@@ -1,124 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
-	<Script File="DataDumper.lua"/>
 	<Script File="NeverLocky.lua"/>
-
-
-	<Slider name="NeverLockySlider_Template" enableMouse="true" virtual="true" minValue="0" maxValue="10" defaultValue="0" valueStep="1">
-		<Size x="17" y="474"/>
-		<HitRectInsets left="0" right="0" top="0" bottom="0"/>
-		<Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background"
-        edgeFile="Interface\Buttons\UI-SliderBar-Border" tile="true">
-			<EdgeSize val="8"/>
-			<TileSize val="8"/>
-			<BackgroundInsets left="3" right="3" top="6" bottom="6"/>
-		</Backdrop>
-		<ThumbTexture name="$parentThumb" file="Interface\Buttons\UI-SliderBar-Button-Vertical">
-			<Size x="32" y="32"/>
-		</ThumbTexture>
-	</Slider>
-
-	<Frame name="NeverLockyScrollBar_Template" virtual="true">
-		<Size x="18" y="475"/>
-		<Frames>
-			<Button name="$parent_DownButton">
-				<Anchors>
-					<Anchor point="TOP" relativeTo="$parent" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="12"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Size x="32" y="32"/>
-				<NormalTexture name = "$parent_NormalTexture" file="Interface\BUTTONS\UI-ScrollBar-ScrollDownButton-Up">
-					<Size x="32" y="32"/>
-				</NormalTexture>
-				<PushedTexture name = "$parent_PushedTexture" file="Interface\BUTTONS\UI-ScrollBar-ScrollDownButton-Down">
-					<Size x="32" y="32"/>
-				</PushedTexture>
-				<Scripts>
-					<OnClick>
-						ScrollBarDown_OnClick()
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Slider name="$parent_Slider" inherits="NeverLockySlider_Template">
-				<Anchors>
-					<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT">
-						<Offset>
-							<AbsDimension x="0" y="0" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Slider_Load(self)
-					</OnLoad>
-					<OnValueChanged>       
-						Slider_OnValueChanged(self, value, userInput)
-					</OnValueChanged>
-				</Scripts>     
-			</Slider>
-			<Button name="$parent_UpButton">
-				<Anchors>
-					<Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP">
-						<Offset>
-							<AbsDimension x="0" y="-12"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Size x="32" y="32"/>
-				<NormalTexture name = "$parent_NormalTexture" file="Interface\BUTTONS\UI-ScrollBar-ScrollUpButton-Up">
-					<Size x="32" y="32"/>
-				</NormalTexture>
-				<PushedTexture name = "$parent_PushedTexture" file="Interface\BUTTONS\UI-ScrollBar-ScrollUpButton-Down">
-					<Size x="32" y="32"/>
-				</PushedTexture>
-				<Scripts>
-					<OnClick>
-						ScrollBarUp_OnClick()	
-					</OnClick>
-				</Scripts>
-			</Button>
-		</Frames>
-	</Frame>
-
-	<Frame name="LockyFriendsData_Template" virtual="true">
-		<Size x="400" y="135"/>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-           edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-		</Backdrop>
-		<Layers>
-			<Layer>
-				<FontString name="$parent_LockyName" text="Brylack" inherits="GameFontNormal">
-					<Size>
-						<AbsDimension x="60" y="0" />
-					</Size>
-					<Anchors>
-						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-							<Offset>
-								<AbsDimension x="5" y="-15" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-					<FontHeight>
-						<AbsValue val="14" />
-					</FontHeight>
-					<Color r="1" g="1" b="1"/>
-				</FontString>
-			</Layer>
-		</Layers>
-	</Frame>
-
 
 	<Frame name="NeverLockyFrame" toplevel="true" movable="true" enableMouse="true" parent="UIParent" hidden="true">
 		<Size>
@@ -197,51 +78,6 @@
 		
 		Possible ready check style confirmations...
 		-->
-			<!--<ScrollFrame name="LockyFriends_Scroller">
-				<Size>
-					<AbsDimension x="425" y="500" />
-				</Size>
-				<Anchors>
-					<Anchor point="CENTER" relativeTo="NeverLockyFrame" relativePoint="CENTER"></Anchor>
-				</Anchors>
-				<Frames>
-					<Frame name="LockyFriends_ScrollBar" inherits="NeverLockyScrollBar_Template">
-						<Anchors>
-							<Anchor point="TOPRIGHT" relativeTo="NeverLockyFrame" relativePoint="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="-15" y="-25" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Frame>
-				<Frame name="LockyFriends_DataContainer" inherits="LockyFriendsData_Template">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="LockyFriends_Scroller" relativePoint="TOPLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>						
-					</Frame>
-					
-				</Frames>
-
-				
-				<ScrollChild>
-				
-				
-					<Frame parentKey="container" setAllPoints="true">
-						<Size y="500" />
-						<Anchors>
-							<Anchor point="CENTER" relativePoint="CENTER" />
-						</Anchors>
-					</Frame>
-					
-				</ScrollChild>
-			</ScrollFrame>		
--->			
-
-
 			<Button name="NeverLocky_Button" inherits="GameMenuButtonTemplate" text="Never Locky Right?">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativeTo="NeverLockyFrame" relativePoint="BOTTOMLEFT">
@@ -259,11 +95,12 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				main()
+				Main()
 				self:RegisterForDrag("LeftButton");
 			</OnLoad>
 			<OnShow>				
-				PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)				
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)	
+					OnShowFrame()
 			</OnShow>
 			<OnHide>
 				PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)

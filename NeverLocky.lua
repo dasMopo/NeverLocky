@@ -1,13 +1,13 @@
 
-raidMode = false;
+RaidMode = false;
 
-function main()
+function Main()
 	print("Never Locky has been registered to the WOW UI.")
 	SlashCmdList["DEMO"]("1")
 	NeverLockyFrame:Show()	
 end
 
-function registerRaid()
+function RegisterRaid()
 	local raidInfo = {}
 	for i=1, 40 do
 		local name, rank, subgroup, level, class, fileName, 
@@ -20,7 +20,7 @@ function registerRaid()
 	return raidInfo
 end
 
-function registerWarlocks()
+function RegisterWarlocks()
 	for i=1, 40 do
 		local name, rank, subgroup, level, class, fileName, 
 		  zone, online, isDead, role, isML = GetRaidRosterInfo(i);
@@ -37,7 +37,7 @@ function HideFrame()
 	NeverLockyFrame:Hide()
 end
 
-function OnShow()
+function OnShowFrame()
 	print("Frame should be showing now.")	
 	--ok, on show we should register all of the warlocks in the raid using a loop.
 	
@@ -45,49 +45,6 @@ function OnShow()
 	
 	
 end
-
-
-function buildLockyFriendsUI(name, UIParent)
-	--Build a frame using CreateFrame("Frame Type as string", "Frame Name as string", UIParent as object)
-	local new_LockyFriend = CreateFrame("Frame", "LockyFriend_"..name , UIParent)
-	new_LockyFriend:SetSize(400,135)
-	
-	
-end
-
-
-function Slider_OnValueChanged(self, value, userInput)
-	print("Slider value changed")
-	print(value)
-end
-
-function Slider_Load(self)
-	print("slider loaded")	
-	print(self)
-end
-
-function ScrollBarDown_OnClick()	
-	Scroll(1)
-end
-
-function ScrollBarUp_OnClick()	
-	Scroll(-1)
-end
-
-function Scroll(increment)
-	local currentIndex = LockyFriends_ScrollBar_Slider:GetValue()
-	local minValue, maxValue = LockyFriends_ScrollBar_Slider:GetMinMaxValues()
-	
-	if (currentIndex+increment > maxValue) then
-		LockyFriends_ScrollBar_Slider:SetValue(maxValue)
-	elseif currentIndex+increment < minValue then
-		LockyFriends_ScrollBar_Slider:SetValue(minValue)
-	else
-		LockyFriends_ScrollBar_Slider:SetValue(currentIndex+increment)
-	end
-end
-
-
 
 SLASH_NL1 = "/nl"
 SLASH_NL2 = "/neverlocky"
@@ -120,14 +77,14 @@ SlashCmdList["DEMO"]= function(msg)
 	]]--
 	
 	--scrollframe 
-	scrollframe = CreateFrame("ScrollFrame", "LockyFriendsScroller_ScrollFrame", frame) 
+	local scrollframe = CreateFrame("ScrollFrame", "LockyFriendsScroller_ScrollFrame", frame) 
 	scrollframe:SetPoint("TOPLEFT", 2, -2) 
 	scrollframe:SetPoint("BOTTOMRIGHT", -2, 2) 
 	
 	frame.scrollframe = scrollframe 
 	--print("Created a Scroll Frame")
 	--scrollbar 
-	scrollbar = CreateFrame("Slider", nil, scrollframe, "UIPanelScrollBarTemplate") 
+	local scrollbar = CreateFrame("Slider", nil, scrollframe, "UIPanelScrollBarTemplate") 
 	scrollbar:SetPoint("TOPLEFT", frame, "TOPRIGHT", 4, -16) 
 	scrollbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT", 4, 16) 
 	scrollbar:SetMinMaxValues(1, 200) 
@@ -161,8 +118,8 @@ SlashCmdList["DEMO"]= function(msg)
 	
 	content.LockyFrames = {}
 	
-	if(raidMode) then
-		local RaidyFriends = registerRaid();
+	if(RaidMode) then
+		local RaidyFriends = RegisterRaid();
 		--print(RaidyFriends)
 	
 	for k, v in pairs(RaidyFriends) do 
@@ -171,11 +128,9 @@ SlashCmdList["DEMO"]= function(msg)
 	end
 	
 	else
-	
-	
-	for i=0, 5 do
-		table.insert(content.LockyFrames, GetLockyFriendFrame("Brylack", i, content))
-	end
+		for i=0, 5 do
+			table.insert(content.LockyFrames, GetLockyFriendFrame("Brylack", i, content))
+		end
 	end
 	
 	
@@ -202,6 +157,7 @@ end
 function GetLockyFriendFrame(LockyName, number, scrollframe)	
 	--Draws the Locky Friend Component Frame, adds the border, and positions it relative to the number of frames created.
 	local LockyFrame = CreateLockyFriendFrame(scrollframe, number)
+	LockyFrame.LockyFrameID  = LockyName .. tostring(number)	
 	
 	--Creates a portrait to assist in identifying units.
 	LockyFrame.Portrait = CreateLockyFriendPortrait(LockyFrame, LockyName) 
@@ -221,12 +177,15 @@ function GetLockyFriendFrame(LockyName, number, scrollframe)
 		UIDropDownMenu_SetSelectedID(LockyFrame.BanishAssignment, number+2)
 	end
 	
-	print(LockyName .. " has been assigned " .. GetCurseValueFromDropDownList(LockyFrame.CurseAssignmentMenu))
+	--print(LockyName .. " has been assigned " .. GetCurseValueFromDropDownList(LockyFrame.CurseAssignmentMenu))
 	UpdateCurseGraphic(LockyFrame.CurseAssignmentMenu, GetCurseValueFromDropDownList(LockyFrame.CurseAssignmentMenu))
+
+	UpdateBanishGraphic(LockyFrame.BanishAssignment, GetValueFromDropDownList(LockyFrame.BanishAssignment, BanishMarkers))
 	
 	return LockyFrame
 end
 
+--Creates the frame that will act as teh container for the component control.
 function CreateLockyFriendFrame(ParentFrame, number)
 	local LockyFriendFrame = CreateFrame("Frame", nil, ParentFrame) 
 	LockyFriendFrame:SetSize(370, 128) 
@@ -246,6 +205,7 @@ function CreateLockyFriendFrame(ParentFrame, number)
 	return LockyFriendFrame
 end
 
+--Creates and assigns the player portrait to the individual raiders in the contrl.
 function CreateLockyFriendPortrait(ParentFrame, UnitName)
 	local portrait = CreateFrame("Frame", nil, ParentFrame) 
 		portrait:SetSize(80,80)
@@ -259,37 +219,49 @@ function CreateLockyFriendPortrait(ParentFrame, UnitName)
 	return portrait
 end
 
+BanishMarkers = {
+	"None",
+	"Diamond",
+	"Star",
+	"Triangle",
+	"Circle",
+	"Square",
+	"Moon",	
+	"Skull",
+	"Cross"
+}
+
+--Builds and sets the banish Icon assignment menu.
 function CreateBanishAssignmentMenu(ParentFrame)
-	local items = {
-		"None",
-	    "Diamond",
-		"Star",
-		"Triangle",
-		"Circle",
-		"Square",
-		"Moon"
-	}
-	
-	local BanishAssignmentMenu = CreateDropDownMenu(ParentFrame, items)
+	local BanishAssignmentMenu = CreateDropDownMenu(ParentFrame, BanishMarkers, "BANISH")
 	BanishAssignmentMenu:SetPoint("CENTER", -25, -30)	
 	BanishAssignmentMenu.Label = CreateBanishAssignmentLabel(BanishAssignmentMenu)
+
+
+	local BanishGraphicFrame = CreateFrame("Frame", nil, ParentFrame)
+	BanishGraphicFrame:SetSize(30,30)
+	BanishGraphicFrame:SetPoint("LEFT", BanishAssignmentMenu, "RIGHT", -12, 8)
+	
+	BanishAssignmentMenu.BanishGraphicFrame = BanishGraphicFrame
 	
 	return BanishAssignmentMenu
 end
 
+--Creates and sets the Banish Assignment Label as part of the banish assignment control.
 function CreateBanishAssignmentLabel(ParentFrame)
 	local Label = AddTextToFrame(ParentFrame, "Banish Assignment", 150)
 	Label:SetPoint("BOTTOMLEFT", ParentFrame, "TOPLEFT", 0, 0)
 	return Label
 end
 
+--Creates and sets the nameplate for the Locky Friends.
 function CreateNamePlate(ParentFrame, Text)
 	local TextFrame = AddTextToFrame(ParentFrame, Text, 90)
 	TextFrame:SetPoint("TOPLEFT", 0,-15)
 	return TextFrame
 end
 
-
+-- Adds text to a frame that is passed in.
 function AddTextToFrame(ParentFrame, Text, Width)
 	local NamePlate = ParentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		NamePlate:SetText(Text)
@@ -300,7 +272,7 @@ function AddTextToFrame(ParentFrame, Text, Width)
 	return NamePlate
 end
 
-
+--Global list of curse options to be displayed in the curse assignment menu.
 CurseOptions = {
 	"None",
    "Elements",
@@ -311,11 +283,10 @@ CurseOptions = {
    "Agony"
 }
 
-
-
+--Creates the curse assignment menu.
 function CreateCurseAssignmentMenu(ParentFrame)	
 		
-	local CurseAssignmentMenu = CreateDropDownMenu(ParentFrame, CurseOptions)
+	local CurseAssignmentMenu = CreateDropDownMenu(ParentFrame, CurseOptions, "CURSE")
 	CurseAssignmentMenu:SetPoint("CENTER", -25, 20)	
 	CurseAssignmentMenu.Label = CreateCurseAssignmentLabel(CurseAssignmentMenu)
 	
@@ -323,12 +294,6 @@ function CreateCurseAssignmentMenu(ParentFrame)
 		CurseGraphicFrame:SetSize(30,30)
 		CurseGraphicFrame:SetPoint("LEFT", CurseAssignmentMenu, "RIGHT", -12, 8)
 	
---[[
-	local CurseGraphic = CurseGraphicFrame:CreateTexture(nil, "OVERLAY") 
-	CurseGraphic:SetAllPoints()
-	CurseGraphic:SetTexture(GetSpellTexture("Curse of the Elements"))
-	--CurseGraphicFrame:SetTexture(CurseGraphic)
-	]]--	
 	CurseAssignmentMenu.CurseGraphicFrame = CurseGraphicFrame
 	
 	return CurseAssignmentMenu
@@ -360,12 +325,58 @@ function UpdateCurseGraphic(ParentFrame, CurseListValue)
 	end
 end
 
+--Parent Frame is the drop down control.
+function UpdateBanishGraphic(ParentFrame, BanishListValue)
+	print("Updating Banish Graphic to " .. BanishListValue)
+	if not (BanishListValue == nil) then
+		if(ParentFrame.BanishGraphicFrame.BanishTexture == nil) then
+			local BanishGraphic = ParentFrame.BanishGraphicFrame:CreateTexture(nil, "OVERLAY") 
+			BanishGraphic:SetAllPoints()
+			BanishGraphic:SetTexture(GetAssetLocationFromRaidMarker(BanishListValue))
+			ParentFrame.BanishGraphicFrame.BanishTexture = BanishGraphic
+		else
+			--print("|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1|t")
+			ParentFrame.BanishGraphicFrame.BanishTexture:SetTexture(GetAssetLocationFromRaidMarker(BanishListValue))
+		end
+		
+	else 
+		if not (ParentFrame.BanishGraphicFrame.BanishTexture == nil) then
+			local BanishGraphic = ParentFrame.BanishGraphicFrame:CreateTexture(nil, "OVERLAY") 
+			BanishGraphic:SetAllPoints()
+			BanishGraphic:SetColorTexture(0,0,0,0)
+			ParentFrame.BanishGraphicFrame.BanishTexture = BanishGraphic
+		else
+			ParentFrame.BanishGraphicFrame.BanishTexture:SetColorTexture(0,0,0,0)		
+		end
+	end
+end
 
+--Generic function that will get called by any drop down to update the graphic that is displayed next to it.
+function UpdateDropDownSideGraphic(DropDownMenu, SelectedValue, DropDownType)
+	if DropDownType == "CURSE" then
+		UpdateCurseGraphic(DropDownMenu, SelectedValue)
+	elseif DropDownType == "BANISH" then
+		UpdateBanishGraphic(DropDownMenu, SelectedValue)
+	end
+end
+
+-- OBSOLETE -- Gets the selected value of the cures from the drop down list.
+-- Use GetValueFromDropDownList instead.
 function GetCurseValueFromDropDownList(DropDownMenu)
 	local selectedValue = UIDropDownMenu_GetSelectedID(DropDownMenu)
 	return CurseOptions[selectedValue]
 end
 
+-- Returns the value of the selected option in a drop down menu.
+-- This exists because the built in UIDropDownMenu_GetSelectedValue appears to be broken.
+-- Of course, it is probable that I am using the drop down menu incorrectly in this case.
+function GetValueFromDropDownList(DropDownMenu, OptionList)
+	local selectedValue = UIDropDownMenu_GetSelectedID(DropDownMenu)
+	return OptionList[selectedValue]
+end
+
+-- Function that converts the Option Value to the Spell Name.
+-- This is used for setting the appropriate texture in in the sidebar graphic.
 function GetSpellNameFromDropDownList(ListValue)
 	if ListValue == "Elements" then
 		return "Curse of the Elements"
@@ -383,22 +394,46 @@ function GetSpellNameFromDropDownList(ListValue)
 	return nil
 end
 
+-- Function provides the asset location of the raid targetting icon.
+function GetAssetLocationFromRaidMarker(raidMarker)
+	if(raidMarker == "Skull") then
+		return "Interface\\TargetingFrame\\UI-RaidTargetingIcon_8"
+	elseif raidMarker == "Star" then
+		return "Interface\\TargetingFrame\\UI-RaidTargetingIcon_1"
+	elseif raidMarker == "Circle" then
+		return "Interface\\TargetingFrame\\UI-RaidTargetingIcon_2"
+	elseif raidMarker == "Diamond" then
+		return "Interface\\TargetingFrame\\UI-RaidTargetingIcon_3"
+	elseif raidMarker == "Triangle" then
+		return "Interface\\TargetingFrame\\UI-RaidTargetingIcon_4"
+	elseif raidMarker == "Moon" then
+		return "Interface\\TargetingFrame\\UI-RaidTargetingIcon_5"
+	elseif raidMarker == "Square" then
+		return "Interface\\TargetingFrame\\UI-RaidTargetingIcon_6"
+	elseif raidMarker == "Cross" then
+		return "Interface\\TargetingFrame\\UI-RaidTargetingIcon_7"
+	end
+	return nil
+end
 
+--Creates the label for the curse assignment. This may not need to have been encapsulated as such but it made sense to me at the time.
 function CreateCurseAssignmentLabel(ParentFrame)
 	local Label = AddTextToFrame(ParentFrame, "Curse Assignment", 150)
 	Label:SetPoint("BOTTOMLEFT", ParentFrame, "TOPLEFT", 0, 0)
 	return Label
 end
 
-function CreateDropDownMenu(ParentFrame, OptionList)
+--Creates and adds a dropdown menu with the passed in option list. 
+--Adding a dropdown type further allows for the sidebar graphic to update as well, but is not required.
+function CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
 	local DropDownMenu = CreateFrame("Button", nil, ParentFrame, "UIDropDownMenuTemplate")
 
 	local function OnClick(self)		
-	   UIDropDownMenu_SetSelectedID(DropDownMenu, self:GetID())
+	    UIDropDownMenu_SetSelectedID(DropDownMenu, self:GetID())
 	   
-		local selection = GetCurseValueFromDropDownList(DropDownMenu)
-		--print("User changed selection to " .. selection)
-		UpdateCurseGraphic(DropDownMenu, selection)
+		local selection = GetValueFromDropDownList(DropDownMenu, OptionList)
+		print("User changed selection to " .. selection)
+		UpdateDropDownSideGraphic(DropDownMenu, selection, DropDownType)
 	end
 	
 	
