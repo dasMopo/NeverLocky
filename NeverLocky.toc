@@ -1,0 +1,5 @@
+## Interface: 11302
+## Title: Never Locky
+## Notes: Allows the user to see the warlock assignments.
+NeverLocky.lua
+NeverLocky.xml
