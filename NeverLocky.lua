@@ -1,10 +1,10 @@
-
 RaidMode = false;
+LockyFriendFrameWidth = 500
 
 function Main()
 	print("Never Locky has been registered to the WOW UI.")
-	SlashCmdList["DEMO"]("1")
-	NeverLockyFrame:Show()	
+	InitLockyFrameScrollArea()
+	NeverLockyFrame:Show()
 end
 
 function RegisterRaid()
@@ -21,19 +21,22 @@ function RegisterRaid()
 end
 
 function RegisterWarlocks()
+	local raidInfo = {}
 	for i=1, 40 do
 		local name, rank, subgroup, level, class, fileName, 
 		  zone, online, isDead, role, isML = GetRaidRosterInfo(i);
 		if not (name == nil) then
 			if fileName == "WARLOCK" then
 				print(name .. "-" .. fileName)
+				table.insert(raidInfo, name)
 			end
 		end		
 	end
+	return raidInfo
 end
 
 function HideFrame()
-	print("Hiding NeverLockyFrame.")
+	--print("Hiding NeverLockyFrame.")
 	NeverLockyFrame:Hide()
 end
 
@@ -57,12 +60,11 @@ SlashCmdList["RL"]= function(msg)
 	ReloadUI();
 end
 
-SLASH_DEMO1 = "/demo"
-SlashCmdList["DEMO"]= function(msg)
+function InitLockyFrameScrollArea()
 	--parent frame 
 	--print("running demo")
 	local frame = CreateFrame("Frame", nil, NeverLockyFrame) 
-	frame:SetSize(385, 500) 
+	frame:SetSize(LockyFriendFrameWidth-52, 500) 
 	frame:SetPoint("CENTER", NeverLockyFrame, "CENTER", -9, 6) 
 		
 	--[[frame:SetBackdrop({
@@ -104,7 +106,7 @@ SlashCmdList["DEMO"]= function(msg)
 	
 	--content frame 	
 	local content = CreateFrame("Frame", nil, scrollframe) 
-	content:SetSize(360, 500) 
+	content:SetSize(LockyFriendFrameWidth-77, 500) 
 	--[[	
 	content:SetBackdrop({
 		bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -120,16 +122,13 @@ SlashCmdList["DEMO"]= function(msg)
 	
 	if(RaidMode) then
 		local RaidyFriends = RegisterRaid();
-		--print(RaidyFriends)
-	
-	for k, v in pairs(RaidyFriends) do 
-		print(k, v) 
-		table.insert(content.LockyFrames, GetLockyFriendFrame(v, k-1, content))
-	end
-	
+		for k, v in pairs(RaidyFriends) do 
+			print(k, v) 
+			table.insert(content.LockyFrames, CreateLockyFriendFrame(v, k-1, content))
+		end
 	else
 		for i=0, 5 do
-			table.insert(content.LockyFrames, GetLockyFriendFrame("Brylack", i, content))
+			table.insert(content.LockyFrames, CreateLockyFriendFrame("Brylack", i, content))
 		end
 	end
 	
@@ -148,15 +147,17 @@ end
 		
 		A dropdown list of names for SoulStones... or maybe a text box for the name... 
 		
-		A timer to keep track of SS targets.
+		A drop down list of raid markers for banish assignments.
+
+		A dropdown to keep track of SS targets.
 		
 		A timer to keep track of SS CDs.
-		
-		A drop down list of raid markers for banish assignments.	
+
+		A status indicator to show if locky friend has accepted the assignment.
 	]]--
-function GetLockyFriendFrame(LockyName, number, scrollframe)	
+function CreateLockyFriendFrame(LockyName, number, scrollframe)	
 	--Draws the Locky Friend Component Frame, adds the border, and positions it relative to the number of frames created.
-	local LockyFrame = CreateLockyFriendFrame(scrollframe, number)
+	local LockyFrame = CreateLockyFriendContainer(scrollframe, number)
 	LockyFrame.LockyFrameID  = LockyName .. tostring(number)	
 	
 	--Creates a portrait to assist in identifying units.
@@ -165,30 +166,39 @@ function GetLockyFriendFrame(LockyName, number, scrollframe)
 	-- Draws the name in the frame.
 	LockyFrame.NamePlate = CreateNamePlate(LockyFrame, LockyName)
 	
+	--Interesting enough, if you attempt to set the selected ID After creating another box, then it ends up doing something weird and crossing wires...
+	--Not sure how to get around that at this time...
+
 	--Draws the curse dropdown.
 	LockyFrame.CurseAssignmentMenu = CreateCurseAssignmentMenu(LockyFrame)
-	--Sets a default based on the raid location.
+	--Sets a default suggested curse assignment.
 	if(number < 3) then
 		UIDropDownMenu_SetSelectedID(LockyFrame.CurseAssignmentMenu, number+2)
 	end
-	--Draw a BanishAssignment DropDownMenu
-	LockyFrame.BanishAssignment = CreateBanishAssignmentMenu(LockyFrame)
-	if(number < 6) then
-		UIDropDownMenu_SetSelectedID(LockyFrame.BanishAssignment, number+2)
-	end
-	
-	--print(LockyName .. " has been assigned " .. GetCurseValueFromDropDownList(LockyFrame.CurseAssignmentMenu))
-	UpdateCurseGraphic(LockyFrame.CurseAssignmentMenu, GetCurseValueFromDropDownList(LockyFrame.CurseAssignmentMenu))
 
-	UpdateBanishGraphic(LockyFrame.BanishAssignment, GetValueFromDropDownList(LockyFrame.BanishAssignment, BanishMarkers))
+	--Draw a BanishAssignment DropDownMenu
+	LockyFrame.BanishAssignmentMenu = CreateBanishAssignmentMenu(LockyFrame)
+	--Sets a default suggested banish target.
+	if(number < 7) then
+		UIDropDownMenu_SetSelectedID(LockyFrame.BanishAssignmentMenu, number+2)
+	end	
+
+	--Draw a SS Assignment Menu.
+	LockyFrame.SSAssignmentMenu = CreateSSAssignmentMenu(LockyFrame)
+	--Sets a default suggested SS target.
+	UIDropDownMenu_SetSelectedID(LockyFrame.SSAssignmentMenu, number+1)
 	
+	--I am not sure if this should be handled here....
+	UpdateCurseGraphic(LockyFrame.CurseAssignmentMenu, GetCurseValueFromDropDownList(LockyFrame.CurseAssignmentMenu))	
+	UpdateBanishGraphic(LockyFrame.BanishAssignmentMenu, GetValueFromDropDownList(LockyFrame.BanishAssignmentMenu, BanishMarkers))
+
 	return LockyFrame
 end
 
 --Creates the frame that will act as teh container for the component control.
-function CreateLockyFriendFrame(ParentFrame, number)
+function CreateLockyFriendContainer(ParentFrame, number)
 	local LockyFriendFrame = CreateFrame("Frame", nil, ParentFrame) 
-	LockyFriendFrame:SetSize(370, 128) 
+	LockyFriendFrame:SetSize(LockyFriendFrameWidth-67, 128) 
 	--Set up the border around the locky frame.
 	LockyFriendFrame:SetBackdrop({
 		bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -234,7 +244,7 @@ BanishMarkers = {
 --Builds and sets the banish Icon assignment menu.
 function CreateBanishAssignmentMenu(ParentFrame)
 	local BanishAssignmentMenu = CreateDropDownMenu(ParentFrame, BanishMarkers, "BANISH")
-	BanishAssignmentMenu:SetPoint("CENTER", -25, -30)	
+	BanishAssignmentMenu:SetPoint("CENTER", -50, -30)	
 	BanishAssignmentMenu.Label = CreateBanishAssignmentLabel(BanishAssignmentMenu)
 
 
@@ -256,9 +266,17 @@ end
 
 --Creates and sets the nameplate for the Locky Friends.
 function CreateNamePlate(ParentFrame, Text)
+	local NameplateFrame = ParentFrame:CreateTexture(nil, "OVERLAY")
+	NameplateFrame:SetSize(205, 50)
+	NameplateFrame:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
+	NameplateFrame:SetPoint("LEFT", ParentFrame, "TOPLEFT", -45, -20)
+
 	local TextFrame = AddTextToFrame(ParentFrame, Text, 90)
-	TextFrame:SetPoint("TOPLEFT", 0,-15)
-	return TextFrame
+	TextFrame:SetPoint("TOPLEFT", 10,-6)
+
+	NameplateFrame.TextFrame = TextFrame
+
+	return NameplateFrame
 end
 
 -- Adds text to a frame that is passed in.
@@ -279,6 +297,7 @@ CurseOptions = {
    "Shadows",
    "Recklessness",
    "Tongues",
+   "Weakness",
    "Doom LOL",
    "Agony"
 }
@@ -287,7 +306,7 @@ CurseOptions = {
 function CreateCurseAssignmentMenu(ParentFrame)	
 		
 	local CurseAssignmentMenu = CreateDropDownMenu(ParentFrame, CurseOptions, "CURSE")
-	CurseAssignmentMenu:SetPoint("CENTER", -25, 20)	
+	CurseAssignmentMenu:SetPoint("CENTER", -50, 20)	
 	CurseAssignmentMenu.Label = CreateCurseAssignmentLabel(CurseAssignmentMenu)
 	
 	local CurseGraphicFrame = CreateFrame("Frame", nil, ParentFrame)
@@ -390,6 +409,8 @@ function GetSpellNameFromDropDownList(ListValue)
 		return "Curse of Agony"
 	elseif ListValue == "Tongues" then
 		return "Curse of Tongues"
+	elseif ListValue == "Weakness" then
+		return "Curse of Weakness"
 	end
 	return nil
 end
@@ -423,17 +444,65 @@ function CreateCurseAssignmentLabel(ParentFrame)
 	return Label
 end
 
+function GetSSTargets()
+	if RaidMode then
+		--I need to implement this next time I am in a raid.
+		local results = {}
+		for i=1, 40 do
+			local name, rank, subgroup, level, class, fileName, 
+				zone, online, isDead, role, isML = GetRaidRosterInfo(i);
+			if not (name == nil) then
+				if fileName == "PRIEST" or fileName == "PALADIN" or rank == "Tank" then
+					print(name .. "-" .. fileName)
+					table.insert(results, name)
+				end
+			end		
+		end
+		return results
+	else
+		return {
+			"Priest1",
+			"Priest2",
+			"Priest3",
+			"Paladin1",
+			"Paladin2",				
+			"WarriorTank1"
+		}
+	end
+end
+
+--Builds and sets the banish Icon assignment menu.
+function CreateSSAssignmentMenu(ParentFrame)
+
+	local SSTargets = GetSSTargets();
+
+	local SSAssignmentMenu = CreateDropDownMenu(ParentFrame, SSTargets, "SS")
+	SSAssignmentMenu:SetPoint("CENTER", 140, 20)	
+	SSAssignmentMenu.Label = CreateSSAssignmentLabel(SSAssignmentMenu)
+	
+	return SSAssignmentMenu
+end
+
+function  CreateSSAssignmentLabel(ParentFrame)
+	local Label = AddTextToFrame(ParentFrame, "Soul Stone", 130)
+	Label:SetPoint("BOTTOMLEFT", ParentFrame, "TOPLEFT", 0, 0)
+	return Label
+end
+
+local dropdowncount = 0
+
 --Creates and adds a dropdown menu with the passed in option list. 
 --Adding a dropdown type further allows for the sidebar graphic to update as well, but is not required.
 function CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
-	local DropDownMenu = CreateFrame("Button", nil, ParentFrame, "UIDropDownMenuTemplate")
+	dropdowncount = dropdowncount + 1
+	local NewDropDownMenu = CreateFrame("Button", "DropDown0"..dropdowncount, ParentFrame, "UIDropDownMenuTemplate")
 
 	local function OnClick(self)		
-	    UIDropDownMenu_SetSelectedID(DropDownMenu, self:GetID())
+	    UIDropDownMenu_SetSelectedID(NewDropDownMenu, self:GetID())
 	   
-		local selection = GetValueFromDropDownList(DropDownMenu, OptionList)
+		local selection = GetValueFromDropDownList(NewDropDownMenu, OptionList)
 		print("User changed selection to " .. selection)
-		UpdateDropDownSideGraphic(DropDownMenu, selection, DropDownType)
+		UpdateDropDownSideGraphic(NewDropDownMenu, selection, DropDownType)
 	end
 	
 	
@@ -448,11 +517,11 @@ function CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
 		  UIDropDownMenu_AddButton(info, level)
 	   end
 	end
-	UIDropDownMenu_Initialize(DropDownMenu, initialize)
-	UIDropDownMenu_SetWidth(DropDownMenu, 100);
-	UIDropDownMenu_SetButtonWidth(DropDownMenu, 124)
-	UIDropDownMenu_SetSelectedID(DropDownMenu, 1)
-	UIDropDownMenu_JustifyText(DropDownMenu, "LEFT")
+	UIDropDownMenu_Initialize(NewDropDownMenu, initialize)
+	UIDropDownMenu_SetWidth(NewDropDownMenu, 100);
+	UIDropDownMenu_SetButtonWidth(NewDropDownMenu, 124)
+	UIDropDownMenu_SetSelectedID(NewDropDownMenu, 1)
+	UIDropDownMenu_JustifyText(NewDropDownMenu, "LEFT")
 	
-	return DropDownMenu
+	return NewDropDownMenu
 end
