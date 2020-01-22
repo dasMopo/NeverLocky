@@ -3,7 +3,7 @@
 
 	<Frame name="NeverLockyFrame" toplevel="true" movable="true" enableMouse="true" parent="UIParent" hidden="true">
 		<Size>
-			<AbsDimension x="437" y="563" />
+			<AbsDimension x="500" y="563" />
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent">
@@ -80,9 +80,9 @@
 		-->
 			<Button name="NeverLocky_Button" inherits="GameMenuButtonTemplate" text="Never Locky Right?">
 				<Anchors>
-					<Anchor point="BOTTOMLEFT" relativeTo="NeverLockyFrame" relativePoint="BOTTOMLEFT">
+					<Anchor point="BOTTOM" relativeTo="NeverLockyFrame" relativePoint="BOTTOM">
 						<Offset>
-							<AbsDimension x="148" y="16"/>
+							<AbsDimension x="0" y="16"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
