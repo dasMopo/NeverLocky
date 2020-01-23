@@ -1,0 +1,40 @@
+This serves as a living task list document for Never Locky
+
+Features:
+    Create a main housing frame that is capable of being shown and hidden using a button or console command - done 
+    Add a nice label to the top of that frame to display the name of the addon. - done
+    Build a scroll bar that is capable of scrolling up and down - done
+    Build a Modular Frame template that can be used to house the information for each member of the raid. - Failed
+        The XML used for this got very complex very quickly, decided to look for other alternatives.
+    Scrap the scroll bar in favor of building one from scratch using the widget API. - done
+    Build a Modular frame that can be used to house the raid member's information - done
+    Add a nameplate to the Modular frame template - done
+    Add a portrait to the Modular frame template - done
+    Add a curse asssignment control to the template - done
+    Add a curse graphic that updates in real time based on the selection choice - done
+    Add a banish contrl to the template - done
+    Add a banish target graphic that behaves like the curse graphic - done
+    Add a soul stone target selector that is fed by the members in the raid - done
+    Decouple the data from the frames by creating a warlock table object that can be used to drive the ui as a datamodel - done
+    Add the ability to get a particular frame by id - done
+    Add the ability to update a frame using a warlock table object - done
+    Increase the capacity of the locky friend frames to 40 - done
+
+ToDo:
+    Add a soul stone tracker.
+        - This can be done using the get item cooldown api call
+        - I think I can store the time that the CD began and then use LUA to math out the rest.
+        - This will allow everyone to stay in sync in seeing each other's CDs.
+    
+    Add the ability to communicate with other NeverLocky addons in the raid.
+        - I am currently looking at setting this up as a channel using Ace3 comms.
+        - More research is needed to figure this out.
+    
+    Add an update all function to implement one-way binding from the warlock collection to the UI.
+        - This is mostly low hanging fruit.
+
+    Add a Test function to simulate adding and removing players from the raid.
+
+    Rework how the locky friend frames are identified to prevent possible collision with other addons.
+
+

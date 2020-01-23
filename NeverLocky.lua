@@ -1,5 +1,6 @@
 RaidMode = false;
 LockyFriendFrameWidth = 500;
+LockyFriendFrameHeight = 128
 HasInitialized = false;
 
 LockyFriendsData = {};
@@ -149,23 +150,16 @@ SlashCmdList["RL"]= function(msg)
 	ReloadUI();
 end
 
+
+--Creates a scroll area to hold the locky friend frames. 
+--This logic was lifted from a snippet from wowprogramming.com I think....
+--This needs a refactor.
 function InitLockyFrameScrollArea()
-	--parent frame 
-	--print("running demo")
+
+	--parent frame 	
 	LockyFrame = CreateFrame("Frame", nil, NeverLockyFrame) 
 	LockyFrame:SetSize(LockyFriendFrameWidth-52, 500) 
 	LockyFrame:SetPoint("CENTER", NeverLockyFrame, "CENTER", -9, 6) 
-		
-	--[[frame:SetBackdrop({
-		bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
-		edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
-		tile = true,
-		tileSize = 32,
-		edgeSize = 32,
-		insets = { left = 0, right = 0, top = 0, bottom = 0 }
-	})
-	frame:SetBackdropColor(0,0,0,1);
-	]]--
 	
 	--scrollframe 
 	local scrollframe = CreateFrame("ScrollFrame", "LockyFriendsScroller_ScrollFrame", LockyFrame) 
@@ -173,7 +167,7 @@ function InitLockyFrameScrollArea()
 	scrollframe:SetPoint("BOTTOMRIGHT", -2, 2) 
 	
 	LockyFrame.scrollframe = scrollframe 
-	--print("Created a Scroll Frame")
+	
 	--scrollbar 
 	local scrollbar = CreateFrame("Slider", nil, scrollframe, "UIPanelScrollBarTemplate") 
 	scrollbar:SetPoint("TOPLEFT", LockyFrame, "TOPRIGHT", 4, -16) 
@@ -196,19 +190,11 @@ function InitLockyFrameScrollArea()
 	--content frame 	
 	local content = CreateFrame("Frame", nil, scrollframe) 
 	content:SetSize(LockyFriendFrameWidth-77, 500) 
-	--[[	
-	content:SetBackdrop({
-		bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
-		edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
-		tile = true,
-		tileSize = 32,
-		edgeSize = 32,
-		insets = { left = 0, right = 0, top = 0, bottom = 0 }
-	})
-	]]--
 	
 	content.LockyFriendFrames = {}
 	
+	--This should just run and create some empty frames.
+	--TODO fix this....
 	if(RaidMode) then
 		local RaidyFriends = RegisterRaid();
 		for k, v in pairs(RaidyFriends) do 
@@ -216,19 +202,41 @@ function InitLockyFrameScrollArea()
 			table.insert(content.LockyFriendFrames, CreateLockyFriendFrame(v, k-1, content))
 		end
 	else
-		for i=0, 5 do
+		for i=0, 3 do
 			table.insert(content.LockyFriendFrames, CreateLockyFriendFrame("Brylack", i, content))
 		end
 	end
 	
 	
 	scrollframe.content = content 
+	-- 290 is perfect for housing 6 locky frames.
+	-- 410 is perfect for housing 7
+	-- 530 is perfect for housing 8
+	scrollbar:SetMinMaxValues(1, GetMaxValueForScrollBar(content.LockyFriendFrames))
 	
-	scrollbar:SetMinMaxValues(1, 290)
-	
+	print(GetTableLength(content.LockyFriendFrames))
+	--print(GetMaxValueForScrollBar(content.LockyFriendFrames))
+
 	scrollframe:SetScrollChild(content)
 end
 
+--Will take in a table object and return a number of pixels 
+function GetMaxValueForScrollBar(LockyFrames)
+	local numberOfFrames = GetTableLength(LockyFrames)
+	--total frame height is 500 we can probably survive with hardcoding this.
+	local _, mod = math.modf(500/LockyFriendFrameHeight)	
+	local shiftFactor = ((1-mod)*LockyFriendFrameHeight) + 13 --There is roughly a 13 pixel spacer somewhere but I am having a hard time nailing it down.
+	local FrameSupports = math.floor(500/LockyFriendFrameHeight)
+	local FirstClippedFrame = math.ceil(500/LockyFriendFrameHeight)
+
+	if numberOfFrames <= FrameSupports then
+		return 1
+	elseif numberOfFrames == FirstClippedFrame then --this is like a partial frame that wont render all the way.
+		return shiftFactor
+	elseif numberOfFrames > FirstClippedFrame then
+		return (numberOfFrames-FirstClippedFrame)*LockyFriendFrameHeight + shiftFactor
+	end
+end
 
 
 --[[
@@ -289,7 +297,8 @@ function CreateLockyFriendFrame(LockyName, number, scrollframe)
 	return LockyFrame
 end
 
-
+--Will update a locky friend frame with the warlock data passed in.
+--If the warlock object is null it will clear and hide the data from the screen.
 function UpdateLockyFrame(Warlock, LockyFriendFrame)
 	--print("Updating Locky Frame")	
 	if(Warlock == nil) then
@@ -322,7 +331,7 @@ function UpdateLockyFrame(Warlock, LockyFriendFrame)
 	LockyFriendFrame.BanishAssignmentMenu.Text:SetText(GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, BanishMarkers))
 
 	--Set the SS Assignment
-	print("Updating SS to: ".. Warlock.SSAssignment)
+	--print("Updating SS to: ".. Warlock.SSAssignment)
 	UIDropDownMenu_SetSelectedID(LockyFriendFrame.SSAssignmentMenu, GetIndexFromTable(GetSSTargets(),Warlock.SSAssignment))
 	LockyFriendFrame.SSAssignmentMenu.Text:SetText(GetValueFromDropDownList(LockyFriendFrame.SSAssignmentMenu, GetSSTargets()))
 
@@ -358,7 +367,7 @@ end
 --Creates the frame that will act as teh container for the component control.
 function CreateLockyFriendContainer(ParentFrame, number)
 	local LockyFriendFrame = CreateFrame("Frame", nil, ParentFrame) 
-	LockyFriendFrame:SetSize(LockyFriendFrameWidth-67, 128) 
+	LockyFriendFrame:SetSize(LockyFriendFrameWidth-67, LockyFriendFrameHeight) 
 	--Set up the border around the locky frame.
 	LockyFriendFrame:SetBackdrop({
 		bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -369,7 +378,7 @@ function CreateLockyFriendContainer(ParentFrame, number)
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	})	
 	--Calculate where to draw the frame on the screen.
-	local yVal = (number*(-128))-10
+	local yVal = (number*(-LockyFriendFrameHeight))-10
 	LockyFriendFrame:SetPoint("TOPLEFT", ParentFrame, "TOPLEFT", 8, yVal)
 	
 	return LockyFriendFrame
@@ -424,7 +433,7 @@ function CreateBanishAssignmentLabel(ParentFrame)
 	return Label
 end
 
---Creates and sets the nameplate for the Locky Friends.
+--Creates and sets the nameplate for the Locky Friends Frame.
 function CreateNamePlate(ParentFrame, Text)
 	local NameplateFrame = ParentFrame:CreateTexture(nil, "OVERLAY")
 	NameplateFrame:SetSize(205, 50)
@@ -440,6 +449,7 @@ function CreateNamePlate(ParentFrame, Text)
 end
 
 -- Adds text to a frame that is passed in.
+-- This text will not be automatically displayed and must be anchored before it will render to the screen.
 function AddTextToFrame(ParentFrame, Text, Width)
 	local NamePlate = ParentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		NamePlate:SetText(Text)
@@ -463,8 +473,7 @@ CurseOptions = {
 }
 
 --Creates the curse assignment menu.
-function CreateCurseAssignmentMenu(ParentFrame)	
-		
+function CreateCurseAssignmentMenu(ParentFrame)			
 	local CurseAssignmentMenu = CreateDropDownMenu(ParentFrame, CurseOptions, "CURSE")
 	CurseAssignmentMenu:SetPoint("CENTER", -50, 20)	
 	CurseAssignmentMenu.Label = CreateCurseAssignmentLabel(CurseAssignmentMenu)
@@ -490,8 +499,7 @@ function UpdateCurseGraphic(ParentFrame, CurseListValue)
 			ParentFrame.CurseGraphicFrame.CurseTexture = CurseGraphic
 		else
 			ParentFrame.CurseGraphicFrame.CurseTexture:SetTexture(GetSpellTexture(GetSpellNameFromDropDownList(CurseListValue)))		
-		end
-		
+		end		
 	else 
 		if not (ParentFrame.CurseGraphicFrame.CurseTexture == nil) then
 			local CurseGraphic = ParentFrame.CurseGraphicFrame:CreateTexture(nil, "OVERLAY") 
@@ -517,7 +525,6 @@ function UpdateBanishGraphic(ParentFrame, BanishListValue)
 			--print("|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1|t")
 			ParentFrame.BanishGraphicFrame.BanishTexture:SetTexture(GetAssetLocationFromRaidMarker(BanishListValue))
 		end
-		
 	else 
 		if not (ParentFrame.BanishGraphicFrame.BanishTexture == nil) then
 			local BanishGraphic = ParentFrame.BanishGraphicFrame:CreateTexture(nil, "OVERLAY") 
@@ -531,6 +538,9 @@ function UpdateBanishGraphic(ParentFrame, BanishListValue)
 end
 
 --Generic function that will get called by any drop down to update the graphic that is displayed next to it.
+-- This event is what is fired when a box is changed manually. 
+-- This event does not fire when the dropdown selection is changed programmatically.
+-- This acts as a router to determine which menu was changed, if the menu is not of a certain "DropDownType" then this function does nothing.
 function UpdateDropDownSideGraphic(DropDownMenu, SelectedValue, DropDownType)
 	if DropDownType == "CURSE" then
 		UpdateCurseGraphic(DropDownMenu, SelectedValue)
@@ -539,11 +549,18 @@ function UpdateDropDownSideGraphic(DropDownMenu, SelectedValue, DropDownType)
 	end
 end
 
--- OBSOLETE -- Gets the selected value of the cures from the drop down list.
+-- Gets the selected value of the cures from the drop down list.
 -- Use GetValueFromDropDownList instead.
 function GetCurseValueFromDropDownList(DropDownMenu)
 	local selectedValue = UIDropDownMenu_GetSelectedID(DropDownMenu)
 	return CurseOptions[selectedValue]
+end
+
+-- Gets the selected value of the banish target from the drop down list.
+-- This is arguably an easier way than referencing the getvalue from dropdown list function.
+function GetBanishValueFromDropDownList(DropDownMenu)
+	local selectedValue = UIDropDownMenu_GetSelectedID(DropDownMenu)
+	return BanishMarkers[selectedValue]
 end
 
 -- Returns the value of the selected option in a drop down menu.
@@ -556,6 +573,7 @@ end
 
 -- Function that converts the Option Value to the Spell Name.
 -- This is used for setting the appropriate texture in in the sidebar graphic.
+-- Acts as a converter from our "Locky Spell Name" to the actual in-game name.
 function GetSpellNameFromDropDownList(ListValue)
 	if ListValue == "Elements" then
 		return "Curse of the Elements"
@@ -576,6 +594,7 @@ function GetSpellNameFromDropDownList(ListValue)
 end
 
 -- Function provides the asset location of the raid targetting icon.
+-- E.X. Converts "Star" to - Interface\\TargetingFrame\\UI-RaidTargetingIcon_1
 function GetAssetLocationFromRaidMarker(raidMarker)
 	if(raidMarker == "Skull") then
 		return "Interface\\TargetingFrame\\UI-RaidTargetingIcon_8"
@@ -604,6 +623,8 @@ function CreateCurseAssignmentLabel(ParentFrame)
 	return Label
 end
 
+--Function will find main healers in the raid and add them to the SS target dropdown
+--Need to make test mode dynamic.
 function GetSSTargets()
 	if RaidMode then
 		--I need to implement this next time I am in a raid.
@@ -634,6 +655,7 @@ function GetSSTargets()
 end
 
 --Builds and sets the banish Icon assignment menu.
+--Parent Frame refers to a "LockyFriendFrame"
 function CreateSSAssignmentMenu(ParentFrame)
 
 	local SSTargets = GetSSTargets();
@@ -645,6 +667,7 @@ function CreateSSAssignmentMenu(ParentFrame)
 	return SSAssignmentMenu
 end
 
+--Create's the "Soul Stone" Label that appears above the soul stone target drop down menu.
 function  CreateSSAssignmentLabel(ParentFrame)
 	local Label = AddTextToFrame(ParentFrame, "Soul Stone", 130)
 	Label:SetPoint("BOTTOMLEFT", ParentFrame, "TOPLEFT", 0, 0)
@@ -686,4 +709,10 @@ function CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
 	UIDropDownMenu_JustifyText(NewDropDownMenu, "LEFT")
 	
 	return NewDropDownMenu
+end
+
+function GetTableLength(T)
+	local count = 0
+	for _ in pairs(T) do count = count + 1 end
+	return count
 end
