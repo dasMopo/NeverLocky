@@ -19,6 +19,10 @@ Features:
     Add the ability to get a particular frame by id - done
     Add the ability to update a frame using a warlock table object - done
     Increase the capacity of the locky friend frames to 40 - done
+    Rework how the locky friend frames are identified to prevent possible collision with other addons.- done
+    Add an update all function to implement one-way binding from the warlock collection to the UI. - done
+    Add a Test function to simulate adding and removing players from the raid. - done
+    Need to add default assignments inside of a function - done
 
 ToDo:
     Add a soul stone tracker.
@@ -29,12 +33,16 @@ ToDo:
     Add the ability to communicate with other NeverLocky addons in the raid.
         - I am currently looking at setting this up as a channel using Ace3 comms.
         - More research is needed to figure this out.
-    
-    Add an update all function to implement one-way binding from the warlock collection to the UI.
-        - This is mostly low hanging fruit.
 
-    Add a Test function to simulate adding and removing players from the raid.
+    Need to add raid validation to show a message when user is not in a raid
 
-    Rework how the locky friend frames are identified to prevent possible collision with other addons.
+    Need to add macro for curse button.
 
+    May add a solo mode for curse button.
+
+    Need to add event subscription to update the ui if the raid state changes. (only if the addon is showing.)
+
+    Issue - If a raider leaves and the assignments are taken away then portaits can be sticky. Not sure if this will affect it in raid mode.
+
+    Issue - Spell texture does not render on non-warlock characters.
 

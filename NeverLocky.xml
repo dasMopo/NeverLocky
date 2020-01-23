@@ -92,7 +92,10 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="Refresh_Button" inherits="GameMenuButtonTemplate" text="Refresh">
+			<Button name="Refresh_Button" inherits="GameMenuButtonTemplate" text="Test">
+				<Size>
+					<AbsDimension x="90" y="20" />
+				</Size>
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativeTo="NeverLockyFrame" relativePoint="BOTTOMLEFT">
 						<Offset>

@@ -12,6 +12,9 @@ local function OnEvent(self, event, isInitialLogin, isReloadingUi)
 		if not HasInitialized then
 			InitLockyFrameScrollArea()
 			HasInitialized = true
+			LockyFriendsData = InitLockyFriendData()
+			LockyFriendsData = SetDefaultAssignments(LockyFriendsData)
+			UpdateAllLockyFriendFrames();
 		end
 		NeverLockyFrame:Show()
 	else
@@ -40,6 +43,121 @@ function RegisterRaid()
 	return raidInfo
 end
 
+local testmode = "init"
+
+function InitLockyFriendData()
+	if(RaidMode) then
+		return RegisterWarlocks()
+	else
+		if testmode == "init"then
+			testmode = "add"
+			print("testing init")
+			return RegisterMyTestData()
+		elseif testmode == "add" then
+			print("testing add")
+			table.insert(LockyFriendsData, RegisterMyTestData()[1])
+			testmode = "remove"
+			return LockyFriendsData
+		elseif testmode == "remove" then
+			print("testing remove")
+			local p = GetLockyFriendIndexByName(LockyFriendsData, "Melon")
+			if not (p==nil) then
+				table.remove(LockyFriendsData, p)
+			end
+			testmode = "setdefault"
+			return LockyFriendsData
+		elseif testmode == "setdefault" then
+			print ("Setting default selection")
+			LockyFriendsData = SetDefaultAssignments(LockyFriendsData)
+			testmode = "init"
+			return LockyFriendsData
+		else
+			return LockyFriendsData
+		end
+	end
+end
+
+function  GetLockyFriendIndexByName(table, name)
+
+	for key, value in pairs(table) do
+		--print(key, " -- ", value["LockyFrameID"])
+		--print(value.Name)
+		if value.Name == name then
+			print(value.Name, "is in position", key)
+			return key
+		end
+	end
+	print(name, "is not in the list.")
+	return nil
+end
+
+function RegisterTestData()
+	local testData = {}
+	for i=1, 5 do
+		table.insert(testData, AddAWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	end
+	return testData
+end
+
+function RegisterRealisicTestData()
+	local testData = {}
+	--table.insert(testData, AddAWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, AddAWarlock("Giandy", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, AddAWarlock("Melon", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, AddAWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));	
+	table.insert(testData, AddAWarlock("Itsyrekt", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, AddAWarlock("Dessian", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, AddAWarlock("Sociopath", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	return testData
+end
+
+function RegisterMyTestData()
+	local testData = {}
+	table.insert(testData, AddAWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));	
+	return testData
+end
+
+function  AddAWarlock(name, curse, banish)
+	local Warlock = {}
+			Warlock.Name = name
+			Warlock.CurseAssignment = curse
+			Warlock.BanishAssignment = banish
+			Warlock.SSAssignment = "None"
+			Warlock.SSCooldown=nil
+			Warlock.AcceptedAssignments = false
+			Warlock.LockyFrameLocation = ""
+	return Warlock
+end
+
+--Will set default assignments for curses / banishes and SS.
+function SetDefaultAssignments(warlockTable)	
+	for k, y in pairs(warlockTable) do
+		if(k<3)then
+			y.CurseAssignment = CurseOptions[k+1]
+		else
+			y.CurseAssignment = CurseOptions[1]
+		end
+
+		if(k<7) then
+			y.BanishAssignment = BanishMarkers[k+1]
+		else
+			y.BanishAssignment = BanishMarkers[1]
+		end
+
+		if(k<=2) then
+			local strSS = GetSSTargets()[k]
+			--print(strSS)
+			y.SSAssignment = strSS
+		else
+			local targets = GetSSTargets()
+			y.SSAssignment = targets[GetTableLength(targets)]
+		end
+	end	
+	return warlockTable
+end
+
+
+--Pulls all of the warlocks in the raid and initilizes thier assignment data.
 function RegisterWarlocks()
 	local raidInfo = {}
 	for i=1, 40 do
@@ -70,48 +188,12 @@ function HideFrame()
 	NeverLockyFrame:Hide()
 end
 
+--At this time this is just a test function.
 function Refresh()
 	print("Updating a frame....")
-	if not (LockyFrame == nil) then		
-		--[[
-		Ok.... so.....
-
-		My Data is WAY too coupled to the UI.
-
-		So I need to decouple it.
-
-		The best way to do that is to initialize the UI to have up to 10 warlocks.		
-		then hide all of the newly created frames.
-
-		Then create a table that is the representation of the data.
-
-		Then I can set up a routine that will set / hide frames as needed.
-		]]--
-
-
-		local testFrame = GetLockyFriendFrameById("3")
-		
-		print(testFrame.LockyFrameID)
-
-
-		local Warlock = {}
-				Warlock.Name = "SocioPath"
-				Warlock.CurseAssignment = "Agony"
-				Warlock.BanishAssignment = "Moon"
-				Warlock.SSAssignment = "Priest2"
-				Warlock.SSCooldown=nil
-				Warlock.AcceptedAssignments = false
-				Warlock.LockyFrameLocation = ""
-
-		UpdateLockyFrame(Warlock, testFrame)
-
-		local testFrame = GetLockyFriendFrameById("4")
-		UpdateLockyFrame(nil, testFrame)
-		--testFrame:Hide()
-
-		local testFrame = GetLockyFriendFrameById("5")
-		UpdateLockyFrame(nil, testFrame)
-		--testFrame:Hide()
+	if not (LockyFrame == nil) then				
+		LockyFriendsData = InitLockyFriendData();
+		UpdateAllLockyFriendFrames();
 	end
 end
 
@@ -192,22 +274,12 @@ function InitLockyFrameScrollArea()
 	content:SetSize(LockyFriendFrameWidth-77, 500) 
 	
 	content.LockyFriendFrames = {}
-	
-	--This should just run and create some empty frames.
-	--TODO fix this....
-	if(RaidMode) then
-		local RaidyFriends = RegisterRaid();
-		for k, v in pairs(RaidyFriends) do 
-			print(k, v) 
-			table.insert(content.LockyFriendFrames, CreateLockyFriendFrame(v, k-1, content))
-		end
-	else
-		for i=0, 3 do
-			table.insert(content.LockyFriendFrames, CreateLockyFriendFrame("Brylack", i, content))
-		end
+		
+	--This is poorly optimized, but it is what it is.
+	for i=0, 39 do
+		table.insert(content.LockyFriendFrames, CreateLockyFriendFrame("Brylack", i, content))
 	end
-	
-	
+
 	scrollframe.content = content 
 	-- 290 is perfect for housing 6 locky frames.
 	-- 410 is perfect for housing 7
@@ -218,6 +290,8 @@ function InitLockyFrameScrollArea()
 	--print(GetMaxValueForScrollBar(content.LockyFriendFrames))
 
 	scrollframe:SetScrollChild(content)
+
+	UpdateAllLockyFriendFrames()
 end
 
 --Will take in a table object and return a number of pixels 
@@ -255,7 +329,7 @@ end
 function CreateLockyFriendFrame(LockyName, number, scrollframe)	
 	--Draws the Locky Friend Component Frame, adds the border, and positions it relative to the number of frames created.
 	local LockyFrame = CreateLockyFriendContainer(scrollframe, number)
-	LockyFrame.LockyFrameID  = tostring(number)
+	LockyFrame.LockyFrameID  = "LockyFriendFrame_0"..tostring(number)
 	LockyFrame.LockyName = LockyName
 	
 	--Creates a portrait to assist in identifying units.
@@ -263,39 +337,59 @@ function CreateLockyFriendFrame(LockyName, number, scrollframe)
 	
 	-- Draws the name in the frame.
 	LockyFrame.NamePlate = CreateNamePlate(LockyFrame, LockyName)
-	
-	--Interesting enough, if you attempt to set the selected ID After creating another box, then it ends up doing something weird and crossing wires...
-	--Not sure how to get around that at this time...
 
 	--Draws the curse dropdown.
 	LockyFrame.CurseAssignmentMenu = CreateCurseAssignmentMenu(LockyFrame)
-	--Sets a default suggested curse assignment.
-	if(number < 3) then
-		UIDropDownMenu_SetSelectedID(LockyFrame.CurseAssignmentMenu, number+2)
-	end
 
 	--Draw a BanishAssignment DropDownMenu
-	LockyFrame.BanishAssignmentMenu = CreateBanishAssignmentMenu(LockyFrame)
-	--Sets a default suggested banish target.
-	if(number < 7) then
-		UIDropDownMenu_SetSelectedID(LockyFrame.BanishAssignmentMenu, number+2)
-	end	
+	LockyFrame.BanishAssignmentMenu = CreateBanishAssignmentMenu(LockyFrame)	
 
 	--Draw a SS Assignment Menu.
 	LockyFrame.SSAssignmentMenu = CreateSSAssignmentMenu(LockyFrame)
-	--Sets a default suggested SS target.
-	UIDropDownMenu_SetSelectedID(LockyFrame.SSAssignmentMenu, number+1)
-	
-	--I am not sure if this should be handled here....
-	UpdateCurseGraphic(LockyFrame.CurseAssignmentMenu, GetCurseValueFromDropDownList(LockyFrame.CurseAssignmentMenu))	
-	UpdateBanishGraphic(LockyFrame.BanishAssignmentMenu, GetValueFromDropDownList(LockyFrame.BanishAssignmentMenu, BanishMarkers))
-
-	LockyFrame.ClearData = function ()
-		UpdateLockyFrame(nil, LockyFrame)
-	end
 
 	return LockyFrame
 end
+
+--This will use the global locky friends data.
+function UpdateAllLockyFriendFrames()
+
+	--wait a minute...
+	--[[
+	I need to reload all locky frames.
+	So first thing is first, we need to clear all?
+	Then reload them.
+
+	]]--
+	ClearAllLockyFrames()
+	ConsolidateFrameLocations()
+	for key, value in pairs(LockyFriendsData) do
+		UpdateLockyFrame(value, GetLockyFriendFrameById(value.LockyFrameLocation))
+	end
+
+	LockyFrame.scrollbar:SetMinMaxValues(1, GetMaxValueForScrollBar(LockyFriendsData))
+end
+
+--Loops through and clears all of the data currently loaded.
+function  ClearAllLockyFrames()
+	--print("Clearing the frames")
+	for key, value in pairs(LockyFrame.scrollframe.content.LockyFriendFrames) do
+
+		UpdateLockyFrame(nil, value)
+		--print(value.LockyFrameID, "successfully cleared.")
+	end
+end
+
+--This function will take in the warlock table object and update the frame assignment to make sense.
+function  ConsolidateFrameLocations()
+	--Need to loop through and assign a locky frame id to a locky friend.
+	--print("Setting up FrameLocations for the locky friend data.")
+	for key, value in pairs(LockyFriendsData) do		
+		--print(value.Name, "will be assigned a frame.")
+		value.LockyFrameLocation = LockyFrame.scrollframe.content.LockyFriendFrames[key].LockyFrameID;
+		--print("Assigned Frame:",value.LockyFrameLocation)
+	end
+end
+
 
 --Will update a locky friend frame with the warlock data passed in.
 --If the warlock object is null it will clear and hide the data from the screen.
@@ -392,7 +486,7 @@ function CreateLockyFriendPortrait(ParentFrame, UnitName)
 	local texture = portrait:CreateTexture(nil, "BACKGROUND") 
 	texture:SetAllPoints() 
 	--texture:SetTexture("Interface\\GLUES\\MainMenu\\Glues-BlizzardLogo") 
-	SetPortraitTexture(texture, UnitName)
+	--SetPortraitTexture(texture, UnitName)
 	portrait.Texture = texture 
 	
 	return portrait
