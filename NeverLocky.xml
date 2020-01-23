@@ -92,6 +92,20 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+			<Button name="Refresh_Button" inherits="GameMenuButtonTemplate" text="Refresh">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="NeverLockyFrame" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="10" y="16"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Refresh()
+					</OnClick>
+				</Scripts>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad>
@@ -110,7 +124,7 @@
 			</OnDragStart>
 			<OnDragStop>
 				self:StopMovingOrSizing();
-			</OnDragStop>
+			</OnDragStop>			
 		</Scripts>
 	</Frame>
 </Ui>
