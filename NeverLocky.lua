@@ -1,3 +1,4 @@
+-- Globals Section
 RaidMode = false;
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
@@ -5,8 +6,24 @@ HasInitialized = false;
 
 LockyFriendsData = {};
 
+NeverLocky_UpdateInterval = 1.0; -- How often the OnUpdate code will run (in seconds)
+
+-- Functions Section
+function NeverLocky_OnUpdate(self, elapsed)
+  self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 	
+
+  if (self.TimeSinceLastUpdate > NeverLocky_UpdateInterval) then
+    --
+    -- Insert your OnUpdate code here
+	--
+	UpdateLockyClockys()
+
+    self.TimeSinceLastUpdate = 0;
+  end
+end
 
 local function OnEvent(self, event, isInitialLogin, isReloadingUi)
+	--print (event)
 	if isInitialLogin or isReloadingUi then
 		--print("loaded the UI")
 		if not HasInitialized then
@@ -26,7 +43,7 @@ function Main()
 	print("Never Locky has been registered to the WOW UI.")
 	--InitLockyFrameScrollArea()
 	--NeverLockyFrame:Show()
-	NeverLockyFrame:RegisterEvent("ADDON_LOADED")
+	NeverLockyFrame:RegisterEvent("ADDON_LOADED")	
 	NeverLockyFrame:SetScript("OnEvent", OnEvent)
 end
 
@@ -123,9 +140,10 @@ function  AddAWarlock(name, curse, banish)
 			Warlock.CurseAssignment = curse
 			Warlock.BanishAssignment = banish
 			Warlock.SSAssignment = "None"
-			Warlock.SSCooldown=nil
+			Warlock.SSCooldown=GetTime()
 			Warlock.AcceptedAssignments = false
 			Warlock.LockyFrameLocation = ""
+			Warlock.SSonCD = true
 	return Warlock
 end
 
@@ -165,18 +183,8 @@ function RegisterWarlocks()
 		  zone, online, isDead, role, isML = GetRaidRosterInfo(i);
 		if not (name == nil) then
 			if fileName == "WARLOCK" then
-				print(name .. "-" .. fileName)
-
-				local Warlock
-				Warlock.Name = name
-				Warlock.CurseAssignment = "None"
-				Warlock.BanishAssignment = "None"
-				Warlock.SSAssignment = "None"
-				Warlock.SSCooldown=nil
-				Warlock.AcceptedAssignments = false
-				Warlock.LockyFrameLocation = ""
-
-				table.insert(raidInfo, Warlock)
+				--print(name .. "-" .. fileName)
+				table.insert(raidInfo, AddAWarlock(name, "None", "None"))
 			end
 		end		
 	end
@@ -347,19 +355,21 @@ function CreateLockyFriendFrame(LockyName, number, scrollframe)
 	--Draw a SS Assignment Menu.
 	LockyFrame.SSAssignmentMenu = CreateSSAssignmentMenu(LockyFrame)
 
+	--Draw the SSCooldownTracker
+	LockyFrame.SSCooldownTracker = CreateSSCooldownTracker(LockyFrame.SSAssignmentMenu)
+	
 	return LockyFrame
+end
+
+--Creates a textframe.
+function CreateSSCooldownTracker(ParentFrame)
+	local TextFrame = AddTextToFrame(ParentFrame, "On CD for 24:13", 120)
+	TextFrame:SetPoint("TOP", ParentFrame, "BOTTOM", 0,0)
+	return TextFrame
 end
 
 --This will use the global locky friends data.
 function UpdateAllLockyFriendFrames()
-
-	--wait a minute...
-	--[[
-	I need to reload all locky frames.
-	So first thing is first, we need to clear all?
-	Then reload them.
-
-	]]--
 	ClearAllLockyFrames()
 	ConsolidateFrameLocations()
 	for key, value in pairs(LockyFriendsData) do
@@ -390,6 +400,32 @@ function  ConsolidateFrameLocations()
 	end
 end
 
+function UpdateLockyClockys()
+	--[[
+	Go through each lock.
+	if SS is on CD then
+	Update the CD Tracker Text
+	else do nothing.
+	]]--
+
+	for k,v in pairs(LockyFriendsData) do
+		if(v.SSonCD) then
+			-- We have the table item for the SSCooldown			
+			local CDLength = 30*60
+			local result = SecondsToTime(math.floor(v.SSCooldown + CDLength - GetTime()))			
+			--print(result)
+			local frame = GetLockyFriendFrameById(v.LockyFrameLocation)
+			frame.SSCooldownTracker:SetText("CD "..result)
+
+			if math.floor(v.SSCooldown + CDLength - GetTime()) <=0 then
+				v.SSonCD = false
+				frame.SSCooldownTracker:SetText("Available")
+			end
+		end
+	end
+
+
+end
 
 --Will update a locky friend frame with the warlock data passed in.
 --If the warlock object is null it will clear and hide the data from the screen.

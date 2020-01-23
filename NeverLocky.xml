@@ -114,6 +114,7 @@
 			<OnLoad>
 				Main()
 				self:RegisterForDrag("LeftButton");
+				self.TimeSinceLastUpdate = 0
 			</OnLoad>
 			<OnShow>				
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)	
@@ -127,7 +128,8 @@
 			</OnDragStart>
 			<OnDragStop>
 				self:StopMovingOrSizing();
-			</OnDragStop>			
+			</OnDragStop>
+			<OnUpdate function="NeverLocky_OnUpdate" />			
 		</Scripts>
 	</Frame>
 </Ui>
