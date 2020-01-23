@@ -1,10 +1,29 @@
 RaidMode = false;
-LockyFriendFrameWidth = 500
+LockyFriendFrameWidth = 500;
+HasInitialized = false;
+
+LockyFriendsData = {};
+
+
+local function OnEvent(self, event, isInitialLogin, isReloadingUi)
+	if isInitialLogin or isReloadingUi then
+		--print("loaded the UI")
+		if not HasInitialized then
+			InitLockyFrameScrollArea()
+			HasInitialized = true
+		end
+		NeverLockyFrame:Show()
+	else
+		print("zoned between map instances")
+	end
+end
 
 function Main()
 	print("Never Locky has been registered to the WOW UI.")
-	InitLockyFrameScrollArea()
-	NeverLockyFrame:Show()
+	--InitLockyFrameScrollArea()
+	--NeverLockyFrame:Show()
+	NeverLockyFrame:RegisterEvent("ADDON_LOADED")
+	NeverLockyFrame:SetScript("OnEvent", OnEvent)
 end
 
 function RegisterRaid()
@@ -15,7 +34,7 @@ function RegisterRaid()
 		if not (name == nil) then
 			print(name .. "-" .. fileName)	
 			table.insert(raidInfo, name)
-		end		
+		end
 	end
 	return raidInfo
 end
@@ -28,7 +47,17 @@ function RegisterWarlocks()
 		if not (name == nil) then
 			if fileName == "WARLOCK" then
 				print(name .. "-" .. fileName)
-				table.insert(raidInfo, name)
+
+				local Warlock
+				Warlock.Name = name
+				Warlock.CurseAssignment = "None"
+				Warlock.BanishAssignment = "None"
+				Warlock.SSAssignment = "None"
+				Warlock.SSCooldown=nil
+				Warlock.AcceptedAssignments = false
+				Warlock.LockyFrameLocation = ""
+
+				table.insert(raidInfo, Warlock)
 			end
 		end		
 	end
@@ -40,8 +69,68 @@ function HideFrame()
 	NeverLockyFrame:Hide()
 end
 
+function Refresh()
+	print("Updating a frame....")
+	if not (LockyFrame == nil) then		
+		--[[
+		Ok.... so.....
+
+		My Data is WAY too coupled to the UI.
+
+		So I need to decouple it.
+
+		The best way to do that is to initialize the UI to have up to 10 warlocks.		
+		then hide all of the newly created frames.
+
+		Then create a table that is the representation of the data.
+
+		Then I can set up a routine that will set / hide frames as needed.
+		]]--
+
+
+		local testFrame = GetLockyFriendFrameById("3")
+		
+		print(testFrame.LockyFrameID)
+
+
+		local Warlock = {}
+				Warlock.Name = "SocioPath"
+				Warlock.CurseAssignment = "Agony"
+				Warlock.BanishAssignment = "Moon"
+				Warlock.SSAssignment = "Priest2"
+				Warlock.SSCooldown=nil
+				Warlock.AcceptedAssignments = false
+				Warlock.LockyFrameLocation = ""
+
+		UpdateLockyFrame(Warlock, testFrame)
+
+		local testFrame = GetLockyFriendFrameById("4")
+		UpdateLockyFrame(nil, testFrame)
+		--testFrame:Hide()
+
+		local testFrame = GetLockyFriendFrameById("5")
+		UpdateLockyFrame(nil, testFrame)
+		--testFrame:Hide()
+	end
+end
+
+function GetLockyFriendFrameById(LockyFrameID)
+	for key, value in pairs(LockyFrame.scrollframe.content.LockyFriendFrames) do
+		--print(key, " -- ", value["LockyFrameID"])
+		if value["LockyFrameID"] == LockyFrameID then
+			return value
+		end
+	end
+end
+
+
 function OnShowFrame()
 	print("Frame should be showing now.")	
+
+	if not HasInitialized then		
+	--	InitLockyFrameScrollArea()
+		HasInitialized = true
+	end
 	--ok, on show we should register all of the warlocks in the raid using a loop.
 	
 	-- We should also 
@@ -63,9 +152,9 @@ end
 function InitLockyFrameScrollArea()
 	--parent frame 
 	--print("running demo")
-	local frame = CreateFrame("Frame", nil, NeverLockyFrame) 
-	frame:SetSize(LockyFriendFrameWidth-52, 500) 
-	frame:SetPoint("CENTER", NeverLockyFrame, "CENTER", -9, 6) 
+	LockyFrame = CreateFrame("Frame", nil, NeverLockyFrame) 
+	LockyFrame:SetSize(LockyFriendFrameWidth-52, 500) 
+	LockyFrame:SetPoint("CENTER", NeverLockyFrame, "CENTER", -9, 6) 
 		
 	--[[frame:SetBackdrop({
 		bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -79,16 +168,16 @@ function InitLockyFrameScrollArea()
 	]]--
 	
 	--scrollframe 
-	local scrollframe = CreateFrame("ScrollFrame", "LockyFriendsScroller_ScrollFrame", frame) 
+	local scrollframe = CreateFrame("ScrollFrame", "LockyFriendsScroller_ScrollFrame", LockyFrame) 
 	scrollframe:SetPoint("TOPLEFT", 2, -2) 
 	scrollframe:SetPoint("BOTTOMRIGHT", -2, 2) 
 	
-	frame.scrollframe = scrollframe 
+	LockyFrame.scrollframe = scrollframe 
 	--print("Created a Scroll Frame")
 	--scrollbar 
 	local scrollbar = CreateFrame("Slider", nil, scrollframe, "UIPanelScrollBarTemplate") 
-	scrollbar:SetPoint("TOPLEFT", frame, "TOPRIGHT", 4, -16) 
-	scrollbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT", 4, 16) 
+	scrollbar:SetPoint("TOPLEFT", LockyFrame, "TOPRIGHT", 4, -16) 
+	scrollbar:SetPoint("BOTTOMLEFT", LockyFrame, "BOTTOMRIGHT", 4, 16) 
 	scrollbar:SetMinMaxValues(1, 200) 
 	scrollbar:SetValueStep(1) 
 	scrollbar.scrollStep = 1 
@@ -101,7 +190,7 @@ function InitLockyFrameScrollArea()
 	local scrollbg = scrollbar:CreateTexture(nil, "BACKGROUND") 
 	scrollbg:SetAllPoints(scrollbar) 
 	scrollbg:SetTexture(0, 0, 0, 0.8) 
-	frame.scrollbar = scrollbar 
+	LockyFrame.scrollbar = scrollbar 
 	--print("Created a Scroll Bar")
 	
 	--content frame 	
@@ -118,17 +207,17 @@ function InitLockyFrameScrollArea()
 	})
 	]]--
 	
-	content.LockyFrames = {}
+	content.LockyFriendFrames = {}
 	
 	if(RaidMode) then
 		local RaidyFriends = RegisterRaid();
 		for k, v in pairs(RaidyFriends) do 
 			print(k, v) 
-			table.insert(content.LockyFrames, CreateLockyFriendFrame(v, k-1, content))
+			table.insert(content.LockyFriendFrames, CreateLockyFriendFrame(v, k-1, content))
 		end
 	else
 		for i=0, 5 do
-			table.insert(content.LockyFrames, CreateLockyFriendFrame("Brylack", i, content))
+			table.insert(content.LockyFriendFrames, CreateLockyFriendFrame("Brylack", i, content))
 		end
 	end
 	
@@ -158,7 +247,8 @@ end
 function CreateLockyFriendFrame(LockyName, number, scrollframe)	
 	--Draws the Locky Friend Component Frame, adds the border, and positions it relative to the number of frames created.
 	local LockyFrame = CreateLockyFriendContainer(scrollframe, number)
-	LockyFrame.LockyFrameID  = LockyName .. tostring(number)	
+	LockyFrame.LockyFrameID  = tostring(number)
+	LockyFrame.LockyName = LockyName
 	
 	--Creates a portrait to assist in identifying units.
 	LockyFrame.Portrait = CreateLockyFriendPortrait(LockyFrame, LockyName) 
@@ -192,7 +282,77 @@ function CreateLockyFriendFrame(LockyName, number, scrollframe)
 	UpdateCurseGraphic(LockyFrame.CurseAssignmentMenu, GetCurseValueFromDropDownList(LockyFrame.CurseAssignmentMenu))	
 	UpdateBanishGraphic(LockyFrame.BanishAssignmentMenu, GetValueFromDropDownList(LockyFrame.BanishAssignmentMenu, BanishMarkers))
 
+	LockyFrame.ClearData = function ()
+		UpdateLockyFrame(nil, LockyFrame)
+	end
+
 	return LockyFrame
+end
+
+
+function UpdateLockyFrame(Warlock, LockyFriendFrame)
+	--print("Updating Locky Frame")	
+	if(Warlock == nil) then
+		LockyFriendFrame:Hide()
+		Warlock = {}
+		Warlock.Name = ""
+		Warlock.CurseAssignment = "None"
+		Warlock.BanishAssignment = "None"
+		Warlock.SSAssignment = "None"
+		Warlock.SSCooldown=nil
+		Warlock.AcceptedAssignments = false
+		Warlock.LockyFrameLocation = ""
+	else
+		LockyFriendFrame:Show()
+	end
+	--Set the nametag
+	--print("Updating Nameplate Text to: ".. Warlock.Name)
+	LockyFriendFrame.NamePlate.TextFrame:SetText(Warlock.Name)
+	--Set the CurseAssignment
+	--print("Updating Curse to: ".. Warlock.CurseAssignment) -- this may need to be done by index.....
+	--GetIndexFromTable(CurseOptions, Warlock.CurseAssignment)
+	UIDropDownMenu_SetSelectedID(LockyFriendFrame.CurseAssignmentMenu, GetIndexFromTable(CurseOptions, Warlock.CurseAssignment))
+	UpdateCurseGraphic(LockyFriendFrame.CurseAssignmentMenu, GetCurseValueFromDropDownList(LockyFriendFrame.CurseAssignmentMenu))
+	LockyFriendFrame.CurseAssignmentMenu.Text:SetText(GetCurseValueFromDropDownList(LockyFriendFrame.CurseAssignmentMenu))
+	
+	--Set the BanishAssignmentMenu
+	--print("Updating Banish to: ".. Warlock.BanishAssignment)
+	UIDropDownMenu_SetSelectedID(LockyFriendFrame.BanishAssignmentMenu, GetIndexFromTable(BanishMarkers, Warlock.BanishAssignment))
+	UpdateBanishGraphic(LockyFriendFrame.BanishAssignmentMenu, GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, BanishMarkers))
+	LockyFriendFrame.BanishAssignmentMenu.Text:SetText(GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, BanishMarkers))
+
+	--Set the SS Assignment
+	print("Updating SS to: ".. Warlock.SSAssignment)
+	UIDropDownMenu_SetSelectedID(LockyFriendFrame.SSAssignmentMenu, GetIndexFromTable(GetSSTargets(),Warlock.SSAssignment))
+	LockyFriendFrame.SSAssignmentMenu.Text:SetText(GetValueFromDropDownList(LockyFriendFrame.SSAssignmentMenu, GetSSTargets()))
+
+	--Update the Portrait picture	
+	if Warlock.Name=="" then
+		LockyFriendFrame.Portrait:Hide()		
+	else
+		--print("Trying to set diff portrait")
+		if(LockyFriendFrame.Portrait.Texture == nil) then
+			--print("The obj never existed")
+			local PortraitGraphic = LockyFriendFrame.Portrait:CreateTexture(nil, "OVERLAY") 
+			PortraitGraphic:SetAllPoints()
+			SetPortraitTexture(PortraitGraphic, Warlock.Name)
+			LockyFriendFrame.Portrait.Texture = PortraitGraphic
+		else
+			--print("the obj exists")
+			SetPortraitTexture(LockyFriendFrame.Portrait.Texture, Warlock.Name)
+		end
+		LockyFriendFrame.Portrait:Show()
+	end
+
+	return LockyFriendFrame.LockyFrameID
+end
+
+function GetIndexFromTable(table, value)
+	local index={}
+	for k,v in pairs(table) do
+	   index[v]=k
+	end
+	return index[value]
 end
 
 --Creates the frame that will act as teh container for the component control.
@@ -224,7 +384,7 @@ function CreateLockyFriendPortrait(ParentFrame, UnitName)
 	texture:SetAllPoints() 
 	--texture:SetTexture("Interface\\GLUES\\MainMenu\\Glues-BlizzardLogo") 
 	SetPortraitTexture(texture, UnitName)
-	portrait.texture = texture 
+	portrait.Texture = texture 
 	
 	return portrait
 end
@@ -346,7 +506,7 @@ end
 
 --Parent Frame is the drop down control.
 function UpdateBanishGraphic(ParentFrame, BanishListValue)
-	print("Updating Banish Graphic to " .. BanishListValue)
+	--print("Updating Banish Graphic to " .. BanishListValue)
 	if not (BanishListValue == nil) then
 		if(ParentFrame.BanishGraphicFrame.BanishTexture == nil) then
 			local BanishGraphic = ParentFrame.BanishGraphicFrame:CreateTexture(nil, "OVERLAY") 
@@ -447,7 +607,7 @@ end
 function GetSSTargets()
 	if RaidMode then
 		--I need to implement this next time I am in a raid.
-		local results = {}
+		local results = {}		
 		for i=1, 40 do
 			local name, rank, subgroup, level, class, fileName, 
 				zone, online, isDead, role, isML = GetRaidRosterInfo(i);
@@ -458,6 +618,7 @@ function GetSSTargets()
 				end
 			end		
 		end
+		table.insert(results,"None")
 		return results
 	else
 		return {
@@ -466,7 +627,8 @@ function GetSSTargets()
 			"Priest3",
 			"Paladin1",
 			"Paladin2",				
-			"WarriorTank1"
+			"WarriorTank1",
+			"None"
 		}
 	end
 end

@@ -1,0 +1,16 @@
+{
+    "Lua.diagnostics.globals": [
+        "UIDropDownMenu_CreateInfo",
+        "UIDropDownMenu_AddButton",
+        "UIDropDownMenu_Initialize",
+        "UIDropDownMenu_SetWidth",
+        "UIDropDownMenu_SetButtonWidth",
+        "UIDropDownMenu_SetSelectedID",
+        "UIDropDownMenu_JustifyText",
+        "CreateFrame",
+        "GetSpellTexture",
+        "GetRaidRosterInfo",
+        "NeverLockyFrame",
+        "SlashCmdList"
+    ]
+}
