@@ -1,4 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script File="LockyGlobalData.lua"/>
+	<Script File="LockyTableFunctions.lua"/>
+	<Script File="LockyDataUI.lua"/>
+	<Script File="LockyUI.lua"/>
+	<Script File="LockyComms.lua"/>
 	<Script File="NeverLocky.lua"/>
 	<Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>
 	<Include file="Libs\AceComm-3.0\AceComm-3.0.xml"/>
@@ -116,14 +121,11 @@
 			<OnLoad>
 				NeverLockyInit()
 				self:RegisterForDrag("LeftButton");
-				self.TimeSinceLastUpdate = 0
+				
 			</OnLoad>
 			<OnShow>	
 				NeverLocky_OnShowFrame()
-			</OnShow>
-			<OnHide>
-				PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
-			</OnHide>
+			</OnShow>			
 			<OnDragStart>
 				self:StartMoving();
 			</OnDragStart>

@@ -2,5 +2,10 @@
 ## Title: Never Locky
 ## Notes: Allows the user to see the warlock assignments.
 
+LockyGlobalData.lua
+LockyTableFunctions.lua
+LockyUI.lua
+LockyDataUI.lua
+LockyComms.lua
 NeverLocky.lua
 NeverLocky.xml
