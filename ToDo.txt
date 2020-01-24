@@ -29,12 +29,30 @@ Features:
 
 ToDo:
     Need to wire up soul stone CD to the GetItemCooldown api call
-        This is done via the item id, need to check wowhead to get the id.
+        This is done via the item id, need to check wowhead to get the id. item id = 16896
+        
+        I think the correct course of action on this request is to poll.
+            I cannot find an item used event to attach to so we will instead use the item cooldown api to determine if the item has been used.
+            once it is on CD we can 
     
     Need to apply the data changes submitted through the messaging channel and make some decisions on the distibuted ledger of it all.
+        changes should be broadcast when - a player uses a soulstone.
+        changes should be broadcast when a user changes the UI and then asks others to confirm assignments.
+        Assignment confirmation
 
+        There will need to be 3 or 4 things that need to be dealt with I Think.
+        
+        Ask for confirmation - 
+            User has updated the UI and has requested confirmation from all other users.
+            the addon will broadcast to the users to accept the assignments
+            when they click yes or no then the addon will reply with confirmation result.
 
+        SS used CD - 
+            User has cast soulstone so they broadcast that it has been used.
+            no other action needed I think.
     
+    Add a notification system the will show messages when action is needed I.E - SS needed, Curse Needed, Banish wearing off--
+
     Need to add raid validation to show a message when user is not in a raid
 
     Need to add macro for curse button.
@@ -47,3 +65,4 @@ ToDo:
 
     Issue - Spell texture does not render on non-warlock characters.
 
+    Refactor - Need to split up all my objects and get things moved into modules because this code us U G L Y.
