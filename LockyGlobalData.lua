@@ -6,6 +6,7 @@ LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the
 LockyFriendsData = {}; -- Global for storing the warlocks and thier assignements.
 NeverLockyClocky_UpdateInterval = 1.0; -- How often the OnUpdate code will run (in seconds)
 NeverLockySSCD_UpdateInterval = 5.0; -- How often to broadcast / check our SS cooldown.
+NeverLockySSCD_BroadcastInterval = 60.0; -- How often to broadcast / check our SS cooldown.
 NeverLocky = LibStub("AceAddon-3.0"):NewAddon("NeverLocky", "AceComm-3.0")
 
 function  CreateWarlock(name, curse, banish)
@@ -17,7 +18,7 @@ function  CreateWarlock(name, curse, banish)
 			Warlock.SSCooldown=GetTime()
 			Warlock.AcceptedAssignments = false
 			Warlock.LockyFrameLocation = ""
-			Warlock.SSonCD = "true"
+			Warlock.SSonCD = "false"
 	return Warlock
 end
 
@@ -76,4 +77,20 @@ function GetSSTargets()
 			"None"
 		}
 	end
+end
+
+function GetMyLockyData()
+    for k, v in pairs(LockyFriendsData) do
+        if v.Name == UnitName("player") then
+            return v
+        end
+    end
+end
+
+function  GetLockyDataByName(name)
+    for k, v in pairs(LockyFriendsData) do
+        if v.Name == name then
+            return v
+        end
+    end
 end

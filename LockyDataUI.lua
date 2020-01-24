@@ -158,3 +158,45 @@ function SetDefaultAssignments(warlockTable)
 	end	
 	return warlockTable
 end
+
+-- Gets the index of the frame that currently houses a particular warlock. 
+-- This is used for force removal and not much else that I can recall.
+function  GetLockyFriendIndexByName(table, name)
+
+	for key, value in pairs(table) do
+		--print(key, " -- ", value["LockyFrameID"])
+		--print(value.Name)
+		if value.Name == name then
+			print(value.Name, "is in position", key)
+			return key
+		end
+	end
+	print(name, "is not in the list.")
+	return nil
+end
+
+--Checks to see if the SS is on CD, and broadcasts if it is to all everyone.
+function CheckSSCD(self)
+    local startTime, duration, enable = GetItemCooldown(16896)
+    --if my CD in never locky is different from the what I am aware of then I need to update.
+    local myself = GetMyLockyData()
+    if(myself.SSCooldown~=startTime) then
+        myself.SSCooldown = startTime
+        myself.SSonCD = "true"
+    end    
+    --print(startTime, duration, enable, myself.Name)
+    --If the SS is on CD then we broadcast that.
+    
+    --If the CD is on cooldown AND we have not broadcast in the last minute we will broadcast.
+    if(startTime > 0 and self.TimeSinceLastSSCDBroadcast > NeverLockySSCD_BroadcastInterval) then
+        self.TimeSinceLastSSCDBroadcast=0
+        BroadcastSSCooldown(myself)
+    end
+end
+
+function UpdateLockySSCDByName(name, cd)
+    local warlock = GetLockyDataByName(name)
+    if warlock.SSCooldown~=cd then
+        warlock.SSCooldown = cd        
+    end    
+end

@@ -1,21 +1,4 @@
--- Update handler to be used for any animations, is called once per frame, but can be throttled using an update interval.
-function NeverLocky_OnUpdate(self, elapsed)
-	if (self.TimeSinceLastClockUpdate == nil) then self.TimeSinceLastClockUpdate = 0; end
-	if (self.TimeSinceLastSSCDUpdate == nil) then self.TimeSinceLastSSCDUpdate = 0; end
-
-	self.TimeSinceLastClockUpdate = self.TimeSinceLastClockUpdate + elapsed; 	
-	if (self.TimeSinceLastClockUpdate > NeverLockyClocky_UpdateInterval) then
-		UpdateLockyClockys()
-		self.TimeSinceLastClockUpdate = 0;
-	end
-
-	self.TimeSinceLastSSCDUpdate = self.TimeSinceLastSSCDUpdate + elapsed;
-	if(self.TimeSinceLastSSCDUpdate > NeverLockySSCD_UpdateInterval) then
-		--CheckSSCD()
-		self.TimeSinceLastSSCDUpdate = 0;
-	end
-end
-
+--Initialization logic for setting up the entire addon
 function NeverLockyInit()
 	print("Never Locky has been registered to the WOW UI.")
 	if not LockyFrame_HasInitialized then
@@ -31,7 +14,7 @@ function NeverLockyInit()
 		--print("LockyFriendsData Default Assignments Set successfully.")
 
 		local str = table.serialize(RegisterRealisicTestData())
-		print(str)
+		--print(str)
 
 		local tab = table.deserialize(str)
 
@@ -41,6 +24,26 @@ function NeverLockyInit()
 		print("Initialization Success")
 		NeverLockyFrame:Show()
 	end	
+end
+
+-- Update handler to be used for any animations, is called once per frame, but can be throttled using an update interval.
+function NeverLocky_OnUpdate(self, elapsed)
+	if (self.TimeSinceLastClockUpdate == nil) then self.TimeSinceLastClockUpdate = 0; end
+	if (self.TimeSinceLastSSCDUpdate == nil) then self.TimeSinceLastSSCDUpdate = 0; end
+	if (self.TimeSinceLastSSCDBroadcast == nil) then self.TimeSinceLastSSCDBroadcast = 0; end
+
+	self.TimeSinceLastClockUpdate = self.TimeSinceLastClockUpdate + elapsed; 	
+	if (self.TimeSinceLastClockUpdate > NeverLockyClocky_UpdateInterval) then
+		self.TimeSinceLastClockUpdate = 0;
+		UpdateLockyClockys()
+	end
+
+	self.TimeSinceLastSSCDUpdate = self.TimeSinceLastSSCDUpdate + elapsed;
+	self.TimeSinceLastSSCDBroadcast = self.TimeSinceLastSSCDBroadcast + elapsed;
+	if(self.TimeSinceLastSSCDUpdate > NeverLockySSCD_UpdateInterval) then		
+		self.TimeSinceLastSSCDUpdate = 0;
+		CheckSSCD(self)
+	end
 end
 
 function RegisterRaid()
@@ -104,47 +107,34 @@ function  GetLockyFriendIndexByName(table, name)
 	return nil
 end
 
+--Generates a series of test data to populate the ui.
 function RegisterTestData()
 	local testData = {}
 	for i=1, 5 do
-		table.insert(testData, AddAWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+		table.insert(testData, CreateWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
 	end
 	return testData
 end
 
+--Generates test data that more closly mimics what one could see in an actual raid.
 function RegisterRealisicTestData()
 	local testData = {}
 	--table.insert(testData, AddAWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
-	table.insert(testData, AddAWarlock("Giandy", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
-	table.insert(testData, AddAWarlock("Melon", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
-	table.insert(testData, AddAWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));	
-	table.insert(testData, AddAWarlock("Itsyrekt", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
-	table.insert(testData, AddAWarlock("Dessian", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
-	table.insert(testData, AddAWarlock("Sociopath", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, CreateWarlock("Giandy", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, CreateWarlock("Melon", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, CreateWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));	
+	table.insert(testData, CreateWarlock("Itsyrekt", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, CreateWarlock("Dessian", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
+	table.insert(testData, CreateWarlock("Sociopath", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));
 	return testData
 end
 
+--Generates just my data and returns it in a table.
 function RegisterMyTestData()
 	local testData = {}
-	table.insert(testData, AddAWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));	
+	table.insert(testData, CreateWarlock("Brylack", CurseOptions[math.random(1,GetTableLength(CurseOptions))], BanishMarkers[math.random(1,GetTableLength(BanishMarkers))]));	
 	return testData
 end
-
-function  AddAWarlock(name, curse, banish)
-	local Warlock = {}
-			Warlock.Name = name
-			Warlock.CurseAssignment = curse
-			Warlock.BanishAssignment = banish
-			Warlock.SSAssignment = "None"
-			Warlock.SSCooldown=GetTime()
-			Warlock.AcceptedAssignments = false
-			Warlock.LockyFrameLocation = ""
-			Warlock.SSonCD = "true"
-	return Warlock
-end
-
-
-
 
 --Pulls all of the warlocks in the raid and initilizes thier assignment data.
 function RegisterWarlocks()
@@ -155,15 +145,16 @@ function RegisterWarlocks()
 		if not (name == nil) then
 			if fileName == "WARLOCK" then
 				--print(name .. "-" .. fileName)
-				table.insert(raidInfo, AddAWarlock(name, "None", "None"))
+				table.insert(raidInfo, CreateWarlock(name, "None", "None"))
 			end
 		end		
 	end
 	return raidInfo
 end
 
-function NeverLocky_HideFrame()
-	--print("Hiding NeverLockyFrame.")
+--This is wired to a button click at present.
+function NeverLocky_HideFrame()	
+	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
 	NeverLockyFrame:Hide()
 end
 
@@ -177,22 +168,21 @@ function Refresh()
 	BroadcastTable(LockyFriendsData);
 end
 
+-- Event for handling the frame showing.
 function NeverLocky_OnShowFrame()
 	print("Frame should be showing now.")	
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-	UpdateAllLockyFriendFrames();
-	if not LockyFrame_HasInitialized then		
-	--	InitLockyFrameScrollArea()
-		LockyFrame_HasInitialized = true
-	end
+	UpdateAllLockyFriendFrames();	
 end
 
+-- /command for opening the ui.
 SLASH_NL1 = "/nl"
 SLASH_NL2 = "/neverlocky"
 SlashCmdList["NL"] = function(msg)
 	NeverLockyFrame:Show()
 end
 
+--Short hand /command for reloading the ui.
 SLASH_RL1 = "/rl"
 SlashCmdList["RL"]= function(msg)
 	ReloadUI();

@@ -125,10 +125,7 @@
 			</OnLoad>
 			<OnShow>	
 				NeverLocky_OnShowFrame()
-			</OnShow>
-			<OnHide>
-				PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
-			</OnHide>
+			</OnShow>			
 			<OnDragStart>
 				self:StartMoving();
 			</OnDragStart>

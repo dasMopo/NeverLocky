@@ -1,12 +1,12 @@
-do 
-	--Table Serialization stuff pulled from a lua tutorial and modified to work for my needs.
+do
 	-- declare local variables
 	--// exportstring( string )
 	--// returns a "Lua" portable version of the string
 	local function exportstring( s )
 	   return string.format("%q", s)
 	end
- 
+
+ 	--Table Serialization stuff pulled from a lua tutorial and modified to work for my needs.
 	--// The Save Function
 	function table.serialize(tbl)
 	   local charS,charE = "   ","\n"
@@ -102,7 +102,8 @@ do
 	   end
 	   return tables[1]
 	end 
-
+	
+	-- Gets the index of a string value.
 	function GetIndexFromTable(table, value)
 		local index={}
 		for k,v in pairs(table) do
@@ -116,4 +117,4 @@ do
 		for _ in pairs(T) do count = count + 1 end
 		return count
 	end
- end 
+end
