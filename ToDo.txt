@@ -23,17 +23,18 @@ Features:
     Add an update all function to implement one-way binding from the warlock collection to the UI. - done
     Add a Test function to simulate adding and removing players from the raid. - done
     Need to add default assignments inside of a function - done
+    Added and set up a refresh for soul stone tracker. - done
+    Add the ability to communicate with other NeverLocky addons in the raid. - done
+    Added table serialization / deserialization to allow for passing data back and forth - done  
 
 ToDo:
-    Add a soul stone tracker.
-        - This can be done using the get item cooldown api call
-        - I think I can store the time that the CD began and then use LUA to math out the rest.
-        - This will allow everyone to stay in sync in seeing each other's CDs.
+    Need to wire up soul stone CD to the GetItemCooldown api call
+        This is done via the item id, need to check wowhead to get the id.
     
-    Add the ability to communicate with other NeverLocky addons in the raid.
-        - I am currently looking at setting this up as a channel using Ace3 comms.
-        - More research is needed to figure this out.
+    Need to apply the data changes submitted through the messaging channel and make some decisions on the distibuted ledger of it all.
 
+
+    
     Need to add raid validation to show a message when user is not in a raid
 
     Need to add macro for curse button.

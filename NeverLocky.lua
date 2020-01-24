@@ -1,33 +1,41 @@
+-- Globals Section
 RaidMode = false;
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
-HasInitialized = false;
+HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
+LockyFriendsData = {}; -- Global for storing the warlocks and thier assignements.
+NeverLocky_UpdateInterval = 1.0; -- How often the OnUpdate code will run (in seconds)
+NeverLocky = LibStub("AceAddon-3.0"):NewAddon("NeverLocky", "AceComm-3.0")
 
-LockyFriendsData = {};
-
-
-local function OnEvent(self, event, isInitialLogin, isReloadingUi)
-	if isInitialLogin or isReloadingUi then
-		--print("loaded the UI")
-		if not HasInitialized then
-			InitLockyFrameScrollArea()
-			HasInitialized = true
-			LockyFriendsData = InitLockyFriendData()
-			LockyFriendsData = SetDefaultAssignments(LockyFriendsData)
-			UpdateAllLockyFriendFrames();
-		end
-		NeverLockyFrame:Show()
-	else
-		print("zoned between map instances")
-	end
+-- Update handler to be used for any animations, is called once per frame, but can be throttled using an update interval.
+function NeverLocky_OnUpdate(self, elapsed)
+  self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 	
+  if (self.TimeSinceLastUpdate > NeverLocky_UpdateInterval) then
+	UpdateLockyClockys()
+    self.TimeSinceLastUpdate = 0;
+  end
 end
 
-function Main()
+function NeverLockyInit()
 	print("Never Locky has been registered to the WOW UI.")
-	--InitLockyFrameScrollArea()
-	--NeverLockyFrame:Show()
-	NeverLockyFrame:RegisterEvent("ADDON_LOADED")
-	NeverLockyFrame:SetScript("OnEvent", OnEvent)
+	if not HasInitialized then
+		InitLockyFrameScrollArea()
+		RegisterForComms()
+		HasInitialized = true
+		LockyFriendsData = InitLockyFriendData()
+		LockyFriendsData = SetDefaultAssignments(LockyFriendsData)
+
+		local str = table.serialize(RegisterRealisicTestData())
+		print(str)
+
+		local tab = table.deserialize(str)
+
+		LockyFriendsData = tab;
+
+		UpdateAllLockyFriendFrames();
+		NeverLockyFrame:Show()
+	end
+	
 end
 
 function RegisterRaid()
@@ -52,7 +60,7 @@ function InitLockyFriendData()
 		if testmode == "init"then
 			testmode = "add"
 			print("testing init")
-			return RegisterMyTestData()
+			return RegisterRealisicTestData()
 		elseif testmode == "add" then
 			print("testing add")
 			table.insert(LockyFriendsData, RegisterMyTestData()[1])
@@ -123,22 +131,23 @@ function  AddAWarlock(name, curse, banish)
 			Warlock.CurseAssignment = curse
 			Warlock.BanishAssignment = banish
 			Warlock.SSAssignment = "None"
-			Warlock.SSCooldown=nil
+			Warlock.SSCooldown=GetTime()
 			Warlock.AcceptedAssignments = false
 			Warlock.LockyFrameLocation = ""
+			Warlock.SSonCD = "true"
 	return Warlock
 end
 
 --Will set default assignments for curses / banishes and SS.
 function SetDefaultAssignments(warlockTable)	
 	for k, y in pairs(warlockTable) do
-		if(k<3)then
+		if(k<=3)then
 			y.CurseAssignment = CurseOptions[k+1]
 		else
 			y.CurseAssignment = CurseOptions[1]
 		end
 
-		if(k<7) then
+		if(k<=7) then
 			y.BanishAssignment = BanishMarkers[k+1]
 		else
 			y.BanishAssignment = BanishMarkers[1]
@@ -165,25 +174,15 @@ function RegisterWarlocks()
 		  zone, online, isDead, role, isML = GetRaidRosterInfo(i);
 		if not (name == nil) then
 			if fileName == "WARLOCK" then
-				print(name .. "-" .. fileName)
-
-				local Warlock
-				Warlock.Name = name
-				Warlock.CurseAssignment = "None"
-				Warlock.BanishAssignment = "None"
-				Warlock.SSAssignment = "None"
-				Warlock.SSCooldown=nil
-				Warlock.AcceptedAssignments = false
-				Warlock.LockyFrameLocation = ""
-
-				table.insert(raidInfo, Warlock)
+				--print(name .. "-" .. fileName)
+				table.insert(raidInfo, AddAWarlock(name, "None", "None"))
 			end
 		end		
 	end
 	return raidInfo
 end
 
-function HideFrame()
+function NeverLocky_HideFrame()
 	--print("Hiding NeverLockyFrame.")
 	NeverLockyFrame:Hide()
 end
@@ -195,6 +194,8 @@ function Refresh()
 		LockyFriendsData = InitLockyFriendData();
 		UpdateAllLockyFriendFrames();
 	end
+
+	BroadcastUpdatedTable();
 end
 
 function GetLockyFriendFrameById(LockyFrameID)
@@ -207,9 +208,10 @@ function GetLockyFriendFrameById(LockyFrameID)
 end
 
 
-function OnShowFrame()
+function NeverLocky_OnShowFrame()
 	print("Frame should be showing now.")	
-
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+	UpdateAllLockyFriendFrames();
 	if not HasInitialized then		
 	--	InitLockyFrameScrollArea()
 		HasInitialized = true
@@ -347,19 +349,21 @@ function CreateLockyFriendFrame(LockyName, number, scrollframe)
 	--Draw a SS Assignment Menu.
 	LockyFrame.SSAssignmentMenu = CreateSSAssignmentMenu(LockyFrame)
 
+	--Draw the SSCooldownTracker
+	LockyFrame.SSCooldownTracker = CreateSSCooldownTracker(LockyFrame.SSAssignmentMenu)
+	
 	return LockyFrame
+end
+
+--Creates a textframe.
+function CreateSSCooldownTracker(ParentFrame)
+	local TextFrame = AddTextToFrame(ParentFrame, "Available", 120)
+	TextFrame:SetPoint("TOP", ParentFrame, "BOTTOM", 0,0)
+	return TextFrame
 end
 
 --This will use the global locky friends data.
 function UpdateAllLockyFriendFrames()
-
-	--wait a minute...
-	--[[
-	I need to reload all locky frames.
-	So first thing is first, we need to clear all?
-	Then reload them.
-
-	]]--
 	ClearAllLockyFrames()
 	ConsolidateFrameLocations()
 	for key, value in pairs(LockyFriendsData) do
@@ -390,6 +394,32 @@ function  ConsolidateFrameLocations()
 	end
 end
 
+function UpdateLockyClockys()
+	--[[
+	Go through each lock.
+	if SS is on CD then
+	Update the CD Tracker Text
+	else do nothing.
+	]]--
+
+	for k,v in pairs(LockyFriendsData) do
+		if(v.SSonCD=="true") then
+			-- We have the table item for the SSCooldown			
+			local CDLength = 30*60
+			local result = SecondsToTime(math.floor(v.SSCooldown + CDLength - GetTime()))			
+			--print(result)
+			local frame = GetLockyFriendFrameById(v.LockyFrameLocation)
+			frame.SSCooldownTracker:SetText("CD "..result)
+
+			if math.floor(v.SSCooldown + CDLength - GetTime()) <=0 then
+				v.SSonCD = "false"
+				frame.SSCooldownTracker:SetText("Available")
+			end
+		end
+	end
+
+
+end
 
 --Will update a locky friend frame with the warlock data passed in.
 --If the warlock object is null it will clear and hide the data from the screen.
@@ -810,3 +840,132 @@ function GetTableLength(T)
 	for _ in pairs(T) do count = count + 1 end
 	return count
 end
+
+function RegisterForComms()
+	NeverLocky:RegisterComm("NeverLockyComms")
+end
+
+function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
+	-- process the incoming message
+	print("The following message was recieved: ", message)
+end
+
+function BroadcastUpdatedTable(LockyTable)
+	--stringify the locky table
+	local serializedTable = "{warlocks:[{name:'Brylack', curse:'Agony'}]}"
+	NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, "RAID")
+	--NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, "WHISPER", "Brylack")
+end
+
+
+function SerializeTable(table)
+	table.serialize(table)
+end
+
+do
+	-- declare local variables
+	--// exportstring( string )
+	--// returns a "Lua" portable version of the string
+	local function exportstring( s )
+	   return string.format("%q", s)
+	end
+ 
+	--// The Save Function
+	function table.serialize(tbl)
+	   local charS,charE = "   ","\n"
+	   local file = ""
+ 
+	   -- initiate variables for save procedure
+	   local tables,lookup = { tbl },{ [tbl] = 1 }
+	   file= file..( "return {"..charE )
+ 
+	   for idx,t in ipairs( tables ) do
+		file= file..( "-- Table: {"..idx.."}"..charE )
+		file= file..( "{"..charE )
+		  local thandled = {}
+ 
+		  for i,v in ipairs( t ) do
+			 thandled[i] = true
+			 local stype = type( v )
+			 -- only handle value
+			 if stype == "table" then
+				if not lookup[v] then
+				   table.insert( tables, v )
+				   lookup[v] = #tables
+				end
+				file= file..( charS.."{"..lookup[v].."},"..charE )
+			 elseif stype == "string" then
+				file= file..(  charS..exportstring( v )..","..charE )
+			 elseif stype == "number" then
+				file= file..(  charS..tostring( v )..","..charE )
+			 end
+		  end
+ 
+		  for i,v in pairs( t ) do
+			 -- escape handled values
+			 if (not thandled[i]) then
+			 
+				local str = ""
+				local stype = type( i )
+				-- handle index
+				if stype == "table" then
+				   if not lookup[i] then
+					  table.insert( tables,i )
+					  lookup[i] = #tables
+				   end
+				   str = charS.."[{"..lookup[i].."}]="
+				elseif stype == "string" then
+				   str = charS.."["..exportstring( i ).."]="
+				elseif stype == "number" then
+				   str = charS.."["..tostring( i ).."]="
+				end
+			 
+				if str ~= "" then
+				   stype = type( v )
+				   -- handle value
+				   if stype == "table" then
+					  if not lookup[v] then
+						 table.insert( tables,v )
+						 lookup[v] = #tables
+					  end
+					  file= file..( str.."{"..lookup[v].."},"..charE )
+				   elseif stype == "string" then
+					file= file..( str..exportstring( v )..","..charE )
+				   elseif stype == "number" then
+					file= file..( str..tostring( v )..","..charE )
+				   end
+				end
+			 end
+		  end
+		  file= file..( "},"..charE )
+	   end
+	   file= file..( "}" )
+	   return file
+	end
+	
+	--// The Load Function
+	function table.deserialize( sfile )
+	   local ftables,err = loadstring( sfile )
+	   if err then return _,err end
+	   local tables = ftables()
+	   for idx = 1,#tables do
+		  local tolinki = {}
+		  for i,v in pairs( tables[idx] ) do
+			 if type( v ) == "table" then
+				tables[idx][i] = tables[v[1]]
+			 end
+			 if type( i ) == "table" and tables[i[1]] then
+				table.insert( tolinki,{ i,tables[i[1]] } )
+			 end
+		  end
+		  -- link indices
+		  for _,v in ipairs( tolinki ) do
+			 tables[idx][v[2]],tables[idx][v[1]] =  tables[idx][v[1]],nil
+		  end
+	   end
+	   return tables[1]
+	end
+ -- close do
+ end
+ 
+ -- ChillCode

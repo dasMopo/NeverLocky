@@ -1,5 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Script File="NeverLocky.lua"/>
+	<Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>
+	<Include file="Libs\AceComm-3.0\AceComm-3.0.xml"/>
 
 	<Frame name="NeverLockyFrame" toplevel="true" movable="true" enableMouse="true" parent="UIParent" hidden="true">
 		<Size>
@@ -88,7 +90,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						HideFrame()
+						NeverLocky_HideFrame()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -112,12 +114,12 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				Main()
+				NeverLockyInit()
 				self:RegisterForDrag("LeftButton");
+				self.TimeSinceLastUpdate = 0
 			</OnLoad>
-			<OnShow>				
-				PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)	
-					OnShowFrame()
+			<OnShow>	
+				NeverLocky_OnShowFrame()
 			</OnShow>
 			<OnHide>
 				PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
@@ -127,7 +129,8 @@
 			</OnDragStart>
 			<OnDragStop>
 				self:StopMovingOrSizing();
-			</OnDragStop>			
+			</OnDragStop>
+			<OnUpdate function="NeverLocky_OnUpdate" />			
 		</Scripts>
 	</Frame>
 </Ui>
