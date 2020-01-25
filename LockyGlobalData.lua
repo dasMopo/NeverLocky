@@ -3,6 +3,8 @@ RaidMode = false;
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
 LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
+LockyData_HasInitialized = false;
+LockyData_Timestamp = 0.0;
 LockyFriendsData = {}; -- Global for storing the warlocks and thier assignements.
 NeverLockyClocky_UpdateInterval = 1.0; -- How often the OnUpdate code will run (in seconds)
 NeverLockySSCD_UpdateInterval = 5.0; -- How often to broadcast / check our SS cooldown.
@@ -16,7 +18,7 @@ function  CreateWarlock(name, curse, banish)
 			Warlock.BanishAssignment = banish
 			Warlock.SSAssignment = "None"
 			Warlock.SSCooldown=GetTime()
-			Warlock.AcceptedAssignments = false
+			Warlock.AcceptedAssignments = "false"
 			Warlock.LockyFrameLocation = ""
 			Warlock.SSonCD = "false"
 	return Warlock

@@ -84,22 +84,8 @@
 		A drop down list of raid markers for banish assignments.
 		
 		Possible ready check style confirmations...
-		-->
-			<Button name="NeverLocky_Button" inherits="GameMenuButtonTemplate" text="Never Locky Right?">
-				<Anchors>
-					<Anchor point="BOTTOM" relativeTo="NeverLockyFrame" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension x="0" y="16"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						NeverLocky_HideFrame()
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="Refresh_Button" inherits="GameMenuButtonTemplate" text="Test">
+		-->			
+			<Button name="NLTest_Button" inherits="GameMenuButtonTemplate" text="Test">
 				<Size>
 					<AbsDimension x="90" y="20" />
 				</Size>
@@ -112,10 +98,45 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						Refresh()
+						NL_Test()
 					</OnClick>
 				</Scripts>
 			</Button>
+			<Button name="NLCancel_Button" inherits="GameMenuButtonTemplate" text="Cancel">
+				<Size>
+					<AbsDimension x="90" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="NeverLockyFrame" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-10" y="16"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						NeverLocky_HideFrame()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="NLCommit_Button" inherits="GameMenuButtonTemplate" text="Commit">
+				<Size>
+					<AbsDimension x="90" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="NLCancel_Button" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						NeverLocky_Commit()
+					</OnClick>
+				</Scripts>
+			</Button>
+			
 		</Frames>
 		<Scripts>
 			<OnLoad>

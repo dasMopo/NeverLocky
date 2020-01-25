@@ -29,25 +29,23 @@ Features:
     Refactor - Need to split up all my objects and get things moved into modules because this code us U G L Y. - done... plot twist this code is still ugly....
     Need to wire up soul stone CD to the GetItemCooldown api call - done
     Wire up SS cooldown sharing via comms - done
-
+    Redefine the MVP -
+        Addon needs to get all the warlocks in the raid and display them in the UI.
+        The addon then needs to update in "real time" when someone modifies an assignment.
+        The addon should display soul stone cooldowns in near real time.
+        The addon should have an is dirty detection to see if user has made changes.
+    -DONE DONE DONE
+    Add a commit button for if data is to be saved. - done
+    Need to apply the data changes submitted through the messaging channel and make some decisions on the distibuted ledger of it all. - done
+        -This was accomplished by using timestamps, the newest data gets loaded over the old data.
 
 ToDo:
-    Need to apply the data changes submitted through the messaging channel and make some decisions on the distibuted ledger of it all.
-        changes should be broadcast when - a player uses a soulstone.
-        changes should be broadcast when a user changes the UI and then asks others to confirm assignments.
-        Assignment confirmation
-
-        There will need to be 3 or 4 things that need to be dealt with I Think.
-        
-        Ask for confirmation - 
+    Assignment confirmation
+        Ask for confirmation - this will require a confirmation frame to be added.
             User has updated the UI and has requested confirmation from all other users.
             the addon will broadcast to the users to accept the assignments
             when they click yes or no then the addon will reply with confirmation result.
 
-        SS used CD - 
-            User has cast soulstone so they broadcast that it has been used.
-            no other action needed I think.
-    
     Add a notification system the will show messages when action is needed I.E - SS needed, Curse Needed, Banish wearing off--
 
     Need to add raid validation to show a message when user is not in a raid
@@ -61,3 +59,5 @@ ToDo:
     Issue - If a raider leaves and the assignments are taken away then portaits can be sticky. Not sure if this will affect it in raid mode.
 
     Issue - Spell texture does not render on non-warlock characters.
+
+    possible issue - Not sure what happens in raid mode if a player leaves / moves in the raid. The SS target info may become corrupt.

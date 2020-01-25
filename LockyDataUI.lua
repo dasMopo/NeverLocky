@@ -10,25 +10,29 @@ function GetLockyFriendFrameById(LockyFrameID)
 	end
 end
 
+--Will take in a string name and return the appropriate Locky Frame.
+function GetLockyFriendFrameByName(LockyName)
+	for key, value in pairs(LockyFrame.scrollframe.content.LockyFriendFrames) do
+		--print(key, " -- ", value["LockyFrameID"])
+		if value["LockyName"] == LockyName then
+			return value
+		end
+	end
+end
+
 --Will update a locky friend frame with the warlock data passed in.
 --If the warlock object is null it will clear and hide the data from the screen.
 function UpdateLockyFrame(Warlock, LockyFriendFrame)
 	--print("Updating Locky Frame")	
 	if(Warlock == nil) then
 		LockyFriendFrame:Hide()
-		Warlock = {}
-		Warlock.Name = ""
-		Warlock.CurseAssignment = "None"
-		Warlock.BanishAssignment = "None"
-		Warlock.SSAssignment = "None"
-		Warlock.SSCooldown=nil
-		Warlock.AcceptedAssignments = false
-		Warlock.LockyFrameLocation = ""
+		Warlock = CreateWarlock("", "None", "None")
 	else
 		LockyFriendFrame:Show()
 	end
 	--Set the nametag
-	--print("Updating Nameplate Text to: ".. Warlock.Name)
+    --print("Updating Nameplate Text to: ".. Warlock.Name)
+    LockyFriendFrame.LockyName = Warlock.Name
 	LockyFriendFrame.NamePlate.TextFrame:SetText(Warlock.Name)
 	--Set the CurseAssignment
 	--print("Updating Curse to: ".. Warlock.CurseAssignment) -- this may need to be done by index.....
@@ -194,9 +198,54 @@ function CheckSSCD(self)
     end
 end
 
+--Updates the cooldown of a warlock in the ui.
 function UpdateLockySSCDByName(name, cd)
     local warlock = GetLockyDataByName(name)
     if warlock.SSCooldown~=cd then
         warlock.SSCooldown = cd        
     end    
+end
+
+--Returns a warlock table object from the LockyFrame
+--This function is used to determine if unsaved UI changes have been made.
+--This will be used by the is dirty function to determine if the frame is dirty.
+function GetWarlockFromLockyFrame(LockyName)
+    local LockyFriendFrame = GetLockyFriendFrameByName(LockyName)
+    local Warlock = CreateWarlock(LockyFriendFrame.LockyName,
+        GetCurseValueFromDropDownList(LockyFriendFrame.CurseAssignmentMenu),
+        GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, BanishMarkers))                
+    Warlock.SSAssignment = GetValueFromDropDownList(LockyFriendFrame.SSAssignmentMenu, GetSSTargets())         
+    Warlock.LockyFrameLocation = LockyFriendFrame.LockyFrameID       
+    return Warlock   
+end
+
+--Returns true if changes have been made but have not been saved.
+function IsUIDirty()
+    for k, v in pairs(LockyFriendsData) do
+        local uiLock = GetWarlockFromLockyFrame(v.Name)
+        if(v.CurseAssignment~=uiLock.CurseAssignment or
+        v.BanishAssignment ~= uiLock.BanishAssignment or
+        v.SSAssignment ~= uiLock.SSAssignment) then
+            return true
+        end        
+    end
+    return false
+end
+
+--Commits any UI changes to the global LockyFriendsDataModel
+function CommitChanges(LockyFriendsData)
+    
+    for k, v in pairs(LockyFriendsData) do
+        local uiLock = GetWarlockFromLockyFrame(v.Name)
+        
+        print("Old: ", v.CurseAssignment, "New: ", uiLock.CurseAssignment)
+        print("Old: ", v.BanishAssignment, "New: ", uiLock.BanishAssignment)
+        print("Old",v.SSAssignment , "New:", uiLock.SSAssignment)
+
+        v.CurseAssignment = uiLock.CurseAssignment
+        v.BanishAssignment = uiLock.BanishAssignment
+        v.SSAssignment = uiLock.SSAssignment
+    end
+    LockyData_Timestamp = GetTime()
+    return LockyFriendsData
 end
