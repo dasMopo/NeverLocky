@@ -1,4 +1,4 @@
-do
+
 --Creates a scroll area to hold the locky friend frames. 
 --This logic was lifted from a snippet from wowprogramming.com I think....
 --This needs a refactor.
@@ -119,14 +119,12 @@ function CreateLockyFriendFrame(LockyName, number, scrollframe)
     return LockyFrame
 end
 
-
---Creates a textframe.
+--Creates a textframe to display the SS cooldown.
 function CreateSSCooldownTracker(ParentFrame)
     local TextFrame = AddTextToFrame(ParentFrame, "Available", 120)
     TextFrame:SetPoint("TOP", ParentFrame, "BOTTOM", 0,0)
     return TextFrame
 end
-
 
 --Creates the frame that will act as teh container for the component control.
 function CreateLockyFriendContainer(ParentFrame, number)
@@ -177,8 +175,6 @@ function CreateBanishAssignmentMenu(ParentFrame)
 	
 	return BanishAssignmentMenu
 end
-
-
 
 --Creates and sets the Banish Assignment Label as part of the banish assignment control.
 function CreateBanishAssignmentLabel(ParentFrame)
@@ -388,38 +384,37 @@ end
 
 local dropdowncount = 0
 
-    --Creates and adds a dropdown menu with the passed in option list. 
-    --Adding a dropdown type further allows for the sidebar graphic to update as well, but is not required.
-    function CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
-        dropdowncount = dropdowncount + 1
-        local NewDropDownMenu = CreateFrame("Button", "DropDown0"..dropdowncount, ParentFrame, "UIDropDownMenuTemplate")
+--Creates and adds a dropdown menu with the passed in option list. 
+--Adding a dropdown type further allows for the sidebar graphic to update as well, but is not required.
+function CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
+    dropdowncount = dropdowncount + 1
+    local NewDropDownMenu = CreateFrame("Button", "DropDown0"..dropdowncount, ParentFrame, "UIDropDownMenuTemplate")
 
-        local function OnClick(self)		
-            UIDropDownMenu_SetSelectedID(NewDropDownMenu, self:GetID())
-        
-            local selection = GetValueFromDropDownList(NewDropDownMenu, OptionList)
-            print("User changed selection to " .. selection)
-            UpdateDropDownSideGraphic(NewDropDownMenu, selection, DropDownType)
-        end
-        
-        
-
-        local function initialize(self, level)
-        local info = UIDropDownMenu_CreateInfo()
-        for k,v in pairs(OptionList) do
-            info = UIDropDownMenu_CreateInfo()
-            info.text = v
-            info.value = v
-            info.func = OnClick
-            UIDropDownMenu_AddButton(info, level)
-        end
-        end
-        UIDropDownMenu_Initialize(NewDropDownMenu, initialize)
-        UIDropDownMenu_SetWidth(NewDropDownMenu, 100);
-        UIDropDownMenu_SetButtonWidth(NewDropDownMenu, 124)
-        UIDropDownMenu_SetSelectedID(NewDropDownMenu, 1)
-        UIDropDownMenu_JustifyText(NewDropDownMenu, "LEFT")
-        
-        return NewDropDownMenu
+    local function OnClick(self)		
+        UIDropDownMenu_SetSelectedID(NewDropDownMenu, self:GetID())
+    
+        local selection = GetValueFromDropDownList(NewDropDownMenu, OptionList)
+        print("User changed selection to " .. selection)
+        UpdateDropDownSideGraphic(NewDropDownMenu, selection, DropDownType)
     end
+    
+    
+
+    local function initialize(self, level)
+    local info = UIDropDownMenu_CreateInfo()
+    for k,v in pairs(OptionList) do
+        info = UIDropDownMenu_CreateInfo()
+        info.text = v
+        info.value = v
+        info.func = OnClick
+        UIDropDownMenu_AddButton(info, level)
+    end
+    end
+    UIDropDownMenu_Initialize(NewDropDownMenu, initialize)
+    UIDropDownMenu_SetWidth(NewDropDownMenu, 100);
+    UIDropDownMenu_SetButtonWidth(NewDropDownMenu, 124)
+    UIDropDownMenu_SetSelectedID(NewDropDownMenu, 1)
+    UIDropDownMenu_JustifyText(NewDropDownMenu, "LEFT")
+    
+    return NewDropDownMenu
 end

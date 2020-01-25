@@ -1,27 +1,19 @@
 --Initialization logic for setting up the entire addon
 function NeverLockyInit()
-	print("Never Locky has been registered to the WOW UI.")
 	if not LockyFrame_HasInitialized then
 		--print("Prepping init")
 		InitLockyFrameScrollArea()
 		--print("ScrollFrame initialized successfully.")
-		RegisterForComms(NeverLocky)
+		RegisterForComms()
 		--print("Comms initialized successfully.")
 		LockyFrame_HasInitialized = true
-		LockyFriendsData = InitLockyFriendData()
+		--LockyFriendsData = InitLockyFriendData()
 		--print("LockyFriendsData initialized successfully.")
-		LockyFriendsData = SetDefaultAssignments(LockyFriendsData)
+		--LockyFriendsData = SetDefaultAssignments(LockyFriendsData)
 		--print("LockyFriendsData Default Assignments Set successfully.")
-
-		local str = table.serialize(RegisterRealisicTestData())
-		--print(str)
-
-		local tab = table.deserialize(str)
-
-		LockyFriendsData = tab;
 		UpdateAllLockyFriendFrames();
-
-		print("Initialization Success")
+		
+		print("Never Locky has been registered to the WOW UI.")		
 		NeverLockyFrame:Show()
 	end	
 end
@@ -59,37 +51,43 @@ function RegisterRaid()
 	return raidInfo
 end
 
-local testmode = "init"
+local TestType = {}
+TestType.init = "Initialization Test"
+TestType.add = "Add Test"
+TestType.remove = "Remove Test"
+TestType.setDefault = "Default Settings Test"
+local testmode = TestType.init
 
 function InitLockyFriendData()
 	if(RaidMode) then
 		return RegisterWarlocks()
 	else
-		if testmode == "init"then
-			testmode = "add"
-			print("testing init")
-			return RegisterRealisicTestData()
-		elseif testmode == "add" then
+		print("Raid mode is not active, running in Test mode.")			
+		if testmode == TestType.init then
+			print("Initializing with Test Data.")
+			testmode = TestType.add
+			return RegisterMyTestData()
+		elseif testmode == TestType.add then
 			print("testing add")
 			table.insert(LockyFriendsData, RegisterMyTestData()[1])
-			testmode = "remove"
+			testmode = TestType.remove
 			return LockyFriendsData
-		elseif testmode == "remove" then
+		elseif testmode == TestType.remove then
 			print("testing remove")
 			local p = GetLockyFriendIndexByName(LockyFriendsData, "Melon")
 			if not (p==nil) then
 				table.remove(LockyFriendsData, p)
 			end
-			testmode = "setdefault"
+			testmode = TestType.setDefault
 			return LockyFriendsData
-		elseif testmode == "setdefault" then
+		elseif testmode == TestType.setDefault then
 			print ("Setting default selection")
 			LockyFriendsData = SetDefaultAssignments(LockyFriendsData)
-			testmode = "init"
+			testmode = TestType.init
 			return LockyFriendsData
 		else
 			return LockyFriendsData
-		end
+		end		
 	end
 end
 
@@ -154,25 +152,40 @@ end
 
 --This is wired to a button click at present.
 function NeverLocky_HideFrame()	
-	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
-	NeverLockyFrame:Hide()
+	if IsUIDirty() then
+		print("Changes have not been saved")
+	else
+		PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
+		NeverLockyFrame:Hide()
+	end
+end
+
+function NeverLocky_Commit()
+	LockyFriendsData = CommitChanges(LockyFriendsData)
+	BroadcastTable(LockyFriendsData)
 end
 
 --At this time this is just a test function.
-function Refresh()
-	print("Updating a frame....")
-	if not (LockyFrame == nil) then				
-		LockyFriendsData = InitLockyFriendData();
-		UpdateAllLockyFriendFrames();
-	end
+function NL_Test()
+	print("Updating a frame....")				
+	LockyFriendsData = InitLockyFriendData();
+	NLTest_Button.Text:SetText(testmode)
+	--UpdateAllLockyFriendFrames();	
 	BroadcastTable(LockyFriendsData);
 end
 
 -- Event for handling the frame showing.
 function NeverLocky_OnShowFrame()
-	print("Frame should be showing now.")	
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-	UpdateAllLockyFriendFrames();	
+	if not LockyData_HasInitialized then
+		LockyFriendsData = InitLockyFriendData()
+		LockyData_Timestamp = GetTime()
+		LockyData_HasInitialized = true
+	else
+		print("Frame should be showing now.")	
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+		RequestAssignments()
+		UpdateAllLockyFriendFrames();	
+	end
 end
 
 -- /command for opening the ui.
