@@ -83,7 +83,7 @@ do
 	--// The Load Function
 	function table.deserialize( sfile )
 	   local ftables,err = loadstring( sfile )
-	   if err then return _,err end
+	   if err then return err end
 	   local tables = ftables()
 	   for idx = 1,#tables do
 		  local tolinki = {}
@@ -109,7 +109,14 @@ do
 		for k,v in pairs(table) do
 		   index[v]=k
 		end
-		return index[value]
+
+		local result = index[value];
+
+		if(result == nil) then
+			result = index["None"];
+		end
+		
+		return result
 	end
 
 	function GetTableLength(T)

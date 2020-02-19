@@ -38,6 +38,12 @@ Features:
     Add a commit button for if data is to be saved. - done
     Need to apply the data changes submitted through the messaging channel and make some decisions on the distibuted ledger of it all. - done
         -This was accomplished by using timestamps, the newest data gets loaded over the old data.
+    possible issue - Not sure what happens in raid mode if a player leaves / moves in the raid. The SS target info may become corrupt. - DONE
+        This issue is confirmed, and needs to be addressed prior to the original release of the addon.
+    Set Default assignment to "None" if the assigned value is no longer selectable. - done
+    Need to fix the cancel button to undo changes. - done
+    Move all print statements into a debug mode. - done
+    There exists a situation where a warlock may join the raid and would not be included in the UI. - done
 
 ToDo:
     Assignment confirmation
@@ -60,4 +66,4 @@ ToDo:
 
     Issue - Spell texture does not render on non-warlock characters.
 
-    possible issue - Not sure what happens in raid mode if a player leaves / moves in the raid. The SS target info may become corrupt.
+    Ship this thing already....

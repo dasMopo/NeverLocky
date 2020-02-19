@@ -1,6 +1,7 @@
 ## Interface: 11303
 ## Title: Never Locky
 ## Notes: Allows the user to see the warlock assignments.
+## Author: Brylack
 
 LockyGlobalData.lua
 LockyTableFunctions.lua

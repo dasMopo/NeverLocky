@@ -85,7 +85,7 @@
 		
 		Possible ready check style confirmations...
 		-->			
-			<Button name="NLTest_Button" inherits="GameMenuButtonTemplate" text="Test">
+			<Button name="NLTest_Button" inherits="GameMenuButtonTemplate" text="Test" hidden="true">
 				<Size>
 					<AbsDimension x="90" y="20" />
 				</Size>
@@ -102,7 +102,7 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="NLCancel_Button" inherits="GameMenuButtonTemplate" text="Cancel">
+			<Button name="NLCancel_Button" inherits="GameMenuButtonTemplate" text="Close">
 				<Size>
 					<AbsDimension x="90" y="20" />
 				</Size>
@@ -119,9 +119,9 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="NLCommit_Button" inherits="GameMenuButtonTemplate" text="Commit">
+			<Button name="NLCommit_Button" inherits="GameMenuButtonTemplate" text="Send Changes">
 				<Size>
-					<AbsDimension x="90" y="20" />
+					<AbsDimension x="115" y="20" />
 				</Size>
 				<Anchors>
 					<Anchor point="RIGHT" relativeTo="NLCancel_Button" relativePoint="LEFT">
