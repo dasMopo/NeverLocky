@@ -393,22 +393,22 @@ function CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
     local function OnClick(self)		
         UIDropDownMenu_SetSelectedID(NewDropDownMenu, self:GetID())
     
-        local selection = GetValueFromDropDownList(NewDropDownMenu, OptionList)
-        print("User changed selection to " .. selection)
+		local selection = GetValueFromDropDownList(NewDropDownMenu, OptionList)
+		if NL_DebugMode then
+			print("User changed selection to " .. selection)
+		end
         UpdateDropDownSideGraphic(NewDropDownMenu, selection, DropDownType)
     end
     
-    
-
     local function initialize(self, level)
-    local info = UIDropDownMenu_CreateInfo()
-    for k,v in pairs(OptionList) do
-        info = UIDropDownMenu_CreateInfo()
-        info.text = v
-        info.value = v
-        info.func = OnClick
-        UIDropDownMenu_AddButton(info, level)
-    end
+		local info = UIDropDownMenu_CreateInfo()
+		for k,v in pairs(OptionList) do
+			info = UIDropDownMenu_CreateInfo()
+			info.text = v
+			info.value = v
+			info.func = OnClick
+			UIDropDownMenu_AddButton(info, level)
+		end
     end
     UIDropDownMenu_Initialize(NewDropDownMenu, initialize)
     UIDropDownMenu_SetWidth(NewDropDownMenu, 100);
@@ -417,4 +417,33 @@ function CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
     UIDropDownMenu_JustifyText(NewDropDownMenu, "LEFT")
     
     return NewDropDownMenu
+end
+
+function UpdateDropDownMenuWithNewOptions(DropDownMenu, OptionList, DropDownType)
+	local function OnClick(self)		
+        UIDropDownMenu_SetSelectedID(DropDownMenu, self:GetID())
+    
+		local selection = GetValueFromDropDownList(DropDownMenu, OptionList)
+		if NL_DebugMode then
+			print("User changed selection to " .. selection)
+		end
+        UpdateDropDownSideGraphic(DropDownMenu, selection, DropDownType)
+    end
+    
+    local function initialize(self, level)
+		local info = UIDropDownMenu_CreateInfo()
+		for k,v in pairs(OptionList) do
+			info = UIDropDownMenu_CreateInfo()
+			info.text = v
+			info.value = v
+			info.func = OnClick
+			UIDropDownMenu_AddButton(info, level)
+		end
+	end
+	
+	UIDropDownMenu_Initialize(DropDownMenu, initialize)
+    UIDropDownMenu_SetWidth(DropDownMenu, 100);
+    UIDropDownMenu_SetButtonWidth(DropDownMenu, 124)
+    UIDropDownMenu_SetSelectedID(DropDownMenu, 1)
+    UIDropDownMenu_JustifyText(DropDownMenu, "LEFT")
 end

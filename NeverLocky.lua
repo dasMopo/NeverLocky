@@ -14,7 +14,7 @@ function NeverLockyInit()
 		UpdateAllLockyFriendFrames();
 		
 		print("Never Locky has been registered to the WOW UI.")		
-		NeverLockyFrame:Show()
+		--NeverLockyFrame:Show()
 	end	
 end
 
@@ -44,7 +44,9 @@ function RegisterRaid()
 		local name, rank, subgroup, level, class, fileName, 
 		  zone, online, isDead, role, isML = GetRaidRosterInfo(i);
 		if not (name == nil) then
-			print(name .. "-" .. fileName)	
+			if NL_DebugMode then
+				print(name .. "-" .. fileName)	
+			end
 			table.insert(raidInfo, name)
 		end
 	end
@@ -74,7 +76,7 @@ function InitLockyFriendData()
 			return LockyFriendsData
 		elseif testmode == TestType.remove then
 			print("testing remove")
-			local p = GetLockyFriendIndexByName(LockyFriendsData, "Melon")
+			local p = GetLockyFriendIndexByName(LockyFriendsData, "Brylack")
 			if not (p==nil) then
 				table.remove(LockyFriendsData, p)
 			end
@@ -97,11 +99,15 @@ function  GetLockyFriendIndexByName(table, name)
 		--print(key, " -- ", value["LockyFrameID"])
 		--print(value.Name)
 		if value.Name == name then
-			print(value.Name, "is in position", key)
+			if NL_DebugMode then
+				print(value.Name, "is in position", key)
+			end
 			return key
 		end
 	end
-	print(name, "is not in the list.")
+	if NL_DebugMode then
+		print(name, "is not in the list.")
+	end
 	return nil
 end
 
@@ -134,26 +140,12 @@ function RegisterMyTestData()
 	return testData
 end
 
---Pulls all of the warlocks in the raid and initilizes thier assignment data.
-function RegisterWarlocks()
-	local raidInfo = {}
-	for i=1, 40 do
-		local name, rank, subgroup, level, class, fileName, 
-		  zone, online, isDead, role, isML = GetRaidRosterInfo(i);
-		if not (name == nil) then
-			if fileName == "WARLOCK" then
-				--print(name .. "-" .. fileName)
-				table.insert(raidInfo, CreateWarlock(name, "None", "None"))
-			end
-		end		
-	end
-	return raidInfo
-end
-
 --This is wired to a button click at present.
 function NeverLocky_HideFrame()	
 	if IsUIDirty() then
-		print("Changes have not been saved")
+		print("Changes were not saved.")
+		PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
+		NeverLockyFrame:Hide()
 	else
 		PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
 		NeverLockyFrame:Hide()
@@ -163,6 +155,9 @@ end
 function NeverLocky_Commit()
 	LockyFriendsData = CommitChanges(LockyFriendsData)
 	BroadcastTable(LockyFriendsData)
+	print("Changes were sent out.");
+	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
+	NeverLockyFrame:Hide()
 end
 
 --At this time this is just a test function.
@@ -178,12 +173,16 @@ end
 function NeverLocky_OnShowFrame()
 	if not LockyData_HasInitialized then
 		LockyFriendsData = InitLockyFriendData()
-		LockyData_Timestamp = GetTime()
+		--LockyData_Timestamp = 0
 		LockyData_HasInitialized = true
 	else
-		print("Frame should be showing now.")	
+		if NL_DebugMode then
+			print("Frame should be showing now.")	
+		end
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+		UpdateSSTargets()
 		RequestAssignments()
+		LockyFriendsData = UpdateWarlocks(LockyFriendsData);
 		UpdateAllLockyFriendFrames();	
 	end
 end

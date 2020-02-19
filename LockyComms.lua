@@ -28,49 +28,79 @@ end
 
 --Message router where reveived messages land.
 function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
-    print("Message was recived.")    
+    --print("Message was recived.")    
     local message = table.deserialize(message)
     -- process the incoming message
     if message.action == CommAction.SSonCD then
-        print("SS on CD: ", message.data.Name, message.data.SSCooldown)
+        if NL_DebugMode then
+            print("SS on CD: ", message.data.Name, message.data.SSCooldown)
+        end
         UpdateLockySSCDByName(message.data.Name, message.data.SSCooldown)
     elseif message.action == CommAction.BroadcastTable then
-        print("Recieved a broadcast message")
-
+        if NL_DebugMode then
+            print("Recieved a broadcast message")
+        end
         if(LockyData_Timestamp <= message.dataAge) then
             for k, v in pairs(message.data)do
-                print(k, v)
+                if NL_DebugMode then
+                    print(k, v)
+                end
             end
             LockyData_Timestamp = message.dataAge
             LockyFriendsData = message.data
             UpdateAllLockyFriendFrames()
-            print("UI has been refreshed.")
+            if NL_DebugMode then
+                print("UI has been refreshed.")
+            end
         else
-            print("Data was recieved but the timestamp showed that the data was stale.")
+            if NL_DebugMode then
+                print("Data was recieved but the timestamp showed that the data was stale.")
+            end
         end
     elseif message.action == CommAction.RequestAssignments then
+        if NL_DebugMode then
+            print("Assignment request recieved, sending out assignments.")
+        end
         BroadcastTable(LockyFriendsData)
     else
-        print("The following message was recieved: ",sender, prefix, message)
+        if NL_DebugMode then
+            print("The following message was recieved: ",sender, prefix, message)
+        end
     end
 end
 
 --Takes in a table and sends the serialized verion across the wire.
 function BroadcastTable(LockyTable)
     --stringify the locky table
-    print("Sending out the table")
+    if NL_DebugMode then
+        print("Sending out the assignment table")
+    end
     local serializedTable = CreateMessageFromTable(CommAction.BroadcastTable, LockyTable, LockyData_Timestamp) 
-	NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommMode, NL_CommTarget)
+    if RaidMode then
+        NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommMode)
+    else
+        NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommMode, NL_CommTarget)
+    end
 	--NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, "WHISPER", "Brylack")
 end
 
 function BroadcastSSCooldown(myself)    
     local serializedTable = CreateMessageFromTable(CommAction.SSonCD, myself, GetTime())
-	NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommMode, NL_CommTarget)
+    if RaidMode then
+        NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommMode)
+    else
+        NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommMode, NL_CommTarget)
+    end
 end
 
 function RequestAssignments()
-    print("Requesting Updated Assignment Table")
+    if NL_DebugMode then
+        print("Requesting Updated Assignment Table")
+    end
     local message = CreateMessageFromTable(CommAction.RequestAssignments, {},GetTime() )
-    NeverLocky:SendCommMessage("NeverLockyComms", message, NL_CommMode, NL_CommTarget)
+    if RaidMode then
+        NeverLocky:SendCommMessage("NeverLockyComms", message, NL_CommMode)
+    else
+        NeverLocky:SendCommMessage("NeverLockyComms", message, NL_CommMode, NL_CommTarget)
+    end
 end

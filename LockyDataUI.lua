@@ -49,6 +49,7 @@ function UpdateLockyFrame(Warlock, LockyFriendFrame)
 
 	--Set the SS Assignment
 	--print("Updating SS to: ".. Warlock.SSAssignment)
+	UpdateDropDownMenuWithNewOptions(LockyFriendFrame.SSAssignmentMenu, GetSSTargets(), "SSAssignments");
 	UIDropDownMenu_SetSelectedID(LockyFriendFrame.SSAssignmentMenu, GetIndexFromTable(GetSSTargets(),Warlock.SSAssignment))
 	LockyFriendFrame.SSAssignmentMenu.Text:SetText(GetValueFromDropDownList(LockyFriendFrame.SSAssignmentMenu, GetSSTargets()))
 
@@ -171,11 +172,15 @@ function  GetLockyFriendIndexByName(table, name)
 		--print(key, " -- ", value["LockyFrameID"])
 		--print(value.Name)
 		if value.Name == name then
-			print(value.Name, "is in position", key)
+			if NL_DebugMode then
+				print(value.Name, "is in position", key)
+			end
 			return key
 		end
 	end
-	print(name, "is not in the list.")
+	if NL_DebugMode then
+		print(name, "is not in the list.")
+	end
 	return nil
 end
 
@@ -237,11 +242,11 @@ function CommitChanges(LockyFriendsData)
     
     for k, v in pairs(LockyFriendsData) do
         local uiLock = GetWarlockFromLockyFrame(v.Name)
-        
-        print("Old: ", v.CurseAssignment, "New: ", uiLock.CurseAssignment)
-        print("Old: ", v.BanishAssignment, "New: ", uiLock.BanishAssignment)
-        print("Old",v.SSAssignment , "New:", uiLock.SSAssignment)
-
+        if NL_DebugMode then
+			print("Old: ", v.CurseAssignment, "New: ", uiLock.CurseAssignment)
+			print("Old: ", v.BanishAssignment, "New: ", uiLock.BanishAssignment)
+			print("Old",v.SSAssignment , "New:", uiLock.SSAssignment)
+		end
         v.CurseAssignment = uiLock.CurseAssignment
         v.BanishAssignment = uiLock.BanishAssignment
         v.SSAssignment = uiLock.SSAssignment
