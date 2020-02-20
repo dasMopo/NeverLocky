@@ -29,8 +29,8 @@ end
 
 --Message router where reveived messages land.
 function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
-    print("Message Was Recieved");
     local message = table.deserialize(message)
+    --print("Message Was Recieved");
     
     -- process the incoming message
     if message.action == CommAction.SSonCD then
