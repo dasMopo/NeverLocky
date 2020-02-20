@@ -16,6 +16,7 @@ function CreateMessageFromTable(action, data, dataAge)
     message.action = action
     message.data = data
     message.dataAge = dataAge
+    message.author = UnitName("player")
     local strMessage = table.serialize(message)
     --print("Message created successfully")
     return strMessage
@@ -28,8 +29,9 @@ end
 
 --Message router where reveived messages land.
 function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
-    --print("Message was recived.")    
+    print("Message Was Recieved");
     local message = table.deserialize(message)
+    
     -- process the incoming message
     if message.action == CommAction.SSonCD then
         if NL_DebugMode then
@@ -43,14 +45,16 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
         if(LockyData_Timestamp <= message.dataAge) then
             for k, v in pairs(message.data)do
                 if NL_DebugMode then
-                    print(k, v)
+                    for lk, lv in pairs(v) do
+                        print(lk, lv)                    
+                    end                    
                 end
             end
             LockyData_Timestamp = message.dataAge
             LockyFriendsData = message.data
             UpdateAllLockyFriendFrames()
             if NL_DebugMode then
-                print("UI has been refreshed.")
+                print("UI has been refreshed by request of broadcast message.")
             end
         else
             if NL_DebugMode then

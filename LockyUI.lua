@@ -57,7 +57,7 @@ function InitLockyFrameScrollArea()
 
 	scrollframe:SetScrollChild(content)
 
-	UpdateAllLockyFriendFrames()
+	--UpdateAllLockyFriendFrames()
 end
 
 --Will take in a table object and return a number of pixels 
