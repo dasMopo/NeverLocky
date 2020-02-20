@@ -67,3 +67,6 @@ ToDo:
     Issue - Spell texture does not render on non-warlock characters.
 
     Ship this thing already....
+
+    There appears to be some kind of timestamp issue involving saving changes as well as soulstone cooldowns.
+        There an issue on receiving SS CDs.

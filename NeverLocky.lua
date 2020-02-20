@@ -14,6 +14,7 @@ function NeverLockyInit()
 		UpdateAllLockyFriendFrames();
 		
 		print("Never Locky has been registered to the WOW UI.")		
+		print("Use /nl or /neverlocky to view assignment information.")
 		--NeverLockyFrame:Show()
 	end	
 end
@@ -62,6 +63,10 @@ local testmode = TestType.init
 
 function InitLockyFriendData()
 	if(RaidMode) then
+		if NL_DebugMode then
+			print("Initializing Friend Data")
+		end
+
 		return RegisterWarlocks()
 	else
 		print("Raid mode is not active, running in Test mode.")			
@@ -175,6 +180,9 @@ function NeverLocky_OnShowFrame()
 		LockyFriendsData = InitLockyFriendData()
 		--LockyData_Timestamp = 0
 		LockyData_HasInitialized = true
+		if NL_DebugMode then
+			print("Initialization complete");
+		end
 	else
 		if NL_DebugMode then
 			print("Frame should be showing now.")	

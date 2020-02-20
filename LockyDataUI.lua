@@ -76,17 +76,17 @@ end
 
 --This will use the global locky friends data.
 function UpdateAllLockyFriendFrames()
-    --print("Updating all frames.")
+    print("Updating all frames.")
     ClearAllLockyFrames()
-    --print("All frames Cleared")
+   -- print("All frames Cleared")
     ConsolidateFrameLocations()
     --print("Frame Locations Consolidated")
 	for key, value in pairs(LockyFriendsData) do
 		UpdateLockyFrame(value, GetLockyFriendFrameById(value.LockyFrameLocation))
 	end
-   -- print("Frames updated successfully.")
+    print("Frames updated successfully.")
     LockyFrame.scrollbar:SetMinMaxValues(1, GetMaxValueForScrollBar(LockyFriendsData))
-   -- print("ScrollRegion size updated successfully")
+  --  print("ScrollRegion size updated successfully")
 end
 
 

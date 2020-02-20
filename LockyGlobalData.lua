@@ -35,7 +35,9 @@ function RegisterWarlocks()
 		  zone, online, isDead, role, isML = GetRaidRosterInfo(i);
 		if not (name == nil) then
 			if fileName == "WARLOCK" then
-				--print(name .. "-" .. fileName)
+				if NL_DebugMode then
+					print(name .. "-" .. fileName)
+				end
 				table.insert(raidInfo, CreateWarlock(name, "None", "None"))
 			end
 		end		
@@ -47,20 +49,27 @@ end
 function UpdateWarlocks(LockyTable)
 	local Newcomers = RegisterWarlocks();
 	--Register Newcomers
-	for k, v in Newcomers do
+	for k, v in pairs(Newcomers) do
 		if WarlockIsInTable(v.Name, LockyTable) then
 			--Do nothing I think...
 		else
+			if NL_DebugMode then
+				print("Newcomer detected")
+			end
+
 			--Add the newcomer to the data.
 			table.insert(LockyTable, CreateWarlock(v.Name, "None", "None"));
 		end
 	end
 	--De-register deserters
-	for k, v in LockyTable do
+	for k, v in pairs(LockyTable) do
 		if WarlockIsInTable(v.Name, Newcomers) then
 			--Do nothing I think...
 		else
 			--Remove the Deserter
+			if NL_DebugMode then
+				print("Deserter detected")
+			end
 			local p = GetLockyFriendIndexByName(LockyFriendsData, v.Name)
 			if not (p==nil) then
 				table.remove(LockyFriendsData, p)
@@ -71,7 +80,7 @@ function UpdateWarlocks(LockyTable)
 end
 
 function WarlockIsInTable(LockyName, LockyTable)
-	for k, v in LockyTable do
+	for k, v in pairs(LockyTable) do
 		if (v.Name == LockyName) then
 			return true;
 		end
@@ -108,8 +117,6 @@ CurseOptions = {
 SSTargets = {};
 
 SSTargetFlipperTester = true;
-
-
 
 --Function will find main healers in the raid and add them to the SS target dropdown
 --Need to make test mode dynamic.
