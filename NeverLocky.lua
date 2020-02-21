@@ -147,7 +147,7 @@ end
 
 --This is wired to a button click at present.
 function NeverLocky_HideFrame()	
-	if IsUIDirty() then
+	if IsUIDirty(LockyFriendsData) then
 		print("Changes were not saved.")
 		PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
 		NeverLockyFrame:Hide()
@@ -192,9 +192,9 @@ function NeverLocky_OnShowFrame()
 	end
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
 	UpdateSSTargets()
-	RequestAssignments()
 	LockyFriendsData = UpdateWarlocks(LockyFriendsData);
 	UpdateAllLockyFriendFrames();	
+	RequestAssignments()
 	if NL_DebugMode then
 		print("Found " .. GetTableLength(LockyFriendsData) .. " Warlocks in raid." );
 	end	

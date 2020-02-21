@@ -44,6 +44,9 @@ Features:
     Need to fix the cancel button to undo changes. - done
     Move all print statements into a debug mode. - done
     There exists a situation where a warlock may join the raid and would not be included in the UI. - done
+    Ship this thing already.... - done
+    Resolve a race condition that removes all warlocks from the screen.
+    
 
 ToDo:
     Assignment confirmation
@@ -66,7 +69,8 @@ ToDo:
 
     Issue - Spell texture does not render on non-warlock characters.
 
-    Ship this thing already....
-
     There appears to be some kind of timestamp issue involving saving changes as well as soulstone cooldowns.
         There an issue on receiving SS CDs.
+        Ok, the issue is that GetTime() is broken for what I am trying to use it for, it worked local but that is because it is based on a local machine timestamp.
+
+    

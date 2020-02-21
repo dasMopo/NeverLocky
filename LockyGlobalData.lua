@@ -24,6 +24,7 @@ function  CreateWarlock(name, curse, banish)
 			Warlock.AcceptedAssignments = "false"
 			Warlock.LockyFrameLocation = ""
 			Warlock.SSonCD = "false"
+			Warlock.LocalTime=GetTime()
 	return Warlock
 end
 
