@@ -10,7 +10,10 @@ LockyFriendsData = {}; -- Global for storing the warlocks and thier assignements
 NeverLockyClocky_UpdateInterval = 1.0; -- How often the OnUpdate code will run (in seconds)
 NeverLockySSCD_UpdateInterval = 5.0; -- How often to broadcast / check our SS cooldown.
 NeverLockySSCD_BroadcastInterval = 60.0; -- How often to broadcast / check our SS cooldown.
-NeverLocky = LibStub("AceAddon-3.0"):NewAddon("NeverLocky", "AceComm-3.0")
+if NeverLocky == nil then
+	NeverLocky = LibStub("AceAddon-3.0"):NewAddon("NeverLocky", "AceComm-3.0")
+end
+
 
 
 
@@ -182,7 +185,10 @@ function UpdateSSTargets()
 end
 
 function GetMyLockyData()
-    for k, v in pairs(LockyFriendsData) do
+	for k, v in pairs(LockyFriendsData) do
+		if NL_DebugMode then
+			--print(v.Name, " vs ", UnitName("player"));
+		end
         if v.Name == UnitName("player") then
             return v
         end
