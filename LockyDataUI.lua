@@ -193,20 +193,22 @@ end
 function CheckSSCD(self)
     local startTime, duration, enable = GetItemCooldown(16896)
     --if my CD in never locky is different from the what I am aware of then I need to update.
-    local myself = GetMyLockyData()
-    if(myself.SSCooldown~=startTime) then
-		myself.SSCooldown = startTime
-		myself.LocalTime = GetTime()
-        myself.SSonCD = "true"
-    end    
-    --print(startTime, duration, enable, myself.Name)
-    --If the SS is on CD then we broadcast that.
-    
-    --If the CD is on cooldown AND we have not broadcast in the last minute we will broadcast.
-    if(startTime > 0 and self.TimeSinceLastSSCDBroadcast > NeverLockySSCD_BroadcastInterval) then
-        self.TimeSinceLastSSCDBroadcast=0
-        BroadcastSSCooldown(myself)
-    end
+	local myself = GetMyLockyData()
+	if myself ~= nil then
+		if(myself.SSCooldown~=startTime) then
+			myself.SSCooldown = startTime
+			myself.LocalTime = GetTime()
+			myself.SSonCD = "true"
+		end    	
+		--print(startTime, duration, enable, myself.Name)
+		--If the SS is on CD then we broadcast that.
+		
+		--If the CD is on cooldown AND we have not broadcast in the last minute we will broadcast.
+		if(startTime > 0 and self.TimeSinceLastSSCDBroadcast > NeverLockySSCD_BroadcastInterval) then
+			self.TimeSinceLastSSCDBroadcast=0
+			BroadcastSSCooldown(myself)
+		end
+	end
 end
 
 --Updates the cooldown of a warlock in the ui.

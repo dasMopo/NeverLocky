@@ -185,7 +185,10 @@ function UpdateSSTargets()
 end
 
 function GetMyLockyData()
-    for k, v in pairs(LockyFriendsData) do
+	for k, v in pairs(LockyFriendsData) do
+		if NL_DebugMode then
+			--print(v.Name, " vs ", UnitName("player"));
+		end
         if v.Name == UnitName("player") then
             return v
         end
