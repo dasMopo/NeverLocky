@@ -128,7 +128,8 @@ function UpdateLockyClockys()
 		if(v.SSonCD=="true") then
 			-- We have the table item for the SSCooldown			
 			local CDLength = 30*60
-			local result = SecondsToTime(math.floor(v.SSCooldown + CDLength - GetTime()))			
+			local timeShift = GetTime()-v.LocalTime;
+			local result = SecondsToTime(math.floor(v.SSCooldown + CDLength - v.LocalTime - timeShift))			
 			--print(result)
 			local frame = GetLockyFriendFrameById(v.LockyFrameLocation)
 			frame.SSCooldownTracker:SetText("CD "..result)
@@ -194,7 +195,8 @@ function CheckSSCD(self)
     --if my CD in never locky is different from the what I am aware of then I need to update.
     local myself = GetMyLockyData()
     if(myself.SSCooldown~=startTime) then
-        myself.SSCooldown = startTime
+		myself.SSCooldown = startTime
+		myself.LocalTime = GetTime()
         myself.SSonCD = "true"
     end    
     --print(startTime, duration, enable, myself.Name)
@@ -208,11 +210,14 @@ function CheckSSCD(self)
 end
 
 --Updates the cooldown of a warlock in the ui.
-function UpdateLockySSCDByName(name, cd)
+function UpdateLockySSCDByName(name, cd, localtime)
     local warlock = GetLockyDataByName(name)
     if warlock.SSCooldown~=cd then
         warlock.SSCooldown = cd        
-    end    
+	end    
+	if warlock.LocalTime ~= localtime then 
+		warlock.LocalTime = localtime
+	end
 end
 
 --Returns a warlock table object from the LockyFrame
@@ -229,8 +234,8 @@ function GetWarlockFromLockyFrame(LockyName)
 end
 
 --Returns true if changes have been made but have not been saved.
-function IsUIDirty()
-    for k, v in pairs(LockyFriendsData) do
+function IsUIDirty(LockyData)
+    for k, v in pairs(LockyData) do
         local uiLock = GetWarlockFromLockyFrame(v.Name)
         if(v.CurseAssignment~=uiLock.CurseAssignment or
         v.BanishAssignment ~= uiLock.BanishAssignment or

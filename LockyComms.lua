@@ -37,14 +37,14 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
     -- process the incoming message
     if message.action == CommAction.SSonCD then
         if NL_DebugMode then
-            print("SS on CD: ", message.data.Name, message.data.SSCooldown)
+            print("SS on CD: ", message.data.Name, message.data.SSCooldown, message.data.LocalTime)
         end
-        UpdateLockySSCDByName(message.data.Name, message.data.SSCooldown)
+        UpdateLockySSCDByName(message.data.Name, message.data.SSCooldown, message.data.LocalTime)
     elseif message.action == CommAction.BroadcastTable then
         if NL_DebugMode then
             print("Recieved a broadcast message")
         end
-        if(LockyData_Timestamp <= message.dataAge) then
+        if(IsUIDirty(message.data)) then
             for k, v in pairs(message.data)do
                 if NL_DebugMode then
                     for lk, lv in pairs(v) do
