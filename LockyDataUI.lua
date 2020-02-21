@@ -76,7 +76,9 @@ end
 
 --This will use the global locky friends data.
 function UpdateAllLockyFriendFrames()
-    print("Updating all frames.")
+	if NL_DebugMode then
+		print("Updating all frames.")
+	end
     ClearAllLockyFrames()
    -- print("All frames Cleared")
     ConsolidateFrameLocations()
@@ -84,7 +86,9 @@ function UpdateAllLockyFriendFrames()
 	for key, value in pairs(LockyFriendsData) do
 		UpdateLockyFrame(value, GetLockyFriendFrameById(value.LockyFrameLocation))
 	end
-    print("Frames updated successfully.")
+	if NL_DebugMode then
+		print("Frames updated successfully.")
+	end
     LockyFrame.scrollbar:SetMinMaxValues(1, GetMaxValueForScrollBar(LockyFriendsData))
   --  print("ScrollRegion size updated successfully")
 end

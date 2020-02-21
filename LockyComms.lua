@@ -29,8 +29,10 @@ end
 
 --Message router where reveived messages land.
 function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
+    if NL_DebugMode then
+        print("Message Was Recieved by the Router");
+    end
     local message = table.deserialize(message)
-    --print("Message Was Recieved");
     
     -- process the incoming message
     if message.action == CommAction.SSonCD then
@@ -52,6 +54,7 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
             end
             LockyData_Timestamp = message.dataAge
             LockyFriendsData = message.data
+            LockyFriendsData = UpdateWarlocks(LockyFriendsData);
             UpdateAllLockyFriendFrames()
             if NL_DebugMode then
                 print("UI has been refreshed by request of broadcast message.")
