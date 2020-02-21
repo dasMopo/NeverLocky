@@ -182,24 +182,40 @@ function NeverLocky_OnShowFrame()
 		LockyData_HasInitialized = true
 		if NL_DebugMode then
 			print("Initialization complete");
+			
+			print("Found " .. GetTableLength(LockyFriendsData) .. " Warlocks in raid." );
 		end
-	else
-		if NL_DebugMode then
-			print("Frame should be showing now.")	
-		end
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-		UpdateSSTargets()
-		RequestAssignments()
-		LockyFriendsData = UpdateWarlocks(LockyFriendsData);
-		UpdateAllLockyFriendFrames();	
 	end
+
+	if NL_DebugMode then
+		print("Frame should be showing now.")	
+	end
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+	UpdateSSTargets()
+	RequestAssignments()
+	LockyFriendsData = UpdateWarlocks(LockyFriendsData);
+	UpdateAllLockyFriendFrames();	
+	if NL_DebugMode then
+		print("Found " .. GetTableLength(LockyFriendsData) .. " Warlocks in raid." );
+	end	
 end
 
 -- /command for opening the ui.
 SLASH_NL1 = "/nl"
 SLASH_NL2 = "/neverlocky"
 SlashCmdList["NL"] = function(msg)
-	NeverLockyFrame:Show()
+
+	if msg == "debug" then
+		if(NL_DebugMode) then
+			NL_DebugMode = false
+			print("Never Locky Debug Mode OFF")
+		else
+			NL_DebugMode = true
+			print("Never Locky Debug Mode ON")
+		end		
+	else
+		NeverLockyFrame:Show()
+	end	
 end
 
 --Short hand /command for reloading the ui.
