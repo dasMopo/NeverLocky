@@ -1,12 +1,15 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script file="Libs\LibStub\LibStub.lua"/>
 	<Script File="LockyGlobalData.lua"/>
+	<Script file="Libs\Ace3.lua"/>
 	<Script File="LockyTableFunctions.lua"/>
 	<Script File="LockyDataUI.lua"/>
 	<Script File="LockyUI.lua"/>
 	<Script File="LockyComms.lua"/>
 	<Script File="NeverLocky.lua"/>
-	<Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>
+	<Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>		
 	<Include file="Libs\AceComm-3.0\AceComm-3.0.xml"/>
+  
 
 	<Frame name="NeverLockyFrame" toplevel="true" movable="true" enableMouse="true" parent="UIParent" hidden="true">
 		<Size>
