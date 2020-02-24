@@ -125,16 +125,26 @@ function UpdateLockyClockys()
 	]]--
 
 	for k,v in pairs(LockyFriendsData) do
+		if (NL_DebugMode) then
+			--print(v.Name, "on cooldown =", v.SSonCD)
+		end
 		if(v.SSonCD=="true") then
 			-- We have the table item for the SSCooldown			
 			local CDLength = 30*60
-			local timeShift = GetTime()-v.LocalTime;
-			local result = SecondsToTime(math.floor(v.SSCooldown + CDLength - v.LocalTime - timeShift))			
-			--print(result)
+			local relCD = v.LocalTime - v.MyTime;
+			local absCD = v.SSCooldown-relCD+CDLength;
+
+			
+
+			local secondsRemaining = math.floor(absCD - GetTime())
+			local result = SecondsToTime(secondsRemaining)			
+			if(NL_DebugMode) then
+				print(absCD, relCD, v.SSCooldown)
+			end
 			local frame = GetLockyFriendFrameById(v.LockyFrameLocation)
 			frame.SSCooldownTracker:SetText("CD "..result)
 
-			if math.floor(v.SSCooldown + CDLength - GetTime()) <=0 then
+			if secondsRemaining <=0 then
 				v.SSonCD = "false"
 				frame.SSCooldownTracker:SetText("Available")
 			end
@@ -196,6 +206,9 @@ function CheckSSCD(self)
 	local myself = GetMyLockyData()
 	if myself ~= nil then
 		if(myself.SSCooldown~=startTime) then
+			if NL_DebugMode then
+				print("Personal SSCD detected.")
+			end
 			myself.SSCooldown = startTime
 			myself.LocalTime = GetTime()
 			myself.SSonCD = "true"
@@ -208,17 +221,24 @@ function CheckSSCD(self)
 			self.TimeSinceLastSSCDBroadcast=0
 			BroadcastSSCooldown(myself)
 		end
+	else
+		if NL_DebugMode then
+			print("Something went horribly wrong.")
+		end
 	end
 end
 
 --Updates the cooldown of a warlock in the ui.
-function UpdateLockySSCDByName(name, cd, localtime)
-    local warlock = GetLockyDataByName(name)
+function UpdateLockySSCDByName(name, cd)
+	local warlock = GetLockyDataByName(name)
+	if NL_DebugMode then
+		print("Attempting to update SS CD for", name);
+	end
     if warlock.SSCooldown~=cd then
-        warlock.SSCooldown = cd        
-	end    
-	if warlock.LocalTime ~= localtime then 
-		warlock.LocalTime = localtime
+		warlock.SSCooldown = cd      
+		if NL_DebugMode then
+			print("Updated SS CD for", name,"successfully.");
+		end  
 	end
 end
 

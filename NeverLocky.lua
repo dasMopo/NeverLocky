@@ -28,6 +28,9 @@ function NeverLocky_OnUpdate(self, elapsed)
 	self.TimeSinceLastClockUpdate = self.TimeSinceLastClockUpdate + elapsed; 	
 	if (self.TimeSinceLastClockUpdate > NeverLockyClocky_UpdateInterval) then
 		self.TimeSinceLastClockUpdate = 0;
+		if NL_DebugMode then
+			--print("Updating the UI");
+		end
 		UpdateLockyClockys()
 	end
 
@@ -35,6 +38,9 @@ function NeverLocky_OnUpdate(self, elapsed)
 	self.TimeSinceLastSSCDBroadcast = self.TimeSinceLastSSCDBroadcast + elapsed;
 	if(self.TimeSinceLastSSCDUpdate > NeverLockySSCD_UpdateInterval) then		
 		self.TimeSinceLastSSCDUpdate = 0;
+		if NL_DebugMode then
+			print("Checking SSCD");
+		end
 		CheckSSCD(self)
 	end
 end
