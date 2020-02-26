@@ -17,6 +17,7 @@ function CreateMessageFromTable(action, data, dataAge)
     message.data = data
     message.dataAge = dataAge
     message.author = UnitName("player")
+    message.addonVersion = NL_Version
     local strMessage = table.serialize(message)
     --print("Message created successfully")
     return strMessage
@@ -37,24 +38,20 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
     -- process the incoming message
     if message.action == CommAction.SSonCD then
         if NL_DebugMode then
-            print("SS on CD: ", message.data.Name, message.data.SSCooldown, message.data.SSonCD)
+            print("SS on CD: ", message.data.Name, message.data.SSCooldown, message.data.SSonCD, message.dataAge)
         end
         local SendingWarlock = GetLockyDataByName(message.author)
             if(SendingWarlock ~= nil) then
-                SendingWarlock.LocalTime = message.dataAge
-                SendingWarlock.MyTime = GetTime()
-                SendingWarlock.SSonCD = "true";
-            end
-        UpdateLockySSCDByName(message.data.Name, message.data.SSCooldown)
-    elseif message.action == CommAction.BroadcastTable then
-        local SendingWarlock = GetLockyDataByName(message.author)
-            if(SendingWarlock ~= nil) then
                 if NL_DebugMode then 
-                    print("Updating timestamp data for", message.author);
+                    print("Updating SS data for", message.author);
                 end
                 SendingWarlock.LocalTime = message.dataAge
                 SendingWarlock.MyTime = GetTime()
+                SendingWarlock.SSonCD = "true";
+                SendingWarlock.SSCooldown = message.data.SSCooldown
             end
+        --UpdateLockySSCDByName(message.data.Name, message.data.SSCooldown)
+    elseif message.action == CommAction.BroadcastTable then
         if RaidMode then
             if NL_DebugMode then
                 print("Received message from", message.author);
@@ -126,6 +123,7 @@ function BroadcastTable(LockyTable)
 end
 
 function BroadcastSSCooldown(myself)    
+    ForceUpdateSSCD();
     local serializedTable = CreateMessageFromTable(CommAction.SSonCD, myself, GetTime())
     if RaidMode then
         NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommMode)
@@ -144,4 +142,8 @@ function RequestAssignments()
     else
         NeverLocky:SendCommMessage("NeverLockyComms", message, NL_CommMode, NL_CommTarget)
     end
+end
+
+function CheckInstallVersion()
+    
 end

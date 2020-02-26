@@ -115,15 +115,13 @@ function  ConsolidateFrameLocations()
 	end
 end
 
-
-function UpdateLockyClockys()
-	--[[
+--[[
 	Go through each lock.
 	if SS is on CD then
 	Update the CD Tracker Text
 	else do nothing.
 	]]--
-
+function UpdateLockyClockys()
 	for k,v in pairs(LockyFriendsData) do
 		if (NL_DebugMode) then
 			--print(v.Name, "on cooldown =", v.SSonCD)
@@ -131,20 +129,23 @@ function UpdateLockyClockys()
 		if(v.SSonCD=="true") then
 			-- We have the table item for the SSCooldown			
 			local CDLength = 30*60
-			local relCD = v.LocalTime - v.MyTime;
-			local absCD = v.SSCooldown-relCD+CDLength;
+			local timeShift = 0
+			
+			timeShift = v.MyTime - v.LocalTime;
+			
+			local absCD = v.SSCooldown+timeShift;
 
 			
 
-			local secondsRemaining = math.floor(absCD - GetTime())
+			local secondsRemaining = math.floor(absCD + CDLength - GetTime())
 			local result = SecondsToTime(secondsRemaining)			
-			if(NL_DebugMode) then
-				print(absCD, relCD, v.SSCooldown)
+			if(NL_DebugMode and v.SSCooldown~=0) then
+				--print(v.Name,"my time:", v.MyTime, "localtime:", v.LocalTime, "timeShift:", timeShift, "LocalCD", v.SSCooldown, "Abs CD:",absCD, "Time Remaining:",secondsRemaining)
 			end
 			local frame = GetLockyFriendFrameById(v.LockyFrameLocation)
 			frame.SSCooldownTracker:SetText("CD "..result)
 
-			if secondsRemaining <=0 then
+			if secondsRemaining <=0 or v.SSCooldown == 0 then
 				v.SSonCD = "false"
 				frame.SSCooldownTracker:SetText("Available")
 			end
@@ -228,18 +229,42 @@ function CheckSSCD(self)
 	end
 end
 
+function ForceUpdateSSCD()
+	if NL_DebugMode then
+		print("Forcing SSCD cache update.")
+	end
+
+	local startTime, duration, enable = GetItemCooldown(16896)
+    --if my CD in never locky is different from the what I am aware of then I need to update.
+	local myself = GetMyLockyData()
+	if myself ~= nil then
+		if(myself.SSCooldown~=startTime) then
+			if NL_DebugMode then
+				print("Personal SSCD detected.")
+			end
+			myself.SSCooldown = startTime
+			myself.LocalTime = GetTime()
+			myself.SSonCD = "true"
+		end    	
+	else
+		if NL_DebugMode then
+			print("Something went horribly wrong.")
+		end
+	end
+end
+
 --Updates the cooldown of a warlock in the ui.
 function UpdateLockySSCDByName(name, cd)
 	local warlock = GetLockyDataByName(name)
 	if NL_DebugMode then
 		print("Attempting to update SS CD for", name);
 	end
-    if warlock.SSCooldown~=cd then
+    --if warlock.SSCooldown~=cd then
 		warlock.SSCooldown = cd      
 		if NL_DebugMode then
 			print("Updated SS CD for", name,"successfully.");
 		end  
-	end
+	--end
 end
 
 --Returns a warlock table object from the LockyFrame

@@ -50,6 +50,9 @@ Features:
         There an issue on receiving SS CDs.
         Ok, the issue is that GetTime() is broken for what I am trying to use it for, it worked local but that is because it is messed up.
         - done. This was solved by pushing a watch sync type thing. I don't know for certain if it actually works though....
+    Issue - SSCD are now showing proper, but only for a limited time. after the window is closed and reopened something corrupts.
+        - fixed by adding a forced SSCD update lookup on broadcast SSCD requests.
+    Add Tanks to SS assignment dropdown. - done
 
 ToDo:
     Assignment confirmation
@@ -72,6 +75,5 @@ ToDo:
 
     Issue - Spell texture does not render on non-warlock characters.
 
-    
 
     
