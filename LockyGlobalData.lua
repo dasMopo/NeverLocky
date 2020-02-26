@@ -1,6 +1,7 @@
 --General global variables
 RaidMode = true;
 NL_DebugMode = false;
+NL_Version = 106
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
 LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
@@ -23,11 +24,12 @@ function  CreateWarlock(name, curse, banish)
 			Warlock.CurseAssignment = curse
 			Warlock.BanishAssignment = banish
 			Warlock.SSAssignment = "None"
-			Warlock.SSCooldown=GetTime()
+			Warlock.SSCooldown=0
 			Warlock.AcceptedAssignments = "false"
 			Warlock.LockyFrameLocation = ""
 			Warlock.SSonCD = "false"
-			Warlock.LocalTime=GetTime()
+			Warlock.LocalTime= 0
+			Warlock.MyTime = 0
 	return Warlock
 end
 
@@ -47,6 +49,18 @@ function RegisterWarlocks()
 		end		
 	end
 	return raidInfo
+end
+
+function  IsLockyTableDirty(LockyData)
+	for k,v in pairs(LockyData) do
+		local lock = GetLockyDataByName(v.Name);
+		if lock.CurseAssignment ~= v.CurseAssignment or
+		lock.BanishAssignment ~= v.BanishAssignment or 
+		lock.SSAssignment ~= v.SSAssignment then
+			return true;
+		end
+	end
+	return false;
 end
 
 -- will merge any newcomers or remove any deserters from the table and return it while leaving assignments intact.
@@ -81,6 +95,15 @@ function UpdateWarlocks(LockyTable)
 		end
 	end
 	return LockyTable;
+end
+
+function MergeAssignments(LockyTable)
+	for k,v in pairs(LockyTable) do 
+		local lock = GetLockyDataByName(v.Name);
+		lock.SSAssignment = v.SSAssignment;
+		lock.CurseAssignment = v.CurseAssignment;
+		lock.BanishAssignment = v.BanishAssignment;
+	end
 end
 
 function WarlockIsInTable(LockyName, LockyTable)
@@ -130,10 +153,10 @@ function GetSSTargetsFromRaid()
 		local results = {}		
 		for i=1, 40 do
 			local name, rank, subgroup, level, class, fileName, 
-				zone, online, isDead, role, isML = GetRaidRosterInfo(i);
+				zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i);
 			if not (name == nil) then
-				if fileName == "PRIEST" or fileName == "PALADIN" or rank == "Tank" then
-					--print(name .. "-" .. fileName .. "-" .. rank)
+				--print(name .. "-" .. fileName .. "-" .. rank .. role)
+				if fileName == "PRIEST" or fileName == "PALADIN" or role == "MAINTANK" then
 					table.insert(results, name)
 				end
 			end		

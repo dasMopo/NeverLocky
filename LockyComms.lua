@@ -17,6 +17,7 @@ function CreateMessageFromTable(action, data, dataAge)
     message.data = data
     message.dataAge = dataAge
     message.author = UnitName("player")
+    message.addonVersion = NL_Version
     local strMessage = table.serialize(message)
     --print("Message created successfully")
     return strMessage
@@ -37,12 +38,30 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
     -- process the incoming message
     if message.action == CommAction.SSonCD then
         if NL_DebugMode then
-            print("SS on CD: ", message.data.Name, message.data.SSCooldown, message.data.LocalTime)
+            print("SS on CD: ", message.data.Name, message.data.SSCooldown, message.data.SSonCD, message.dataAge)
         end
-        UpdateLockySSCDByName(message.data.Name, message.data.SSCooldown, message.data.LocalTime)
+        local SendingWarlock = GetLockyDataByName(message.author)
+            if(SendingWarlock ~= nil) then
+                if NL_DebugMode then 
+                    print("Updating SS data for", message.author);
+                end
+                SendingWarlock.LocalTime = message.dataAge
+                SendingWarlock.MyTime = GetTime()
+                SendingWarlock.SSonCD = "true";
+                SendingWarlock.SSCooldown = message.data.SSCooldown
+            end
+        --UpdateLockySSCDByName(message.data.Name, message.data.SSCooldown)
     elseif message.action == CommAction.BroadcastTable then
+        if RaidMode then
+            if NL_DebugMode then
+                print("Received message from", message.author);
+            end
+            if message.author == NL_CommTarget then
+                return;
+            end
+        end
         if NL_DebugMode then
-            print("Recieved a broadcast message")
+            print("Recieved a broadcast message from", message.author)
         end
         if(IsUIDirty(message.data)) then
             for k, v in pairs(message.data)do
@@ -52,23 +71,35 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
                     end                    
                 end
             end
-            LockyData_Timestamp = message.dataAge
-            LockyFriendsData = message.data
+            --LockyFriendsData = message.data            
+            MergeAssignments(message.data);
             LockyFriendsData = UpdateWarlocks(LockyFriendsData);
             UpdateAllLockyFriendFrames()
             if NL_DebugMode then
                 print("UI has been refreshed by request of broadcast message.")
-            end
-        else
-            if NL_DebugMode then
-                print("Data was recieved but the timestamp showed that the data was stale.")
-            end
+            end       
         end
     elseif message.action == CommAction.RequestAssignments then
+        if RaidMode then
+            if NL_DebugMode then
+                print("Received Assignment Request message from", message.author);
+            end
+            local myself = GetMyLockyData()
+            if myself ~= nil then
+                BroadcastSSCooldown(myself)
+            end
+            if message.author == NL_CommTarget then
+                if NL_DebugMode then
+                    print("Message was from self, doing nothing.");
+                end
+                return;
+            end
+        end
         if NL_DebugMode then
             print("Assignment request recieved, sending out assignments.")
         end
         BroadcastTable(LockyFriendsData)
+        
     else
         if NL_DebugMode then
             print("The following message was recieved: ",sender, prefix, message)
@@ -92,6 +123,7 @@ function BroadcastTable(LockyTable)
 end
 
 function BroadcastSSCooldown(myself)    
+    ForceUpdateSSCD();
     local serializedTable = CreateMessageFromTable(CommAction.SSonCD, myself, GetTime())
     if RaidMode then
         NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommMode)
@@ -110,4 +142,8 @@ function RequestAssignments()
     else
         NeverLocky:SendCommMessage("NeverLockyComms", message, NL_CommMode, NL_CommTarget)
     end
+end
+
+function CheckInstallVersion()
+    
 end
