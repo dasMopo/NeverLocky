@@ -1,7 +1,7 @@
 --General global variables
 RaidMode = true;
 NL_DebugMode = false;
-NL_Version = 106
+NL_Version = 107
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
 LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
@@ -156,7 +156,7 @@ function GetSSTargetsFromRaid()
 				zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i);
 			if not (name == nil) then
 				--print(name .. "-" .. fileName .. "-" .. rank .. role)
-				if fileName == "PRIEST" or fileName == "PALADIN" or role == "MAINTANK" then
+				if fileName == "PRIEST" or fileName == "PALADIN" or fileName == "SHAMAN" or role == "MAINTANK" then
 					table.insert(results, name)
 				end
 			end		
