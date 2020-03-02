@@ -58,6 +58,13 @@ function InitLockyFrameScrollArea()
 	scrollframe:SetScrollChild(content)
 
 	--UpdateAllLockyFriendFrames()
+	NeverLockyFrame.WarningTextFrame = CreateFrame("Frame", nil, NeverLockyFrame);
+	NeverLockyFrame.WarningTextFrame:SetSize(250, 30);
+	NeverLockyFrame.WarningTextFrame:SetPoint("BOTTOMLEFT", NeverLockyFrame, "BOTTOMLEFT", 0, 0)
+	
+	NeverLockyFrame.WarningTextFrame.value = AddTextToFrame(NeverLockyFrame.WarningTextFrame, "Warning your addon is out of date!", 240)
+	NeverLockyFrame.WarningTextFrame.value:SetPoint("LEFT", NeverLockyFrame.WarningTextFrame, "LEFT", 0, 0);
+	NeverLockyFrame.WarningTextFrame:Hide();
 end
 
 --Will take in a table object and return a number of pixels 
@@ -115,7 +122,11 @@ function CreateLockyFriendFrame(LockyName, number, scrollframe)
 
     --Draw the SSCooldownTracker
     LockyFrame.SSCooldownTracker = CreateSSCooldownTracker(LockyFrame.SSAssignmentMenu)
-    
+	
+	LockyFrame.AssignmentAcknowledgement = CreateAckFrame(LockyFrame);
+
+	LockyFrame.Warning = CreateWarningFrame(LockyFrame);
+
     return LockyFrame
 end
 
@@ -233,10 +244,10 @@ function UpdateCurseGraphic(ParentFrame, CurseListValue)
 		if(ParentFrame.CurseGraphicFrame.CurseTexture == nil) then
 			local CurseGraphic = ParentFrame.CurseGraphicFrame:CreateTexture(nil, "OVERLAY") 
 			CurseGraphic:SetAllPoints()
-			CurseGraphic:SetTexture(GetSpellTexture(GetSpellNameFromDropDownList(CurseListValue)))
+			CurseGraphic:SetTexture(GetSpellTexture(GetSpellIdFromDropDownList(CurseListValue)))
 			ParentFrame.CurseGraphicFrame.CurseTexture = CurseGraphic
 		else
-			ParentFrame.CurseGraphicFrame.CurseTexture:SetTexture(GetSpellTexture(GetSpellNameFromDropDownList(CurseListValue)))		
+			ParentFrame.CurseGraphicFrame.CurseTexture:SetTexture(GetSpellTexture(GetSpellIdFromDropDownList(CurseListValue)))		
 		end		
 	else 
 		if not (ParentFrame.CurseGraphicFrame.CurseTexture == nil) then
@@ -331,6 +342,28 @@ function GetSpellNameFromDropDownList(ListValue)
 	return nil
 end
 
+-- Function that converts the Option Value to the Spell Name.
+-- This is used for setting the appropriate texture in in the sidebar graphic.
+-- Acts as a converter from our "Locky Spell Name" to the actual in-game name.
+function GetSpellIdFromDropDownList(ListValue)
+	if ListValue == "Elements" then
+		return 11722
+	elseif ListValue == "Shadows" then
+		return 17937
+	elseif ListValue == "Recklessness" then
+		return 11717
+	elseif ListValue == "Doom LOL" then
+		return 603
+	elseif ListValue == "Agony" then
+		return 11713
+	elseif ListValue == "Tongues" then
+		return 11719
+	elseif ListValue == "Weakness" then
+		return 11708
+	end
+	return nil
+end
+
 -- Function provides the asset location of the raid targetting icon.
 -- E.X. Converts "Star" to - Interface\\TargetingFrame\\UI-RaidTargetingIcon_1
 function GetAssetLocationFromRaidMarker(raidMarker)
@@ -373,6 +406,29 @@ function CreateSSAssignmentMenu(ParentFrame)
 	SSAssignmentMenu.Label = CreateSSAssignmentLabel(SSAssignmentMenu)
 	
 	return SSAssignmentMenu
+end
+
+function CreateAckFrame(ParentFrame)
+	local AckFrame = CreateFrame("Frame", nil, ParentFrame)
+	AckFrame:SetSize(150,30)
+	AckFrame:SetPoint("CENTER", ParentFrame, "CENTER",80,-25)
+
+	AckFrame.label = AddTextToFrame(AckFrame, "Accepted:", 150)
+	AckFrame.label:SetPoint("LEFT", AckFrame, "LEFT", 0, 0)
+
+	AckFrame.value = AddTextToFrame(AckFrame, "Not Recieved", 120)
+	AckFrame.value:SetPoint("LEFT", AckFrame, "LEFT", 85, 0)
+	return AckFrame;
+end
+
+function CreateWarningFrame(ParentFrame)
+	local NoteFrame = CreateFrame("Frame", nil, ParentFrame)
+	NoteFrame:SetSize(150, 30)
+	NoteFrame:SetPoint("BOTTOMLEFT", ParentFrame, "BOTTOMLEFT",0,0)
+	NoteFrame.value = AddTextToFrame(NoteFrame, "Warning: Addon out of date", 250)
+	NoteFrame.value:SetPoint("LEFT", NoteFrame, "LEFT", 0, 0)
+	NoteFrame:Hide();
+	return NoteFrame;
 end
 
 --Create's the "Soul Stone" Label that appears above the soul stone target drop down menu.
@@ -446,4 +502,140 @@ function UpdateDropDownMenuWithNewOptions(DropDownMenu, OptionList, DropDownType
     UIDropDownMenu_SetButtonWidth(DropDownMenu, 124)
     UIDropDownMenu_SetSelectedID(DropDownMenu, 1)
     UIDropDownMenu_JustifyText(DropDownMenu, "LEFT")
+end
+
+function InitLockyAssignCheckFrame()
+	LockyAssignCheckFrame =  CreateFrame("Frame", nil, UIParent);
+
+	LockyAssignCheckFrame:SetSize(200, 175) 
+	LockyAssignCheckFrame:SetPoint("CENTER", UIParent, "CENTER",0,0) 
+	LockyAssignCheckFrame:SetBackdrop({
+		bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
+		edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
+		tile = true,
+		tileSize = 32,
+		edgeSize = 32,
+		insets = { left = 5, right = 5, top = 5, bottom = 5 }
+	});
+
+	LockyAssignCheckFrame:RegisterForDrag("LeftButton");
+	LockyAssignCheckFrame:SetMovable(true);
+	LockyAssignCheckFrame:EnableMouse(true);
+
+	LockyAssignCheckFrame:SetScript("OnDragStart", LockyAssignCheckFrame.StartMoving);
+	LockyAssignCheckFrame:SetScript("OnDragStop", LockyAssignCheckFrame.StopMovingOrSizing);
+
+	LockyAssignRejectButton = CreateFrame("Button", nil, LockyAssignCheckFrame, "GameMenuButtonTemplate");
+	LockyAssignRejectButton:SetSize(70,20);
+	LockyAssignRejectButton:SetPoint("BOTTOMRIGHT", LockyAssignCheckFrame, "BOTTOMRIGHT",-15,15)
+	LockyAssignRejectButton:SetText("No");
+	LockyAssignRejectButton:SetScript("OnClick", LockyAssignRejectClick);
+
+	LockyAssignAcceptButton = CreateFrame("Button", nil, LockyAssignCheckFrame, "GameMenuButtonTemplate");
+	LockyAssignAcceptButton:SetSize(70,20);
+	LockyAssignAcceptButton:SetPoint("RIGHT", LockyAssignRejectButton, "LEFT",-5,0)
+	LockyAssignAcceptButton:SetText("Yes");
+	LockyAssignAcceptButton:SetScript("OnClick", LockyAssignAcceptClick);
+
+	LockyAssignCheckFrame.AcceptButton = LockyAssignAcceptButton;
+	LockyAssignCheckFrame.RejectButton = LockyAssignRejectButton;
+
+	LockyAssignCheckFrame.Label = AddTextToFrame(LockyAssignCheckFrame, "Your new assignments:", 140)
+	LockyAssignCheckFrame.Label:SetPoint("TOPLEFT", LockyAssignCheckFrame, "TOPLEFT", 10, -15)
+
+	LockyAssignCheckFrame.CurseLabel = AddTextToFrame(LockyAssignCheckFrame, "Curse:", 130)
+	LockyAssignCheckFrame.CurseLabel:SetPoint("TOPLEFT", LockyAssignCheckFrame, "TOPLEFT", 0, -37)
+
+
+	local CurseGraphicFrame = CreateFrame("Frame", nil, LockyAssignCheckFrame)
+	CurseGraphicFrame:SetSize(30,30)
+	CurseGraphicFrame:SetPoint("CENTER", LockyAssignCheckFrame, "LEFT", 105, 42)
+	
+	LockyAssignCheckFrame.CurseGraphicFrame = CurseGraphicFrame
+
+	LockyAssignCheckFrame.BanishLabel = AddTextToFrame(LockyAssignCheckFrame, "Banish:", 130)
+	LockyAssignCheckFrame.BanishLabel:SetPoint("TOPLEFT", LockyAssignCheckFrame, "TOPLEFT", 0, -67)
+
+	local BanishGraphicFrame = CreateFrame("Frame", nil, LockyAssignCheckFrame)
+	BanishGraphicFrame:SetSize(30,30)
+	BanishGraphicFrame:SetPoint("CENTER", LockyAssignCheckFrame, "LEFT", 105, 12)
+	LockyAssignCheckFrame.BanishGraphicFrame = BanishGraphicFrame;
+
+	LockyAssignCheckFrame.SoulStoneLabel = AddTextToFrame(LockyAssignCheckFrame, "SoulStone:", 130)
+	LockyAssignCheckFrame.SoulStoneLabel:SetPoint("TOPLEFT", LockyAssignCheckFrame, "TOPLEFT", -8, -97)
+
+	LockyAssignCheckFrame.SoulStoneAssignment = AddTextToFrame(LockyAssignCheckFrame, "", 130)
+	LockyAssignCheckFrame.SoulStoneAssignment:SetPoint("TOPLEFT", LockyAssignCheckFrame, "TOPLEFT", 65, -97)
+
+	LockyAssignCheckFrame.Prompt = AddTextToFrame(LockyAssignCheckFrame, "Do you accept?", 130)
+	LockyAssignCheckFrame.Prompt:SetPoint("TOPLEFT", LockyAssignCheckFrame, "TOPLEFT", 0, -120)
+	
+	
+	LockyAssignCheckFrame:SetScript("OnShow", LockyAssignFrameOnShow);
+
+	
+	LockyAssignCheckFrame:Hide();
+
+	
+	--This needs to be removed.	
+	--LockyAssignCheckFrame:Show();
+end
+
+function SetLockyCheckFrameAssignments(curse, banish, sstarget)
+	print(curse,banish, sstarget);
+	UpdateCurseGraphic(LockyAssignCheckFrame, curse)
+	UpdateBanishGraphic(LockyAssignCheckFrame, banish)
+	UpdateSoulStoneAssignment(sstarget)
+	LockyAssignCheckFrame:Show();
+end
+
+function LockyAssignFrameOnShow()	
+	PlaySound(SOUNDKIT.READY_CHECK)
+	if NL_DebugMode then	
+		print("Assignment ready check recieved. Assignment check frame should be showing now.");
+	end	
+end
+
+
+
+function LockyAssignAcceptClick()
+	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE);
+	LockyAssignCheckFrame:Hide()
+	print("You clicked Yes.")
+	SendAssignmentAcknowledgement("true");
+end
+
+function LockyAssignRejectClick()
+	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE);
+	LockyAssignCheckFrame:Hide()
+	print("You clicked No.")
+	SendAssignmentAcknowledgement("false");
+end
+
+function UpdateSoulStoneAssignment(Assignment)
+	LockyAssignCheckFrame.SoulStoneAssignment:SetText(Assignment);
+end
+
+
+function UpdateAssignedCurseGraphic(CurseGraphicFrame, CurseListValue)
+	--print("Updating Curse Graphic to " .. CurseListValue)
+	if not (CurseListValue == nil) then
+		if(CurseGraphicFrame.CurseTexture == nil) then
+			local CurseGraphic = CurseGraphicFrame:CreateTexture(nil, "OVERLAY") 
+			CurseGraphic:SetAllPoints()
+			CurseGraphic:SetTexture(GetSpellTexture(11713))
+			CurseGraphicFrame.CurseTexture = CurseGraphic
+		else
+			CurseGraphicFrame.CurseTexture:SetTexture(GetSpellTexture(11713))		
+		end		
+	else 
+		if (CurseGraphicFrame.CurseTexture == nil) then
+			local CurseGraphic = CurseGraphicFrame:CreateTexture(nil, "OVERLAY") 
+			CurseGraphic:SetAllPoints()
+			CurseGraphic:SetTexture(1,0,0,0)
+			CurseGraphicFrame.CurseTexture = CurseGraphic
+		else
+			CurseGraphicFrame.CurseTexture:SetTexture(1,0,0,0);	
+		end
+	end
 end

@@ -71,6 +71,25 @@ function UpdateLockyFrame(Warlock, LockyFriendFrame)
 		LockyFriendFrame.Portrait:Show()
 	end
 
+	--Update acknowledged Update that text:
+	if(Warlock.AcceptedAssignments == "true")then
+		LockyFriendFrame.AssignmentAcknowledgement.value:SetText("Yes")
+	elseif Warlock.AcceptedAssignments == "false" then
+		LockyFriendFrame.AssignmentAcknowledgement.value:SetText("No")
+	else
+		LockyFriendFrame.AssignmentAcknowledgement.value:SetText("Not Received")
+	end
+
+	if(Warlock.AddonVersion == 0) then
+		LockyFriendFrame.Warning.value:SetText("Warning: Addon not installed")
+		LockyFriendFrame.Warning:Show();		
+	elseif (Warlock.AddonVersion< NL_Version) then
+		LockyFriendFrame.Warning.value:SetText("Warning: Addon out of date")
+		LockyFriendFrame.Warning:Show();
+	else
+		LockyFriendFrame.Warning:Hide();
+	end
+
 	return LockyFriendFrame.LockyFrameID
 end
 
@@ -305,7 +324,8 @@ function CommitChanges(LockyFriendsData)
 		end
         v.CurseAssignment = uiLock.CurseAssignment
         v.BanishAssignment = uiLock.BanishAssignment
-        v.SSAssignment = uiLock.SSAssignment
+		v.SSAssignment = uiLock.SSAssignment
+		v.AcceptedAssignments = "nil"
     end
     LockyData_Timestamp = GetTime()
     return LockyFriendsData

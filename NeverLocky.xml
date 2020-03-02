@@ -9,7 +9,6 @@
 	<Script File="NeverLocky.lua"/>
 	<Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>		
 	<Include file="Libs\AceComm-3.0\AceComm-3.0.xml"/>
-  
 
 	<Frame name="NeverLockyFrame" toplevel="true" movable="true" enableMouse="true" parent="UIParent" hidden="true">
 		<Size>
@@ -159,5 +158,6 @@
 			<OnUpdate function="NeverLocky_OnUpdate" />			
 		</Scripts>
 	</Frame>
+
 </Ui>
 

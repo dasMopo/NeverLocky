@@ -1,7 +1,7 @@
 --General global variables
 RaidMode = true;
 NL_DebugMode = false;
-NL_Version = 106
+NL_Version = 110
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
 LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
@@ -14,7 +14,8 @@ NeverLockySSCD_BroadcastInterval = 60.0; -- How often to broadcast / check our S
 if NeverLocky == nil then
 	NeverLocky = LibStub("AceAddon-3.0"):NewAddon("NeverLocky", "AceComm-3.0")
 end
-
+LockyAssignCheckFrame={}
+IsMyAddonOutOfDate=false;
 
 
 
@@ -25,11 +26,12 @@ function  CreateWarlock(name, curse, banish)
 			Warlock.BanishAssignment = banish
 			Warlock.SSAssignment = "None"
 			Warlock.SSCooldown=0
-			Warlock.AcceptedAssignments = "false"
+			Warlock.AcceptedAssignments = "nil"
 			Warlock.LockyFrameLocation = ""
 			Warlock.SSonCD = "false"
 			Warlock.LocalTime= 0
 			Warlock.MyTime = 0
+			Warlock.AddonVersion = 0
 	return Warlock
 end
 
@@ -48,6 +50,13 @@ function RegisterWarlocks()
 			end
 		end		
 	end
+	if GetTableLength(raidInfo) == 0 then
+		RaidMode = false;
+		return RegisterMySoloData();
+	else
+		RaidMode = true;
+	end
+
 	return raidInfo
 end
 
@@ -63,9 +72,21 @@ function  IsLockyTableDirty(LockyData)
 	return false;
 end
 
+
+function IsMyDataDirty(lockyData)
+	local myData = GetMyLockyData();
+	if myData.CurseAssignment ~= lockyData.CurseAssignment or
+		myData.BanishAssignment ~= lockyData.BanishAssignment or
+		myData.SSAssignment ~= lockyData.SSAssignment then
+			return true;
+	end
+
+	return false;
+end
+
 -- will merge any newcomers or remove any deserters from the table and return it while leaving assignments intact.
 function UpdateWarlocks(LockyTable)
-	local Newcomers = RegisterWarlocks();
+	local Newcomers = RegisterWarlocks();	
 	--Register Newcomers
 	for k, v in pairs(Newcomers) do
 		if WarlockIsInTable(v.Name, LockyTable) then
@@ -103,6 +124,13 @@ function MergeAssignments(LockyTable)
 		lock.SSAssignment = v.SSAssignment;
 		lock.CurseAssignment = v.CurseAssignment;
 		lock.BanishAssignment = v.BanishAssignment;
+	end
+end
+
+function  ResetAssignmentAcks(LockyTable)
+	for k,v in pairs(LockyTable) do 
+		local lock = GetLockyDataByName(v.Name);
+		lock.AcceptedAssignments = "nil";
 	end
 end
 
@@ -149,6 +177,7 @@ SSTargetFlipperTester = true;
 --Need to make test mode dynamic.
 function GetSSTargetsFromRaid()
 	if RaidMode then
+		--print("Raid MODE!!")
 		--I need to implement this next time I am in a raid.
 		local results = {}		
 		for i=1, 40 do
@@ -156,7 +185,7 @@ function GetSSTargetsFromRaid()
 				zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i);
 			if not (name == nil) then
 				--print(name .. "-" .. fileName .. "-" .. rank .. role)
-				if fileName == "PRIEST" or fileName == "PALADIN" or role == "MAINTANK" then
+				if fileName == "PRIEST" or fileName == "PALADIN" or fileName == "SHAMAN" or role == "MAINTANK" then
 					table.insert(results, name)
 				end
 			end		
@@ -164,36 +193,41 @@ function GetSSTargetsFromRaid()
 		table.insert(results,"None")
 		return results
 	else
-		if SSTargetFlipperTester then
-			SSTargetFlipperTester = false
-			if NL_DebugMode then
-				print("Setting SS target set 1.");
-			end
-			return {
-				"Priest1",
-				"Priest2",
-				"Priest3",
-				"Paladin1",
-				"Paladin2",				
-				"WarriorTank1",
-				"None"
-			}
+		if NL_DebugMode then
+			print("Registering Test SS target data.");
+			if SSTargetFlipperTester then
+				SSTargetFlipperTester = false
+				if NL_DebugMode then
+					print("Setting SS target set 1.");
+				end
+				return {
+					"Priest1",
+					"Priest2",
+					"Priest3",
+					"Paladin1",
+					"Paladin2",				
+					"WarriorTank1",
+					"None"
+				}
+			else
+				SSTargetFlipperTester = true
+				if NL_DebugMode then
+					print("Setting SS target set 2.");
+				end
+				return {
+					"PriestA",
+					"PriestB",
+					"PriestC",
+					"PaladinA",
+					"PaladinB",				
+					"WarriorTankA",
+					"None"
+				}
+			end	
 		else
-			SSTargetFlipperTester = true
-			if NL_DebugMode then
-				print("Setting SS target set 2.");
-			end
-			return {
-				"PriestA",
-				"PriestB",
-				"PriestC",
-				"PaladinA",
-				"PaladinB",				
-				"WarriorTankA",
-				"None"
-			}
+			--print("Not in debug mode, solo mode enabled no targets");
+			return {"None"};
 		end
-
 	end
 end
 
@@ -205,6 +239,7 @@ end
 
 function UpdateSSTargets()
 	SSTargets = GetSSTargetsFromRaid();
+--	print ("SS Targets Updated success.")
 end
 
 function GetMyLockyData()
