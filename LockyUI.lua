@@ -582,7 +582,9 @@ function InitLockyAssignCheckFrame()
 end
 
 function SetLockyCheckFrameAssignments(curse, banish, sstarget)
-	print(curse,banish, sstarget);
+	if NL_DebugMode then
+		print(curse,banish, sstarget);
+	end
 	UpdateCurseGraphic(LockyAssignCheckFrame, curse)
 	UpdateBanishGraphic(LockyAssignCheckFrame, banish)
 	UpdateSoulStoneAssignment(sstarget)
@@ -601,14 +603,18 @@ end
 function LockyAssignAcceptClick()
 	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE);
 	LockyAssignCheckFrame:Hide()
-	print("You clicked Yes.")
+	if NL_DebugMode then
+		print("You clicked Yes.")
+	end
 	SendAssignmentAcknowledgement("true");
 end
 
 function LockyAssignRejectClick()
 	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE);
 	LockyAssignCheckFrame:Hide()
-	print("You clicked No.")
+	if NL_DebugMode then
+		print("You clicked No.")
+	end
 	SendAssignmentAcknowledgement("false");
 end
 

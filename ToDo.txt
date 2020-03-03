@@ -69,6 +69,8 @@ Features:
         wire up something to display to users if other's addons are out of date. - Done
         disable broadcasting assignment changes for out of date addons - Done
     No longer auto close the main assignment screen. - Done
+    Issue - If I reload the UI then it nukes everything because the addon has not initialized or loaded data. - Done
+    
 
 ToDo:
     Add a notification system the will show messages when action is needed I.E - SS needed, Curse Needed, Banish wearing off--

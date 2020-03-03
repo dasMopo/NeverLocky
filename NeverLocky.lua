@@ -16,7 +16,7 @@ function NeverLockyInit()
 		print("Never Locky has been registered to the WOW UI.")		
 		print("Use /nl or /neverlocky to view assignment information.")
 		--NeverLockyFrame:Show()
-		InitLockyAssignCheckFrame();
+		InitLockyAssignCheckFrame();	
 	end	
 end
 

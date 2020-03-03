@@ -301,6 +301,11 @@ end
 
 --Returns true if changes have been made but have not been saved.
 function IsUIDirty(LockyData)
+	if(not LockyData_HasInitialized) then	
+		LockyFriendsData = InitLockyFriendData();
+		LockyData_HasInitialized = true;
+		return true;
+	end
     for k, v in pairs(LockyData) do
         local uiLock = GetWarlockFromLockyFrame(v.Name)
         if(v.CurseAssignment~=uiLock.CurseAssignment or

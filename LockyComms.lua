@@ -62,11 +62,25 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
             end
         --UpdateLockySSCDByName(message.data.Name, message.data.SSCooldown)
     elseif message.action == CommAction.BroadcastTable then
+
+        local myData = GetMyLockyData()
+        if (myData~=nil)then
+            for  lockyindex, lockydata in pairs(message.data) do
+                if lockydata.Name == UnitName("player") then
+                    if IsMyDataDirty(lockydata) or NL_DebugMode then                    
+                        SetLockyCheckFrameAssignments(lockydata.CurseAssignment, lockydata.BanishAssignment, lockydata.SSAssignment)
+                    else
+                        SendAssignmentAcknowledgement("true");
+                    end
+                end
+            end
+        end
+
         if RaidMode then
             if NL_DebugMode then
                 print("Received message from", message.author);
             end
-            if message.author == NL_CommTarget then
+            if message.author == NL_CommTarget then            
                 return;
             end
         end
@@ -74,18 +88,7 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
             print("Recieved a broadcast message from", message.author)
         end
 
-        local myData = GetMyLockyData()
-        if (myData~=nil)then
-            for  lockyindex, lockydata in pairs(message.data) do
-                if lockydata.Name == UnitName("player") then
-                    if IsMyDataDirty(lockydata) or NL_DebugMode then                    
-                        SetLockyCheckFrameAssignments(myData.CurseAssignment, myData.BanishAssignment, myData.SSAssignment)
-                    else
-                        SendAssignmentAcknowledgement("true");
-                    end
-                end
-            end
-        end
+        
 
         if(IsUIDirty(message.data)) then
             for k, v in pairs(message.data)do
@@ -95,6 +98,20 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
                     end                    
                 end
             end
+
+            local myData = GetMyLockyData()
+            if (myData~=nil)then
+                for  lockyindex, lockydata in pairs(message.data) do
+                    if lockydata.Name == UnitName("player") then
+                        if IsMyDataDirty(lockydata) or NL_DebugMode then                    
+                            SetLockyCheckFrameAssignments(lockydata.CurseAssignment, lockydata.BanishAssignment, lockydata.SSAssignment)
+                        else
+                            SendAssignmentAcknowledgement("true");
+                        end
+                    end
+                end
+            end
+
             --LockyFriendsData = message.data            
             MergeAssignments(message.data);
             LockyFriendsData = UpdateWarlocks(LockyFriendsData);

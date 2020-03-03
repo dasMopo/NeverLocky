@@ -1,7 +1,7 @@
 --General global variables
 RaidMode = true;
 NL_DebugMode = false;
-NL_Version = 110
+NL_Version = 112
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
 LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
@@ -244,6 +244,17 @@ end
 
 function GetMyLockyData()
 	for k, v in pairs(LockyFriendsData) do
+		if NL_DebugMode then
+			--print(v.Name, " vs ", UnitName("player"));
+		end
+        if v.Name == UnitName("player") then
+            return v
+        end
+	end	
+end
+
+function GetMyLockyDataFromTable(lockyDataTable)
+	for k, v in pairs(lockyDataTable) do
 		if NL_DebugMode then
 			--print(v.Name, " vs ", UnitName("player"));
 		end
