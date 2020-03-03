@@ -2,6 +2,7 @@
 RaidMode = true;
 NL_DebugMode = false;
 NL_Version = 112
+
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
 LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
