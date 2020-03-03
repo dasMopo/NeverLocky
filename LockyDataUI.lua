@@ -71,6 +71,25 @@ function UpdateLockyFrame(Warlock, LockyFriendFrame)
 		LockyFriendFrame.Portrait:Show()
 	end
 
+	--Update acknowledged Update that text:
+	if(Warlock.AcceptedAssignments == "true")then
+		LockyFriendFrame.AssignmentAcknowledgement.value:SetText("Yes")
+	elseif Warlock.AcceptedAssignments == "false" then
+		LockyFriendFrame.AssignmentAcknowledgement.value:SetText("No")
+	else
+		LockyFriendFrame.AssignmentAcknowledgement.value:SetText("Not Received")
+	end
+
+	if(Warlock.AddonVersion == 0) then
+		LockyFriendFrame.Warning.value:SetText("Warning: Addon not installed")
+		LockyFriendFrame.Warning:Show();		
+	elseif (Warlock.AddonVersion< NL_Version) then
+		LockyFriendFrame.Warning.value:SetText("Warning: Addon out of date")
+		LockyFriendFrame.Warning:Show();
+	else
+		LockyFriendFrame.Warning:Hide();
+	end
+
 	return LockyFriendFrame.LockyFrameID
 end
 
@@ -282,6 +301,11 @@ end
 
 --Returns true if changes have been made but have not been saved.
 function IsUIDirty(LockyData)
+	if(not LockyData_HasInitialized) then	
+		LockyFriendsData = InitLockyFriendData();
+		LockyData_HasInitialized = true;
+		return true;
+	end
     for k, v in pairs(LockyData) do
         local uiLock = GetWarlockFromLockyFrame(v.Name)
         if(v.CurseAssignment~=uiLock.CurseAssignment or
@@ -305,7 +329,8 @@ function CommitChanges(LockyFriendsData)
 		end
         v.CurseAssignment = uiLock.CurseAssignment
         v.BanishAssignment = uiLock.BanishAssignment
-        v.SSAssignment = uiLock.SSAssignment
+		v.SSAssignment = uiLock.SSAssignment
+		v.AcceptedAssignments = "nil"
     end
     LockyData_Timestamp = GetTime()
     return LockyFriendsData

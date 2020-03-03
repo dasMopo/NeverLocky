@@ -53,27 +53,30 @@ Features:
     Issue - SSCD are now showing proper, but only for a limited time. after the window is closed and reopened something corrupts.
         - fixed by adding a forced SSCD update lookup on broadcast SSCD requests.
     Add Tanks to SS assignment dropdown. - done
-
-ToDo:
+    Issue - Spell texture does not render on non-warlock characters.
+        This is because I am using the Get Spell Texture by name overload. If I instead pass a spell ID then it will display properly. - fixed
     Assignment confirmation
         Ask for confirmation - this will require a confirmation frame to be added.
             User has updated the UI and has requested confirmation from all other users.
-            the addon will broadcast to the users to accept the assignments
-            when they click yes or no then the addon will reply with confirmation result.
+            the addon will broadcast to the users to accept the assignments - Kinda done                
+        Need to wire up accept function - done
+        Need to wire up reject function - done
+        Need to add code to detect state changes only. - done
+        Need to add code to display acceptance state - done
+    Add a solo mode. - done
+    Add versioning system to detect out of date addons.
+        wire up something to display to users that their addon is out of date. - Done
+        wire up something to display to users if other's addons are out of date. - Done
+        disable broadcasting assignment changes for out of date addons - Done
+    No longer auto close the main assignment screen. - Done
+    Issue - If I reload the UI then it nukes everything because the addon has not initialized or loaded data. - Done
+    
 
+ToDo:
     Add a notification system the will show messages when action is needed I.E - SS needed, Curse Needed, Banish wearing off--
 
-    Need to add raid validation to show a message when user is not in a raid
-
     Need to add macro for curse button.
-
-    May add a solo mode for curse button.
 
     Need to add event subscription to update the ui if the raid state changes. (only if the addon is showing.)
 
     Issue - If a raider leaves and the assignments are taken away then portaits can be sticky. Not sure if this will affect it in raid mode.
-
-    Issue - Spell texture does not render on non-warlock characters.
-
-
-    

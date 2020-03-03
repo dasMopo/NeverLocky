@@ -16,6 +16,7 @@ function NeverLockyInit()
 		print("Never Locky has been registered to the WOW UI.")		
 		print("Use /nl or /neverlocky to view assignment information.")
 		--NeverLockyFrame:Show()
+		InitLockyAssignCheckFrame();	
 	end	
 end
 
@@ -151,6 +152,16 @@ function RegisterMyTestData()
 	return testData
 end
 
+function RegisterMySoloData()
+	localizedClass, englishClass, classIndex = UnitClass("player");
+
+	local soloData = {}
+	if englishClass == "WARLOCK" then
+		table.insert(soloData, CreateWarlock(UnitName("player"), "None", "None"));	
+	end
+	return soloData
+end
+
 --This is wired to a button click at present.
 function NeverLocky_HideFrame()	
 	if IsUIDirty(LockyFriendsData) then
@@ -165,10 +176,12 @@ end
 
 function NeverLocky_Commit()
 	LockyFriendsData = CommitChanges(LockyFriendsData)
+	UpdateAllLockyFriendFrames();
+	SendAssignmentReset();
 	BroadcastTable(LockyFriendsData)
 	print("Changes were sent out.");
 	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
-	NeverLockyFrame:Hide()
+	--NeverLockyFrame:Hide()
 end
 
 --At this time this is just a test function.
@@ -190,13 +203,14 @@ function NeverLocky_OnShowFrame()
 			print("Initialization complete");
 			
 			print("Found " .. GetTableLength(LockyFriendsData) .. " Warlocks in raid." );
-		end
+		end		
 	end
 
 	if NL_DebugMode then
 		print("Frame should be showing now.")	
 	end
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+	--print("Updating SS targets")
 	UpdateSSTargets()
 	LockyFriendsData = UpdateWarlocks(LockyFriendsData);
 	UpdateAllLockyFriendFrames();	
@@ -204,6 +218,10 @@ function NeverLocky_OnShowFrame()
 	if NL_DebugMode then
 		print("Found " .. GetTableLength(LockyFriendsData) .. " Warlocks in raid." );
 	end	
+	if GetTableLength(LockyFriendsData) == 0 then
+		RaidMode = false;
+		LockyFriendsData = RegisterMySoloData();
+	end
 end
 
 -- /command for opening the ui.
@@ -219,6 +237,8 @@ SlashCmdList["NL"] = function(msg)
 			NL_DebugMode = true
 			print("Never Locky Debug Mode ON")
 		end		
+	elseif msg == "test" then
+		LockyAssignCheckFrame:Show();
 	else
 		NeverLockyFrame:Show()
 	end	
