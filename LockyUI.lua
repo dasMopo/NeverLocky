@@ -603,6 +603,7 @@ end
 function LockyAssignAcceptClick()
 	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE);
 	LockyAssignCheckFrame:Hide()
+	
 	if NL_DebugMode then
 		print("You clicked Yes.")
 	end
@@ -644,4 +645,88 @@ function UpdateAssignedCurseGraphic(CurseGraphicFrame, CurseListValue)
 			CurseGraphicFrame.CurseTexture:SetTexture(1,0,0,0);	
 		end
 	end
+end
+
+function InitPersonalMonitorFrame()
+	LockyPersonalAnchorButton = CreateFrame("Button", nil, UIParent)
+	LockyPersonalAnchorButton:SetSize(30,30)
+	LockyPersonalAnchorButton:SetPoint("CENTER", UIParent, "CENTER")
+
+
+	LockyPersonalMonitorFrame = CreateFrame("Frame", nil, UIParent);
+
+	LockyPersonalMonitorFrame:SetSize(66, 34) 
+	LockyPersonalMonitorFrame:SetPoint("TOP", UIParent, "TOP",0,-25) 
+
+	--LockyPersonalMonitorFrame:SetBackdrop({
+	-- 	bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
+	-- 	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
+	-- 	tile = true,
+	-- 	tileSize = 32,
+	-- 	edgeSize = 12,
+	-- 	insets = { left = 0, right = 0, top = 0, bottom = 0 }
+	-- });
+
+	LockyPersonalMonitorFrame:RegisterForDrag("LeftButton");
+	LockyPersonalMonitorFrame:SetMovable(true);
+	LockyPersonalMonitorFrame:EnableMouse(true);
+
+	LockyPersonalMonitorFrame:SetScript("OnDragStart", LockyPersonalMonitorFrame.StartMoving);
+	LockyPersonalMonitorFrame:SetScript("OnDragStop", LockyPersonalMonitorFrame.StopMovingOrSizing);
+
+	LockyPersonalMonitorFrame.CurseGraphicFrame = CreateFrame("Frame", nil, LockyPersonalMonitorFrame)
+	LockyPersonalMonitorFrame.CurseGraphicFrame:SetSize(30,30)
+	LockyPersonalMonitorFrame.CurseGraphicFrame:SetPoint("LEFT", LockyPersonalMonitorFrame, "LEFT", 2, 0)
+
+	LockyPersonalMonitorFrame.BanishGraphicFrame = CreateFrame("Frame", nil, LockyPersonalMonitorFrame)
+	LockyPersonalMonitorFrame.BanishGraphicFrame:SetSize(30,30)
+	LockyPersonalMonitorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyPersonalMonitorFrame.CurseGraphicFrame, "RIGHT", 2, 0)
+
+	LockyPersonalMonitorFrame.SSAssignmentText = AddTextToFrame(LockyPersonalMonitorFrame, "Test", 200);
+	LockyPersonalMonitorFrame.SSAssignmentText:SetPoint("LEFT", LockyPersonalMonitorFrame.BanishGraphicFrame,"RIGHT", 5, 0)
+	LockyPersonalMonitorFrame.SSAssignmentText:SetJustifyH("LEFT")
+
+	LockyPersonalMonitorFrame.MainLabel = AddTextToFrame(LockyPersonalMonitorFrame,"Lock Assigns:", 180);
+	LockyPersonalMonitorFrame.MainLabel:SetPoint("BOTTOM", LockyPersonalMonitorFrame, "TOP");
+
+	LockyPersonalMonitorFrame:Hide();
+	--UpdateCurseGraphic(LockyPersonalMonitorFrame, "Agony")
+	print("Personal Monitor loaded.")
+	--print(LockyPersonalMonitorFrame.CurseGraphicFrame.CurseTexture)
+end
+
+function UpdatePersonalSSAssignment(ParentFrame, SSAssignment)
+	if SSAssignment ~= "None" then
+		ParentFrame.SSAssignmentText:SetText(SSAssignment);
+		else
+			ParentFrame.SSAssignmentText:SetText("");
+	end
+end
+
+function UpdatePersonalMonitorFrame()
+	local myData = GetMyLockyData()
+	UpdateBanishGraphic(LockyPersonalMonitorFrame, myData.BanishAssignment);
+	UpdateCurseGraphic(LockyPersonalMonitorFrame, myData.CurseAssignment);
+	UpdatePersonalSSAssignment(LockyPersonalMonitorFrame, myData.SSAssignment);
+
+	--Need to resize the frame accordingly.
+	UpdatePersonalMonitorSize(myData);
+end
+
+function UpdatePersonalMonitorSize(myData)
+	local picframesize = 34
+	local buffcount = 0;
+	if myData.CurseAssignment ~= "None" then
+		buffcount = buffcount+1;
+	end
+	if myData.BanishAssignment ~= "None" then
+		buffcount = buffcount+1;
+	end
+	local textLength = 0
+	if myData.SSAssignment ~="None" then
+		textLength = 200;
+	end
+	
+
+	LockyPersonalMonitorFrame:SetSize((picframesize*buffcount)+textLength, 34)
 end

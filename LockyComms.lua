@@ -119,7 +119,13 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
             if NL_DebugMode then
                 print("UI has been refreshed by request of broadcast message.")
             end               
-        end        
+        end 
+        
+        if myData.CurseAssignment == "None" and myData.BanishAssignment == "None" and myData.SSAssignment == "None" then
+            LockyPersonalMonitorFrame:Hide();
+        else
+            LockyPersonalMonitorFrame:Show();
+        end
     elseif message.action == CommAction.RequestAssignments then
         if RaidMode then
             if NL_DebugMode then
@@ -209,7 +215,12 @@ end
 function  SendAssignmentAcknowledgement(answer)
     if NL_DebugMode then
         print("Sending assignment acknowledgement:", answer)
-    end    
+    end   
+    
+    if answer == "true"then        
+        UpdatePersonalMonitorFrame()
+    end
+
     local message = CreateMessageFromTable(CommAction.AssigmentResponse, {acknowledged = answer}, GetTime());
     if RaidMode then
         NeverLocky:SendCommMessage("NeverLockyComms", message, NL_CommModeRaid)

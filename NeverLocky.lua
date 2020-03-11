@@ -17,6 +17,7 @@ function NeverLockyInit()
 		print("Use /nl or /neverlocky to view assignment information.")
 		--NeverLockyFrame:Show()
 		InitLockyAssignCheckFrame();	
+		InitPersonalMonitorFrame();
 	end	
 end
 
