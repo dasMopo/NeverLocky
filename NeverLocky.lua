@@ -18,6 +18,7 @@ function NeverLockyInit()
 		--NeverLockyFrame:Show()
 		InitLockyAssignCheckFrame();	
 		InitPersonalMonitorFrame();
+		InitAnnouncerOptionFrame();
 	end	
 end
 
@@ -181,6 +182,8 @@ function NeverLocky_Commit()
 	SendAssignmentReset();
 	BroadcastTable(LockyFriendsData)
 	print("Changes were sent out.");
+
+	AnnounceAssignments();
 	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
 	--NeverLockyFrame:Hide()
 end

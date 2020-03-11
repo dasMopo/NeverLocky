@@ -335,3 +335,34 @@ function CommitChanges(LockyFriendsData)
     LockyData_Timestamp = GetTime()
     return LockyFriendsData
 end
+
+function AnnounceAssignments()
+	local AnnounceOption = 	GetValueFromDropDownList(LockyAnnouncerOptionMenu, AnnouncerOptions);
+	for k, v in pairs(LockyFriendsData) do
+		local message = ""
+		if v.CurseAssignment ~= "None"  or v.BanishAssignment ~= "None" or v.SSAssignment~="None" then
+			message = v.Name .. ": ";
+		end
+		if v.CurseAssignment~="None" then
+			message = message.."Curse -> ".. v.CurseAssignment .." ";
+		end
+		if v.BanishAssignment~="None" then
+			message = message.."Banish -> {".. v.BanishAssignment .."} ";
+		end
+		if v.SSAssignment~="None" then
+			message = message.."SS -> "..v.SSAssignment .." ";
+		end		
+		
+		if AnnounceOption == "Addon Only" then
+			if NL_DebugMode then					
+				print(message)
+			end
+		elseif AnnounceOption == "Raid" then
+			SendChatMessage(message, "RAID", nil, nil)
+		elseif AnnounceOption == "Party" then
+			SendChatMessage(message, "PARTY", nil, nil)
+		elseif AnnounceOption == "Whisper" then
+			SendChatMessage(message, "WHISPER", nil, v.Name)
+		end
+	end		
+end

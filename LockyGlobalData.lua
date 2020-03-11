@@ -168,6 +168,12 @@ CurseOptions = {
    "Agony"
 }
 
+AnnouncerOptions = {
+	"Addon Only",
+	"Raid",
+	"Party",
+	"Whisper"
+}
 
 SSTargets = {};
 

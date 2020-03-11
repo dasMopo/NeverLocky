@@ -70,7 +70,9 @@ Features:
         disable broadcasting assignment changes for out of date addons - Done
     No longer auto close the main assignment screen. - Done
     Issue - If I reload the UI then it nukes everything because the addon has not initialized or loaded data. - Done
-    
+    Added a personal monitor frame to allow people to see thier assignments easily.
+    Added the ability to announce assignments to the group of choice.
+
 
 ToDo:
     Add a notification system the will show messages when action is needed I.E - SS needed, Curse Needed, Banish wearing off--

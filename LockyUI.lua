@@ -730,3 +730,8 @@ function UpdatePersonalMonitorSize(myData)
 
 	LockyPersonalMonitorFrame:SetSize((picframesize*buffcount)+textLength, 34)
 end
+
+function InitAnnouncerOptionFrame()
+	LockyAnnouncerOptionMenu = CreateDropDownMenu(NLAnnouncerContainer, AnnouncerOptions, "CHAT")
+	LockyAnnouncerOptionMenu:SetPoint("CENTER", NLAnnouncerContainer, "CENTER", 0,0);
+end
