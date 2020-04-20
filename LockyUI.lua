@@ -648,9 +648,9 @@ function UpdateAssignedCurseGraphic(CurseGraphicFrame, CurseListValue)
 end
 
 function InitPersonalMonitorFrame()
-	LockyPersonalAnchorButton = CreateFrame("Button", nil, UIParent)
-	LockyPersonalAnchorButton:SetSize(30,30)
-	LockyPersonalAnchorButton:SetPoint("CENTER", UIParent, "CENTER")
+	--LockyPersonalAnchorButton = CreateFrame("Button", nil, UIParent)
+	--LockyPersonalAnchorButton:SetSize(30,30)
+	--LockyPersonalAnchorButton:SetPoint("CENTER", UIParent, "CENTER")
 
 
 	LockyPersonalMonitorFrame = CreateFrame("Frame", nil, UIParent);
