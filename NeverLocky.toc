@@ -1,4 +1,4 @@
-## Interface: 11303
+## Interface: 11305
 ## Title: Never Locky
 ## Notes: Allows the user to see the warlock assignments.
 ## Author: Brylack
