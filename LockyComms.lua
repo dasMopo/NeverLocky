@@ -3,14 +3,14 @@ NL_CommTarget = UnitName("player")
 NL_CommModeRaid = "RAID";
 
 
-CommAction = {}
-CommAction.SSonCD = "SSonCD"
-CommAction.BroadcastTable = "DataRefresh"
-CommAction.RequestAssignments = "GetAssignmentData"
-CommAction.AssigmentResponse = "AssignmentResponse"
-CommAction.AssignmentReset = "AssignmentReset"
+NL_CommAction = {}
+NL_CommAction.SSonCD = "SSonCD"
+NL_CommAction.BroadcastTable = "DataRefresh"
+NL_CommAction.RequestAssignments = "GetAssignmentData"
+NL_CommAction.AssigmentResponse = "AssignmentResponse"
+NL_CommAction.AssignmentReset = "AssignmentReset"
 
-function CreateMessageFromTable(action, data, dataAge)
+function NL_CreateMessageFromTable(action, data, dataAge)
     --print("Creating outbound message.")
     local message = {}
     message.action = action
@@ -23,7 +23,7 @@ function CreateMessageFromTable(action, data, dataAge)
     return strMessage
 end
 
-function RegisterForComms()   
+function NL_RegisterForComms()   
     NeverLocky:RegisterComm("NeverLockyComms")    
 end
 
@@ -40,13 +40,13 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
     end
 
     if message.addonVersion > NL_Version then
-        IsMyAddonOutOfDate = true;
+        NL_IsMyAddonOutOfDate = true;
         NeverLockyFrame.WarningTextFrame:Show();
         NLCommit_Button:Disable();
     end
     
     -- process the incoming message
-    if message.action == CommAction.SSonCD then
+    if message.action == NL_CommAction.SSonCD then
         if NL_DebugMode then
             print("SS on CD: ", message.data.Name, message.data.SSCooldown, message.data.SSonCD, message.dataAge)
         end
@@ -61,7 +61,7 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
                 SendingWarlock.SSCooldown = message.data.SSCooldown
             end
         --UpdateLockySSCDByName(message.data.Name, message.data.SSCooldown)
-    elseif message.action == CommAction.BroadcastTable then
+    elseif message.action == NL_CommAction.BroadcastTable then
 
         local myData = GetMyLockyData()
         if (myData~=nil)then
@@ -90,7 +90,7 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
 
         
 
-        if(IsUIDirty(message.data)) then
+        if(NL_IsUIDirty(message.data)) then
             for k, v in pairs(message.data)do
                 if NL_DebugMode then
                     for lk, lv in pairs(v) do
@@ -113,14 +113,20 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
             end
 
             --LockyFriendsData = message.data            
-            MergeAssignments(message.data);
+            NL_MergeAssignments(message.data);
             LockyFriendsData = UpdateWarlocks(LockyFriendsData);
             UpdateAllLockyFriendFrames()
             if NL_DebugMode then
                 print("UI has been refreshed by request of broadcast message.")
             end               
-        end        
-    elseif message.action == CommAction.RequestAssignments then
+        end 
+        
+        if myData.CurseAssignment == "None" and myData.BanishAssignment == "None" and myData.SSAssignment == "None" then
+            LockyPersonalMonitorFrame:Hide();
+        else
+            LockyPersonalMonitorFrame:Show();
+        end
+    elseif message.action == NL_CommAction.RequestAssignments then
         if RaidMode then
             if NL_DebugMode then
                 print("Received Assignment Request message from", message.author);
@@ -141,7 +147,7 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
         end
         BroadcastTable(LockyFriendsData)
         
-    elseif message.action == CommAction.AssigmentResponse then
+    elseif message.action == NL_CommAction.AssigmentResponse then
         -- When we recieve an assigment response we should stuff with that.
         if NL_DebugMode then 
             print("Recieved an Ack message from", message.author);
@@ -153,7 +159,7 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
             UpdateLockyFrame(SendingWarlock, GetLockyFriendFrameById(SendingWarlock.LockyFrameLocation))
         end
 
-    elseif message.action == CommAction.AssignmentReset then
+    elseif message.action == NL_CommAction.AssignmentReset then
         if NL_DebugMode then
             print("Recieved assignment reset from", message.author)
         end
@@ -168,14 +174,14 @@ end
 
 --Takes in a table and sends the serialized verion across the wire.
 function BroadcastTable(LockyTable)
-    if(IsMyAddonOutOfDate)then
+    if(NL_IsMyAddonOutOfDate)then
         return;
     end
     --stringify the locky table
     if NL_DebugMode then
         print("Sending out the assignment table")
     end
-    local serializedTable = CreateMessageFromTable(CommAction.BroadcastTable, LockyTable, LockyData_Timestamp) 
+    local serializedTable = NL_CreateMessageFromTable(NL_CommAction.BroadcastTable, LockyTable, LockyData_Timestamp) 
     if RaidMode then
         NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommModeRaid)
     else
@@ -186,7 +192,7 @@ end
 
 function BroadcastSSCooldown(myself)    
     ForceUpdateSSCD();
-    local serializedTable = CreateMessageFromTable(CommAction.SSonCD, myself, GetTime())
+    local serializedTable = NL_CreateMessageFromTable(NL_CommAction.SSonCD, myself, GetTime())
     if RaidMode then
         NeverLocky:SendCommMessage("NeverLockyComms", serializedTable, NL_CommModeRaid)
     else
@@ -198,7 +204,7 @@ function RequestAssignments()
     if NL_DebugMode then
         print("Requesting Updated Assignment Table")
     end
-    local message = CreateMessageFromTable(CommAction.RequestAssignments, {},GetTime() )
+    local message = NL_CreateMessageFromTable(NL_CommAction.RequestAssignments, {},GetTime() )
     if RaidMode then
         NeverLocky:SendCommMessage("NeverLockyComms", message, NL_CommModeRaid)
     else
@@ -209,8 +215,13 @@ end
 function  SendAssignmentAcknowledgement(answer)
     if NL_DebugMode then
         print("Sending assignment acknowledgement:", answer)
-    end    
-    local message = CreateMessageFromTable(CommAction.AssigmentResponse, {acknowledged = answer}, GetTime());
+    end   
+    
+    if answer == "true"then        
+        UpdatePersonalMonitorFrame()
+    end
+
+    local message = NL_CreateMessageFromTable(NL_CommAction.AssigmentResponse, {acknowledged = answer}, GetTime());
     if RaidMode then
         NeverLocky:SendCommMessage("NeverLockyComms", message, NL_CommModeRaid)
     else
@@ -222,7 +233,7 @@ function SendAssignmentReset()
     if NL_DebugMode then
         print("Sending assignment reset command")
     end    
-    local message = CreateMessageFromTable(CommAction.AssignmentReset, {}, GetTime());
+    local message = NL_CreateMessageFromTable(NL_CommAction.AssignmentReset, {}, GetTime());
     if RaidMode then
         NeverLocky:SendCommMessage("NeverLockyComms", message, NL_CommModeRaid)
     else

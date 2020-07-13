@@ -1,8 +1,7 @@
 --General global variables
 RaidMode = true;
 NL_DebugMode = false;
-NL_Version = 112
-
+NL_Version = 113
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
 LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
@@ -16,7 +15,7 @@ if NeverLocky == nil then
 	NeverLocky = LibStub("AceAddon-3.0"):NewAddon("NeverLocky", "AceComm-3.0")
 end
 LockyAssignCheckFrame={}
-IsMyAddonOutOfDate=false;
+NL_IsMyAddonOutOfDate=false;
 
 
 
@@ -37,7 +36,7 @@ function  CreateWarlock(name, curse, banish)
 end
 
 --Pulls all of the warlocks in the raid and initilizes thier assignment data.
-function RegisterWarlocks()
+function NL_RegisterWarlocks()
 	local raidInfo = {}
 	for i=1, 40 do
 		local name, rank, subgroup, level, class, fileName, 
@@ -87,7 +86,7 @@ end
 
 -- will merge any newcomers or remove any deserters from the table and return it while leaving assignments intact.
 function UpdateWarlocks(LockyTable)
-	local Newcomers = RegisterWarlocks();	
+	local Newcomers = NL_RegisterWarlocks();	
 	--Register Newcomers
 	for k, v in pairs(Newcomers) do
 		if WarlockIsInTable(v.Name, LockyTable) then
@@ -119,7 +118,7 @@ function UpdateWarlocks(LockyTable)
 	return LockyTable;
 end
 
-function MergeAssignments(LockyTable)
+function NL_MergeAssignments(LockyTable)
 	for k,v in pairs(LockyTable) do 
 		local lock = GetLockyDataByName(v.Name);
 		lock.SSAssignment = v.SSAssignment;
@@ -169,6 +168,12 @@ CurseOptions = {
    "Agony"
 }
 
+AnnouncerOptions = {
+	"Addon Only",
+	"Raid",
+	"Party",
+	"Whisper"
+}
 
 SSTargets = {};
 

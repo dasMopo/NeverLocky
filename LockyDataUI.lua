@@ -100,7 +100,7 @@ function UpdateAllLockyFriendFrames()
 	end
     ClearAllLockyFrames()
    -- print("All frames Cleared")
-    ConsolidateFrameLocations()
+    NL_ConsolidateFrameLocations()
     --print("Frame Locations Consolidated")
 	for key, value in pairs(LockyFriendsData) do
 		UpdateLockyFrame(value, GetLockyFriendFrameById(value.LockyFrameLocation))
@@ -108,7 +108,7 @@ function UpdateAllLockyFriendFrames()
 	if NL_DebugMode then
 		print("Frames updated successfully.")
 	end
-    LockyFrame.scrollbar:SetMinMaxValues(1, GetMaxValueForScrollBar(LockyFriendsData))
+    LockyFrame.scrollbar:SetMinMaxValues(1, NL_GetMaxValueForScrollBar(LockyFriendsData))
   --  print("ScrollRegion size updated successfully")
 end
 
@@ -124,7 +124,7 @@ function  ClearAllLockyFrames()
 end
 
 --This function will take in the warlock table object and update the frame assignment to make sense.
-function  ConsolidateFrameLocations()
+function  NL_ConsolidateFrameLocations()
 	--Need to loop through and assign a locky frame id to a locky friend.
 	--print("Setting up FrameLocations for the locky friend data.")
 	for key, value in pairs(LockyFriendsData) do		
@@ -173,7 +173,7 @@ function UpdateLockyClockys()
 end
 
 --Will set default assignments for curses / banishes and SS.
-function SetDefaultAssignments(warlockTable)	
+function NL_SetDefaultAssignments(warlockTable)	
 	for k, y in pairs(warlockTable) do
 		if(k<=3)then
 			y.CurseAssignment = CurseOptions[k+1]
@@ -300,7 +300,7 @@ function GetWarlockFromLockyFrame(LockyName)
 end
 
 --Returns true if changes have been made but have not been saved.
-function IsUIDirty(LockyData)
+function NL_IsUIDirty(LockyData)
 	if(not LockyData_HasInitialized) then	
 		LockyFriendsData = InitLockyFriendData();
 		LockyData_HasInitialized = true;
@@ -318,7 +318,7 @@ function IsUIDirty(LockyData)
 end
 
 --Commits any UI changes to the global LockyFriendsDataModel
-function CommitChanges(LockyFriendsData)
+function NL_CommitChanges(LockyFriendsData)
     
     for k, v in pairs(LockyFriendsData) do
         local uiLock = GetWarlockFromLockyFrame(v.Name)
@@ -334,4 +334,35 @@ function CommitChanges(LockyFriendsData)
     end
     LockyData_Timestamp = GetTime()
     return LockyFriendsData
+end
+
+function AnnounceAssignments()
+	local AnnounceOption = 	GetValueFromDropDownList(LockyAnnouncerOptionMenu, AnnouncerOptions);
+	for k, v in pairs(LockyFriendsData) do
+		local message = ""
+		if v.CurseAssignment ~= "None"  or v.BanishAssignment ~= "None" or v.SSAssignment~="None" then
+			message = v.Name .. ": ";
+		end
+		if v.CurseAssignment~="None" then
+			message = message.."Curse -> ".. v.CurseAssignment .." ";
+		end
+		if v.BanishAssignment~="None" then
+			message = message.."Banish -> {".. v.BanishAssignment .."} ";
+		end
+		if v.SSAssignment~="None" then
+			message = message.."SS -> "..v.SSAssignment .." ";
+		end		
+		
+		if AnnounceOption == "Addon Only" then
+			if NL_DebugMode then					
+				print(message)
+			end
+		elseif AnnounceOption == "Raid" then
+			SendChatMessage(message, "RAID", nil, nil)
+		elseif AnnounceOption == "Party" then
+			SendChatMessage(message, "PARTY", nil, nil)
+		elseif AnnounceOption == "Whisper" then
+			SendChatMessage(message, "WHISPER", nil, v.Name)
+		end
+	end		
 end

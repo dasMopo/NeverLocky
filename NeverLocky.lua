@@ -4,7 +4,7 @@ function NeverLockyInit()
 		--print("Prepping init")
 		InitLockyFrameScrollArea()
 		--print("ScrollFrame initialized successfully.")
-		RegisterForComms()
+		NL_RegisterForComms()
 		--print("Comms initialized successfully.")
 		LockyFrame_HasInitialized = true
 		--LockyFriendsData = InitLockyFriendData()
@@ -17,6 +17,8 @@ function NeverLockyInit()
 		print("Use /nl or /neverlocky to view assignment information.")
 		--NeverLockyFrame:Show()
 		InitLockyAssignCheckFrame();	
+		InitPersonalMonitorFrame();
+		InitAnnouncerOptionFrame();
 	end	
 end
 
@@ -46,11 +48,11 @@ function NeverLocky_OnUpdate(self, elapsed)
 	end
 end
 
-function RegisterRaid()
+function NL_RegisterRaid()
 	local raidInfo = {}
 	for i=1, 40 do
 		local name, rank, subgroup, level, class, fileName, 
-		  zone, online, isDead, role, isML = GetRaidRosterInfo(i);
+		  zone, online, isDead, role, isML = NL_GetRaidRosterInfo(i);
 		if not (name == nil) then
 			if NL_DebugMode then
 				print(name .. "-" .. fileName)	
@@ -74,7 +76,7 @@ function InitLockyFriendData()
 			print("Initializing Friend Data")
 		end
 
-		return RegisterWarlocks()
+		return NL_RegisterWarlocks()
 	else
 		print("Raid mode is not active, running in Test mode.")			
 		if testmode == TestType.init then
@@ -96,7 +98,7 @@ function InitLockyFriendData()
 			return LockyFriendsData
 		elseif testmode == TestType.setDefault then
 			print ("Setting default selection")
-			LockyFriendsData = SetDefaultAssignments(LockyFriendsData)
+			LockyFriendsData = NL_SetDefaultAssignments(LockyFriendsData)
 			testmode = TestType.init
 			return LockyFriendsData
 		else
@@ -164,7 +166,7 @@ end
 
 --This is wired to a button click at present.
 function NeverLocky_HideFrame()	
-	if IsUIDirty(LockyFriendsData) then
+	if NL_IsUIDirty(LockyFriendsData) then
 		print("Changes were not saved.")
 		PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
 		NeverLockyFrame:Hide()
@@ -175,11 +177,13 @@ function NeverLocky_HideFrame()
 end
 
 function NeverLocky_Commit()
-	LockyFriendsData = CommitChanges(LockyFriendsData)
+	LockyFriendsData = NL_CommitChanges(LockyFriendsData)
 	UpdateAllLockyFriendFrames();
 	SendAssignmentReset();
 	BroadcastTable(LockyFriendsData)
 	print("Changes were sent out.");
+
+	AnnounceAssignments();
 	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
 	--NeverLockyFrame:Hide()
 end

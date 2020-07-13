@@ -138,7 +138,18 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			
+			<Frame name="NLAnnouncerContainer">
+				<Size>
+					<AbsDimension x="115" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="NLCommit_Button" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
