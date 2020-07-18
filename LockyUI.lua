@@ -586,6 +586,7 @@ function SetLockyCheckFrameAssignments(curse, banish, sstarget)
 		print(curse,banish, sstarget);
 	end
 	UpdateCurseGraphic(LockyAssignCheckFrame, curse)
+	LockyAssignCheckFrame.pendingCurse = curse;
 	UpdateBanishGraphic(LockyAssignCheckFrame, banish)
 	UpdateSoulStoneAssignment(sstarget)
 	LockyAssignCheckFrame:Show();
@@ -607,6 +608,12 @@ function LockyAssignAcceptClick()
 	if NL_DebugMode then
 		print("You clicked Yes.")
 	end
+	LockyAssignCheckFrame.activeCurse = LockyAssignCheckFrame.pendingCurse;
+	if NL_DebugMode then
+		print("Attempting to create macro for curse: ".. LockyAssignCheckFrame.activeCurse);		
+	end
+
+	NL_SetupAssignmentMacro(LockyAssignCheckFrame.activeCurse);
 	SendAssignmentAcknowledgement("true");
 end
 

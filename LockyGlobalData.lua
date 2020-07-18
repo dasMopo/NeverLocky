@@ -1,7 +1,7 @@
 --General global variables
 RaidMode = true;
 NL_DebugMode = false;
-NL_Version = 113
+NL_Version = 114
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
 LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
@@ -16,7 +16,7 @@ if NeverLocky == nil then
 end
 LockyAssignCheckFrame={}
 NL_IsMyAddonOutOfDate=false;
-
+NL_MacroName =  "CurseAssignment";
 
 
 function  CreateWarlock(name, curse, banish)
@@ -277,3 +277,29 @@ function  GetLockyDataByName(name)
         end
     end
 end
+
+function NL_SetupAssignmentMacro(CurseAssignment)
+	-- If macro exists?
+	local macroIndex = GetMacroIndexByName(NL_MacroName)
+	if (macroIndex == 0) then
+		macroIndex = CreateMacro(NL_MacroName, "INV_MISC_QUESTIONMARK", "/stopcast;", 1);
+		if NL_DebugMode then
+			print("Never Locky macro did not exist, creating a new one with ID" .. macroIndex);
+		end
+	end
+
+	local curseName = GetSpellNameFromDropDownList(CurseAssignment);
+
+	if NL_DebugMode then
+		print("Updating macro ".. macroIndex .. " to the new assigment " .. curseName);
+	end
+
+	EditMacro(macroIndex, NL_MacroName, GetSpellTexture(GetSpellIdFromDropDownList(CurseAssignment)), "#showtooltip ".. curseName .." \n/Cast ".. curseName ..";", 1, 1);
+	if NL_DebugMode then
+		print("Update success!!!!!");
+	end
+	-- CreateMacro("MyMacro", "INV_MISC_QUESTIONMARK", "/script CastSpellById(1);", 1);
+	-- I think I can just pass in the texture in param 2?
+
+end
+

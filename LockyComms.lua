@@ -69,7 +69,9 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
                 if lockydata.Name == UnitName("player") then
                     if IsMyDataDirty(lockydata) or NL_DebugMode then                    
                         SetLockyCheckFrameAssignments(lockydata.CurseAssignment, lockydata.BanishAssignment, lockydata.SSAssignment)
-                    else
+                    else                        
+                        LockyAssignCheckFrame.activeCurse = lockydata.CurseAssignment;
+                        NL_SetupAssignmentMacro(LockyAssignCheckFrame.activeCurse);
                         SendAssignmentAcknowledgement("true");
                     end
                 end
@@ -106,6 +108,8 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
                         if IsMyDataDirty(lockydata) or NL_DebugMode then                    
                             SetLockyCheckFrameAssignments(lockydata.CurseAssignment, lockydata.BanishAssignment, lockydata.SSAssignment)
                         else
+                            LockyAssignCheckFrame.activeCurse = lockydata.CurseAssignment;
+                            NL_SetupAssignmentMacro(LockyAssignCheckFrame.activeCurse);
                             SendAssignmentAcknowledgement("true");
                         end
                     end

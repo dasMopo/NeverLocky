@@ -72,12 +72,12 @@ Features:
     Issue - If I reload the UI then it nukes everything because the addon has not initialized or loaded data. - Done
     Added a personal monitor frame to allow people to see thier assignments easily.
     Added the ability to announce assignments to the group of choice.
+    Added a macro button that will auto update when the user accepts the assignment.
 
 
 ToDo:
     Add a notification system the will show messages when action is needed I.E - SS needed, Curse Needed, Banish wearing off--
-
-    Need to add macro for curse button.
+    
 
     Need to add event subscription to update the ui if the raid state changes. (only if the addon is showing.)
 
