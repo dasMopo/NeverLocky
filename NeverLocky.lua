@@ -155,7 +155,7 @@ function RegisterMyTestData()
 end
 
 function RegisterMySoloData()
-	localizedClass, englishClass, classIndex = UnitClass("player");
+	local localizedClass, englishClass, classIndex = UnitClass("player");
 
 	local soloData = {}
 	if englishClass == "WARLOCK" then
