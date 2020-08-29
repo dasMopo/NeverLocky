@@ -72,13 +72,22 @@ Features:
     Issue - If I reload the UI then it nukes everything because the addon has not initialized or loaded data. - Done
     Added a personal monitor frame to allow people to see thier assignments easily.
     Added the ability to announce assignments to the group of choice.
-    Added a macro button that will auto update when the user accepts the assignment.
-
+    Need to add macro for curse button.
+            - If the NL Curse Macro does not exist.        
+                - Create the macro when the user accepts the assignment.
+            - If the NL Macro exists then update it to the appropriate spell.
 
 ToDo:
     Add a notification system the will show messages when action is needed I.E - SS needed, Curse Needed, Banish wearing off--
     
-
     Need to add event subscription to update the ui if the raid state changes. (only if the addon is showing.)
 
     Issue - If a raider leaves and the assignments are taken away then portaits can be sticky. Not sure if this will affect it in raid mode.
+
+    Issue - There is a race condition that is loable to cause data corruption but I need to track it down.
+
+    Reduce global taint.
+
+    Add the ability to send assignments to custom channels.
+
+    Remove the filter on soulstone recipients.

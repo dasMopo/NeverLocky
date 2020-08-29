@@ -1,7 +1,7 @@
 --General global variables
 RaidMode = true;
 NL_DebugMode = false;
-NL_Version = 114
+NL_Version = 113
 LockyFriendFrameWidth = 500;
 LockyFriendFrameHeight = 128
 LockyFrame_HasInitialized = false; -- Used to prevent reloads from redrawing the ui.
@@ -279,6 +279,7 @@ function  GetLockyDataByName(name)
 end
 
 function NL_SetupAssignmentMacro(CurseAssignment)
+	
 	-- If macro exists?
 	local macroIndex = GetMacroIndexByName(NL_MacroName)
 	if (macroIndex == 0) then
@@ -287,17 +288,27 @@ function NL_SetupAssignmentMacro(CurseAssignment)
 			print("Never Locky macro did not exist, creating a new one with ID" .. macroIndex);
 		end
 	end
-
+	
+	--print('anything working?');
 	local curseName = GetSpellNameFromDropDownList(CurseAssignment);
+	--print(curseName .. 'vs None');
+	if (curseName == nil) then	
+		if NL_DebugMode then
+			print("No update applied because no curse selected");
+		end
+	else
+		if NL_DebugMode then
+			print("Updating macro ".. macroIndex .. " to the new assigment " .. curseName);
+		end
 
-	if NL_DebugMode then
-		print("Updating macro ".. macroIndex .. " to the new assigment " .. curseName);
+		EditMacro(macroIndex, NL_MacroName, GetSpellTexture(GetSpellIdFromDropDownList(CurseAssignment)), "#showtooltip ".. curseName .." \n/Cast ".. curseName ..";", 1, 1);
+		
+		if NL_DebugMode then
+			print("Update success!!!!!");
+		end
 	end
 
-	EditMacro(macroIndex, NL_MacroName, GetSpellTexture(GetSpellIdFromDropDownList(CurseAssignment)), "#showtooltip ".. curseName .." \n/Cast ".. curseName ..";", 1, 1);
-	if NL_DebugMode then
-		print("Update success!!!!!");
-	end
+
 	-- CreateMacro("MyMacro", "INV_MISC_QUESTIONMARK", "/script CastSpellById(1);", 1);
 	-- I think I can just pass in the texture in param 2?
 

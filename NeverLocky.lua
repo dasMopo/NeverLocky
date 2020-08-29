@@ -52,7 +52,7 @@ function NL_RegisterRaid()
 	local raidInfo = {}
 	for i=1, 40 do
 		local name, rank, subgroup, level, class, fileName, 
-		  zone, online, isDead, role, isML = NL_GetRaidRosterInfo(i);
+		  zone, online, isDead, role, isML = GetRaidRosterInfo(i);
 		if not (name == nil) then
 			if NL_DebugMode then
 				print(name .. "-" .. fileName)	

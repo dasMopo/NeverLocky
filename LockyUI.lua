@@ -689,11 +689,11 @@ function InitPersonalMonitorFrame()
 	LockyPersonalMonitorFrame.BanishGraphicFrame:SetSize(30,30)
 	LockyPersonalMonitorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyPersonalMonitorFrame.CurseGraphicFrame, "RIGHT", 2, 0)
 
-	LockyPersonalMonitorFrame.SSAssignmentText = NL_AddTextToFrame(LockyPersonalMonitorFrame, "Test", 200);
+	LockyPersonalMonitorFrame.SSAssignmentText = NL_AddTextToFrame(LockyPersonalMonitorFrame, "", 75);
 	LockyPersonalMonitorFrame.SSAssignmentText:SetPoint("LEFT", LockyPersonalMonitorFrame.BanishGraphicFrame,"RIGHT", 5, 0)
 	LockyPersonalMonitorFrame.SSAssignmentText:SetJustifyH("LEFT")
 
-	LockyPersonalMonitorFrame.MainLabel = NL_AddTextToFrame(LockyPersonalMonitorFrame,"Lock Assigns:", 180);
+	LockyPersonalMonitorFrame.MainLabel = NL_AddTextToFrame(LockyPersonalMonitorFrame,"Lock Assigns:", 125);
 	LockyPersonalMonitorFrame.MainLabel:SetPoint("BOTTOM", LockyPersonalMonitorFrame, "TOP");
 
 	LockyPersonalMonitorFrame:Hide();
@@ -718,6 +718,30 @@ function UpdatePersonalMonitorFrame()
 
 	--Need to resize the frame accordingly.
 	UpdatePersonalMonitorSize(myData);
+
+	--Need to shift stuff around since this display is wrong.
+	--if myData.CurseAssignment ~= "None" and myData.BanishAssignment ~= "None" then
+	--This just resets to default locations.
+		LockyPersonalMonitorFrame.CurseGraphicFrame:SetPoint("LEFT", LockyPersonalMonitorFrame, "LEFT", 2, 0)
+		LockyPersonalMonitorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyPersonalMonitorFrame.CurseGraphicFrame, "RIGHT", 2, 0)
+		LockyPersonalMonitorFrame.SSAssignmentText:SetPoint("LEFT", LockyPersonalMonitorFrame.BanishGraphicFrame,"RIGHT", 5, 0)
+	--end
+	if myData.CurseAssignment == "None" and myData.BanishAssignment ~= "None" then
+		-- We shift stuff left.
+		LockyPersonalMonitorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyPersonalMonitorFrame, "LEFT", 2, 0)
+		LockyPersonalMonitorFrame.SSAssignmentText:SetPoint("LEFT", LockyPersonalMonitorFrame.BanishGraphicFrame,"RIGHT", 5, 0)
+	end
+	if myData.BanishAssignment == "None" and myData.CurseAssignment ~= "None" then
+		--we only need to shift the SSAssignmentText to be next to the curse graphic.
+		LockyPersonalMonitorFrame.SSAssignmentText:SetPoint("LEFT", LockyPersonalMonitorFrame.CurseGraphicFrame,"RIGHT", 5, 0)
+	end
+
+	if myData.CurseAssignment == "None" and myData.BanishAssignment == "None" then
+		-- we can make the SSAssignmentText shif all the way left.
+		LockyPersonalMonitorFrame.SSAssignmentText:SetPoint("LEFT", LockyPersonalMonitorFrame, "LEFT", 2, 0)
+	end
+
+	
 end
 
 function UpdatePersonalMonitorSize(myData)
@@ -731,11 +755,11 @@ function UpdatePersonalMonitorSize(myData)
 	end
 	local textLength = 0
 	if myData.SSAssignment ~="None" then
-		textLength = 200;
+		textLength = 75;
 	end
-	
-
 	LockyPersonalMonitorFrame:SetSize((picframesize*buffcount)+textLength, 34)
+
+	
 end
 
 function InitAnnouncerOptionFrame()
