@@ -1,7 +1,7 @@
 --All of these functions are related to updating the ui from the data or vice versa.
 
 --Will take in the string ID and return the appropriate Locky Frame
-function GetLockyFriendFrameById(LockyFrameID)
+function NL.GetLockyFriendFrameById(LockyFrameID)
 	for key, value in pairs(LockyFrame.scrollframe.content.LockyFriendFrames) do
 		--print(key, " -- ", value["LockyFrameID"])
 		if value["LockyFrameID"] == LockyFrameID then
@@ -11,7 +11,7 @@ function GetLockyFriendFrameById(LockyFrameID)
 end
 
 --Will take in a string name and return the appropriate Locky Frame.
-function GetLockyFriendFrameByName(LockyName)
+function NL.GetLockyFriendFrameByName(LockyName)
 	for key, value in pairs(LockyFrame.scrollframe.content.LockyFriendFrames) do
 		--print(key, " -- ", value["LockyFrameID"])
 		if value["LockyName"] == LockyName then
@@ -22,11 +22,11 @@ end
 
 --Will update a locky friend frame with the warlock data passed in.
 --If the warlock object is null it will clear and hide the data from the screen.
-function UpdateLockyFrame(Warlock, LockyFriendFrame)
+function NL.UpdateLockyFrame(Warlock, LockyFriendFrame)
 	--print("Updating Locky Frame")	
 	if(Warlock == nil) then
 		LockyFriendFrame:Hide()
-		Warlock = CreateWarlock("", "None", "None")
+		Warlock = NL.CreateWarlock("", "None", "None")
 	else
 		LockyFriendFrame:Show()
 	end
@@ -37,21 +37,21 @@ function UpdateLockyFrame(Warlock, LockyFriendFrame)
 	--Set the CurseAssignment
 	--print("Updating Curse to: ".. Warlock.CurseAssignment) -- this may need to be done by index.....
 	--GetIndexFromTable(CurseOptions, Warlock.CurseAssignment)
-	UIDropDownMenu_SetSelectedID(LockyFriendFrame.CurseAssignmentMenu, GetIndexFromTable(CurseOptions, Warlock.CurseAssignment))
-	UpdateCurseGraphic(LockyFriendFrame.CurseAssignmentMenu, GetCurseValueFromDropDownList(LockyFriendFrame.CurseAssignmentMenu))
-	LockyFriendFrame.CurseAssignmentMenu.Text:SetText(GetCurseValueFromDropDownList(LockyFriendFrame.CurseAssignmentMenu))
+	L_UIDropDownMenu_SetSelectedID(LockyFriendFrame.CurseAssignmentMenu, NL.GetIndexFromTable(NL.CurseOptions, Warlock.CurseAssignment))
+	NL.UpdateCurseGraphic(LockyFriendFrame.CurseAssignmentMenu, NL.GetCurseValueFromDropDownList(LockyFriendFrame.CurseAssignmentMenu))
+	LockyFriendFrame.CurseAssignmentMenu.Text:SetText(NL.GetCurseValueFromDropDownList(LockyFriendFrame.CurseAssignmentMenu))
 	
 	--Set the BanishAssignmentMenu
 	--print("Updating Banish to: ".. Warlock.BanishAssignment)
-	UIDropDownMenu_SetSelectedID(LockyFriendFrame.BanishAssignmentMenu, GetIndexFromTable(BanishMarkers, Warlock.BanishAssignment))
-	UpdateBanishGraphic(LockyFriendFrame.BanishAssignmentMenu, GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, BanishMarkers))
-	LockyFriendFrame.BanishAssignmentMenu.Text:SetText(GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, BanishMarkers))
+	L_UIDropDownMenu_SetSelectedID(LockyFriendFrame.BanishAssignmentMenu, NL.GetIndexFromTable(NL.BanishMarkers, Warlock.BanishAssignment))
+	NL.UpdateBanishGraphic(LockyFriendFrame.BanishAssignmentMenu, NL.GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, NL.BanishMarkers))
+	LockyFriendFrame.BanishAssignmentMenu.Text:SetText(NL.GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, NL.BanishMarkers))
 
 	--Set the SS Assignment
 	--print("Updating SS to: ".. Warlock.SSAssignment)
-	UpdateDropDownMenuWithNewOptions(LockyFriendFrame.SSAssignmentMenu, GetSSTargets(), "SSAssignments");
-	UIDropDownMenu_SetSelectedID(LockyFriendFrame.SSAssignmentMenu, GetIndexFromTable(GetSSTargets(),Warlock.SSAssignment))
-	LockyFriendFrame.SSAssignmentMenu.Text:SetText(GetValueFromDropDownList(LockyFriendFrame.SSAssignmentMenu, GetSSTargets()))
+	NL.UpdateDropDownMenuWithNewOptions(LockyFriendFrame.SSAssignmentMenu, NL.GetSSTargets(), "SSAssignments");
+	L_UIDropDownMenu_SetSelectedID(LockyFriendFrame.SSAssignmentMenu, NL.GetIndexFromTable(NL.GetSSTargets(),Warlock.SSAssignment))
+	LockyFriendFrame.SSAssignmentMenu.Text:SetText(NL.GetValueFromDropDownList(LockyFriendFrame.SSAssignmentMenu, NL.GetSSTargets()))
 
 	--Update the Portrait picture	
 	if Warlock.Name=="" then
@@ -83,7 +83,7 @@ function UpdateLockyFrame(Warlock, LockyFriendFrame)
 	if(Warlock.AddonVersion == 0) then
 		LockyFriendFrame.Warning.value:SetText("Warning: Addon not installed")
 		LockyFriendFrame.Warning:Show();		
-	elseif (Warlock.AddonVersion< NL_Version) then
+	elseif (Warlock.AddonVersion< NL.Version) then
 		LockyFriendFrame.Warning.value:SetText("Warning: Addon out of date")
 		LockyFriendFrame.Warning:Show();
 	else
@@ -94,40 +94,40 @@ function UpdateLockyFrame(Warlock, LockyFriendFrame)
 end
 
 --This will use the global locky friends data.
-function UpdateAllLockyFriendFrames()
-	if NL_DebugMode then
+function NL.UpdateAllLockyFriendFrames()
+	if NL.DebugMode then
 		print("Updating all frames.")
 	end
-    ClearAllLockyFrames()
+    NL.ClearAllLockyFrames()
    -- print("All frames Cleared")
-    NL_ConsolidateFrameLocations()
+    NL.ConsolidateFrameLocations()
     --print("Frame Locations Consolidated")
-	for key, value in pairs(LockyFriendsData) do
-		UpdateLockyFrame(value, GetLockyFriendFrameById(value.LockyFrameLocation))
+	for key, value in pairs(NL.LockyFriendsData) do
+		NL.UpdateLockyFrame(value, NL.GetLockyFriendFrameById(value.LockyFrameLocation))
 	end
-	if NL_DebugMode then
+	if NL.DebugMode then
 		print("Frames updated successfully.")
 	end
-    LockyFrame.scrollbar:SetMinMaxValues(1, NL_GetMaxValueForScrollBar(LockyFriendsData))
+    LockyFrame.scrollbar:SetMinMaxValues(1, NL.GetMaxValueForScrollBar(NL.LockyFriendsData))
   --  print("ScrollRegion size updated successfully")
 end
 
 
 --Loops through and clears all of the data currently loaded.
-function  ClearAllLockyFrames()
+function  NL.ClearAllLockyFrames()
 	--print("Clearing the frames")
 	for key, value in pairs(LockyFrame.scrollframe.content.LockyFriendFrames) do
 
-		UpdateLockyFrame(nil, value)
+		NL.UpdateLockyFrame(nil, value)
 		--print(value.LockyFrameID, "successfully cleared.")
 	end
 end
 
 --This function will take in the warlock table object and update the frame assignment to make sense.
-function  NL_ConsolidateFrameLocations()
+function  NL.ConsolidateFrameLocations()
 	--Need to loop through and assign a locky frame id to a locky friend.
 	--print("Setting up FrameLocations for the locky friend data.")
-	for key, value in pairs(LockyFriendsData) do		
+	for key, value in pairs(NL.LockyFriendsData) do		
 		--print(value.Name, "will be assigned a frame.")
 		value.LockyFrameLocation = LockyFrame.scrollframe.content.LockyFriendFrames[key].LockyFrameID;
 		--print("Assigned Frame:",value.LockyFrameLocation)
@@ -140,9 +140,9 @@ end
 	Update the CD Tracker Text
 	else do nothing.
 	]]--
-function UpdateLockyClockys()
-	for k,v in pairs(LockyFriendsData) do
-		if (NL_DebugMode) then
+function NL.UpdateLockyClockys()
+	for k,v in pairs(NL.LockyFriendsData) do
+		if (NL.DebugMode) then
 			--print(v.Name, "on cooldown =", v.SSonCD)
 		end
 		if(v.SSonCD=="true") then
@@ -158,10 +158,10 @@ function UpdateLockyClockys()
 
 			local secondsRemaining = math.floor(absCD + CDLength - GetTime())
 			local result = SecondsToTime(secondsRemaining)			
-			if(NL_DebugMode and v.SSCooldown~=0) then
+			if(NL.DebugMode and v.SSCooldown~=0) then
 				--print(v.Name,"my time:", v.MyTime, "localtime:", v.LocalTime, "timeShift:", timeShift, "LocalCD", v.SSCooldown, "Abs CD:",absCD, "Time Remaining:",secondsRemaining)
 			end
-			local frame = GetLockyFriendFrameById(v.LockyFrameLocation)
+			local frame = NL.GetLockyFriendFrameById(v.LockyFrameLocation)
 			frame.SSCooldownTracker:SetText("CD "..result)
 
 			if secondsRemaining <=0 or v.SSCooldown == 0 then
@@ -173,27 +173,27 @@ function UpdateLockyClockys()
 end
 
 --Will set default assignments for curses / banishes and SS.
-function NL_SetDefaultAssignments(warlockTable)	
+function NL.SetDefaultAssignments(warlockTable)	
 	for k, y in pairs(warlockTable) do
 		if(k<=3)then
-			y.CurseAssignment = CurseOptions[k+1]
+			y.CurseAssignment = NL.CurseOptions[k+1]
 		else
-			y.CurseAssignment = CurseOptions[1]
+			y.CurseAssignment = NL.CurseOptions[1]
 		end
 
 		if(k<=7) then
-			y.BanishAssignment = BanishMarkers[k+1]
+			y.BanishAssignment = NL.BanishMarkers[k+1]
 		else
-			y.BanishAssignment = BanishMarkers[1]
+			y.BanishAssignment = NL.BanishMarkers[1]
 		end
 
 		if(k<=2) then
-			local strSS = GetSSTargets()[k]
+			local strSS = NL.GetSSTargets()[k]
 			--print(strSS)
 			y.SSAssignment = strSS
 		else
-			local targets = GetSSTargets()
-			y.SSAssignment = targets[GetTableLength(targets)]
+			local targets = NL.GetSSTargets()
+			y.SSAssignment = targets[NL.GetTableLength(targets)]
 		end
 	end	
 	return warlockTable
@@ -201,32 +201,32 @@ end
 
 -- Gets the index of the frame that currently houses a particular warlock. 
 -- This is used for force removal and not much else that I can recall.
-function  GetLockyFriendIndexByName(table, name)
+function  NL.GetLockyFriendIndexByName(table, name)
 
 	for key, value in pairs(table) do
 		--print(key, " -- ", value["LockyFrameID"])
 		--print(value.Name)
 		if value.Name == name then
-			if NL_DebugMode then
+			if NL.DebugMode then
 				print(value.Name, "is in position", key)
 			end
 			return key
 		end
 	end
-	if NL_DebugMode then
+	if NL.DebugMode then
 		print(name, "is not in the list.")
 	end
 	return nil
 end
 
 --Checks to see if the SS is on CD, and broadcasts if it is to all everyone.
-function CheckSSCD(self)
+function NL.CheckSSCD(self)
     local startTime, duration, enable = GetItemCooldown(16896)
     --if my CD in never locky is different from the what I am aware of then I need to update.
-	local myself = GetMyLockyData()
+	local myself = NL.GetMyLockyData()
 	if myself ~= nil then
 		if(myself.SSCooldown~=startTime) then
-			if NL_DebugMode then
+			if NL.DebugMode then
 				print("Personal SSCD detected.")
 			end
 			myself.SSCooldown = startTime
@@ -237,28 +237,28 @@ function CheckSSCD(self)
 		--If the SS is on CD then we broadcast that.
 		
 		--If the CD is on cooldown AND we have not broadcast in the last minute we will broadcast.
-		if(startTime > 0 and self.TimeSinceLastSSCDBroadcast > NeverLockySSCD_BroadcastInterval) then
+		if(startTime > 0 and self.TimeSinceLastSSCDBroadcast > NL.NeverLockySSCD_BroadcastInterval) then
 			self.TimeSinceLastSSCDBroadcast=0
-			BroadcastSSCooldown(myself)
+			NL.BroadcastSSCooldown(myself)
 		end
 	else
-		if NL_DebugMode then
+		if NL.DebugMode then
 			print("Something went horribly wrong.")
 		end
 	end
 end
 
-function ForceUpdateSSCD()
-	if NL_DebugMode then
+function NL.ForceUpdateSSCD()
+	if NL.DebugMode then
 		print("Forcing SSCD cache update.")
 	end
 
 	local startTime, duration, enable = GetItemCooldown(16896)
     --if my CD in never locky is different from the what I am aware of then I need to update.
-	local myself = GetMyLockyData()
+	local myself = NL.GetMyLockyData()
 	if myself ~= nil then
 		if(myself.SSCooldown~=startTime) then
-			if NL_DebugMode then
+			if NL.DebugMode then
 				print("Personal SSCD detected.")
 			end
 			myself.SSCooldown = startTime
@@ -266,21 +266,21 @@ function ForceUpdateSSCD()
 			myself.SSonCD = "true"
 		end    	
 	else
-		if NL_DebugMode then
+		if NL.DebugMode then
 			print("Something went horribly wrong.")
 		end
 	end
 end
 
 --Updates the cooldown of a warlock in the ui.
-function UpdateLockySSCDByName(name, cd)
-	local warlock = GetLockyDataByName(name)
-	if NL_DebugMode then
+function NL.UpdateLockySSCDByName(name, cd)
+	local warlock = NL.GetLockyDataByName(name)
+	if NL.DebugMode then
 		print("Attempting to update SS CD for", name);
 	end
     --if warlock.SSCooldown~=cd then
 		warlock.SSCooldown = cd      
-		if NL_DebugMode then
+		if NL.DebugMode then
 			print("Updated SS CD for", name,"successfully.");
 		end  
 	--end
@@ -289,25 +289,25 @@ end
 --Returns a warlock table object from the LockyFrame
 --This function is used to determine if unsaved UI changes have been made.
 --This will be used by the is dirty function to determine if the frame is dirty.
-function GetWarlockFromLockyFrame(LockyName)
-    local LockyFriendFrame = GetLockyFriendFrameByName(LockyName)
-    local Warlock = CreateWarlock(LockyFriendFrame.LockyName,
-        GetCurseValueFromDropDownList(LockyFriendFrame.CurseAssignmentMenu),
-        GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, BanishMarkers))                
-    Warlock.SSAssignment = GetValueFromDropDownList(LockyFriendFrame.SSAssignmentMenu, GetSSTargets())         
+function NL.GetWarlockFromLockyFrame(LockyName)
+    local LockyFriendFrame = NL.GetLockyFriendFrameByName(LockyName)
+    local Warlock = NL.CreateWarlock(LockyFriendFrame.LockyName,
+	NL.GetCurseValueFromDropDownList(LockyFriendFrame.CurseAssignmentMenu),
+	NL.GetValueFromDropDownList(LockyFriendFrame.BanishAssignmentMenu, NL.BanishMarkers))                
+    Warlock.SSAssignment = NL.GetValueFromDropDownList(LockyFriendFrame.SSAssignmentMenu, NL.GetSSTargets())         
     Warlock.LockyFrameLocation = LockyFriendFrame.LockyFrameID       
     return Warlock   
 end
 
 --Returns true if changes have been made but have not been saved.
-function NL_IsUIDirty(LockyData)
+function NL.IsUIDirty(LockyData)
 	if(not LockyData_HasInitialized) then	
-		LockyFriendsData = InitLockyFriendData();
+		NL.LockyFriendsData = NL.InitLockyFriendData();
 		LockyData_HasInitialized = true;
 		return true;
 	end
     for k, v in pairs(LockyData) do
-        local uiLock = GetWarlockFromLockyFrame(v.Name)
+        local uiLock = NL.GetWarlockFromLockyFrame(v.Name)
         if(v.CurseAssignment~=uiLock.CurseAssignment or
         v.BanishAssignment ~= uiLock.BanishAssignment or
         v.SSAssignment ~= uiLock.SSAssignment) then
@@ -318,11 +318,11 @@ function NL_IsUIDirty(LockyData)
 end
 
 --Commits any UI changes to the global LockyFriendsDataModel
-function NL_CommitChanges(LockyFriendsData)
+function NL.CommitChanges(LockyFriendsData)
     
     for k, v in pairs(LockyFriendsData) do
-        local uiLock = GetWarlockFromLockyFrame(v.Name)
-        if NL_DebugMode then
+        local uiLock = NL.GetWarlockFromLockyFrame(v.Name)
+        if NL.DebugMode then
 			print("Old: ", v.CurseAssignment, "New: ", uiLock.CurseAssignment)
 			print("Old: ", v.BanishAssignment, "New: ", uiLock.BanishAssignment)
 			print("Old",v.SSAssignment , "New:", uiLock.SSAssignment)
@@ -336,9 +336,9 @@ function NL_CommitChanges(LockyFriendsData)
     return LockyFriendsData
 end
 
-function AnnounceAssignments()
-	local AnnounceOption = 	GetValueFromDropDownList(LockyAnnouncerOptionMenu, AnnouncerOptions);
-	for k, v in pairs(LockyFriendsData) do
+function NL.AnnounceAssignments()
+	local AnnounceOption = 	NL.GetValueFromDropDownList(LockyAnnouncerOptionMenu, NL.AnnouncerOptions);
+	for k, v in pairs(NL.LockyFriendsData) do
 		local message = ""
 		if v.CurseAssignment ~= "None"  or v.BanishAssignment ~= "None" or v.SSAssignment~="None" then
 			message = v.Name .. ": ";
@@ -354,7 +354,7 @@ function AnnounceAssignments()
 		end		
 		
 		if AnnounceOption == "Addon Only" then
-			if NL_DebugMode then					
+			if NL.DebugMode then					
 				print(message)
 			end
 		elseif AnnounceOption == "Raid" then

@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Script file="Libs\LibStub\LibStub.lua"/>
+	<include file="Libs\!LibUIDropDownMenu\LibUIDropDownMenu\LibUIDropDownMenu.lua"/>
 	<Script File="LockyGlobalData.lua"/>
 	<Script file="Libs\Ace3.lua"/>
 	<Script File="LockyTableFunctions.lua"/>
@@ -9,6 +10,7 @@
 	<Script File="NeverLocky.lua"/>
 	<Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>		
 	<Include file="Libs\AceComm-3.0\AceComm-3.0.xml"/>
+	
 
 	<Frame name="NeverLockyFrame" toplevel="true" movable="true" enableMouse="true" parent="UIParent" hidden="true">
 		<Size>
@@ -100,7 +102,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						NL_Test()
+						NL.NL_Test()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -117,7 +119,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						NeverLocky_HideFrame()
+						NL.NeverLocky_HideFrame()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -134,7 +136,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						NeverLocky_Commit()
+						NL.NeverLocky_Commit()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -153,12 +155,12 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				NeverLockyInit()
+				NL.NeverLockyInit()
 				self:RegisterForDrag("LeftButton");
 				
 			</OnLoad>
 			<OnShow>	
-				NeverLocky_OnShowFrame()
+				NL.NeverLocky_OnShowFrame()
 			</OnShow>			
 			<OnDragStart>
 				self:StartMoving();
