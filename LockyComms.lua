@@ -70,6 +70,9 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
                     if IsMyDataDirty(lockydata) or NL_DebugMode then                    
                         SetLockyCheckFrameAssignments(lockydata.CurseAssignment, lockydata.BanishAssignment, lockydata.SSAssignment)
                     else
+                        --print("updating curse macro.")
+                        LockyAssignCheckFrame.activeCurse = lockydata.CurseAssignment;
+                        NL_SetupAssignmentMacro(LockyAssignCheckFrame.activeCurse);
                         SendAssignmentAcknowledgement("true");
                     end
                 end
@@ -106,6 +109,9 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
                         if IsMyDataDirty(lockydata) or NL_DebugMode then                    
                             SetLockyCheckFrameAssignments(lockydata.CurseAssignment, lockydata.BanishAssignment, lockydata.SSAssignment)
                         else
+                            print("updating curse macro.")
+                            LockyAssignCheckFrame.activeCurse = lockydata.CurseAssignment;
+                            NL_SetupAssignmentMacro(LockyAssignCheckFrame.activeCurse);
                             SendAssignmentAcknowledgement("true");
                         end
                     end
