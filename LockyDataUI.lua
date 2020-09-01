@@ -340,29 +340,43 @@ function NL.AnnounceAssignments()
 	local AnnounceOption = 	NL.GetValueFromDropDownList(LockyAnnouncerOptionMenu, NL.AnnouncerOptions);
 	for k, v in pairs(NL.LockyFriendsData) do
 		local message = ""
-		if v.CurseAssignment ~= "None"  or v.BanishAssignment ~= "None" or v.SSAssignment~="None" then
+		if v.CurseAssignme1nt ~= "None"  or v.BanishAssignment ~= "None" or v.SSAssignment~="None" then
 			message = v.Name .. ": ";
 		end
 		if v.CurseAssignment~="None" then
 			message = message.."Curse -> ".. v.CurseAssignment .." ";
+			NL.SendAnnounceMent(AnnounceOption, message);
 		end
 		if v.BanishAssignment~="None" then
-			message = message.."Banish -> {".. v.BanishAssignment .."} ";
+			message = v.Name .. ": ".."Banish -> {".. v.BanishAssignment .."} ";
+			NL.SendAnnounceMent(AnnounceOption, message);
 		end
 		if v.SSAssignment~="None" then
-			message = message.."SS -> "..v.SSAssignment .." ";
+			message = v.Name .. ": ".."SS -> "..v.SSAssignment .." ";
+			NL.SendAnnounceMent(AnnounceOption, message);
 		end		
-		
-		if AnnounceOption == "Addon Only" then
-			if NL.DebugMode then					
-				print(message)
-			end
-		elseif AnnounceOption == "Raid" then
-			SendChatMessage(message, "RAID", nil, nil)
-		elseif AnnounceOption == "Party" then
-			SendChatMessage(message, "PARTY", nil, nil)
-		elseif AnnounceOption == "Whisper" then
-			SendChatMessage(message, "WHISPER", nil, v.Name)
-		end
 	end		
+end
+
+function NL.SendAnnounceMent(AnnounceOption, message)
+	if AnnounceOption == "Addon Only" then
+		if NL.DebugMode then					
+			print(message)
+		end
+	elseif AnnounceOption == "Raid" then
+		SendChatMessage(message, "RAID", nil, nil)
+	elseif AnnounceOption == "Party" then
+		SendChatMessage(message, "PARTY", nil, nil)
+	elseif AnnounceOption == "Whisper" then
+		SendChatMessage(message, "WHISPER", nil, v.Name)
+	else
+		if(NL.DebugMode) then
+			print("Should send the announce here: " .. AnnounceOption)
+		end
+		
+		local index = GetChannelName(AnnounceOption) -- It finds General is a channel at index 1
+		if (index~=nil) then 
+			SendChatMessage(message , "CHANNEL", nil, index); 
+		end
+	end
 end

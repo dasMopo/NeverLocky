@@ -449,7 +449,9 @@ function NL.CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
     local NewDropDownMenu = CreateFrame("Button", "NL_DropDown0"..dropdowncount, ParentFrame, "L_UIDropDownMenuTemplate")
 
     local function OnClick(self)		
-        L_UIDropDownMenu_SetSelectedID(NewDropDownMenu, self:GetID())
+		
+		
+		L_UIDropDownMenu_SetSelectedID(NewDropDownMenu, self:GetID())
     
 		local selection = NL.GetValueFromDropDownList(NewDropDownMenu, OptionList)
 		if NL.DebugMode then
@@ -466,7 +468,7 @@ function NL.CreateDropDownMenu(ParentFrame, OptionList, DropDownType)
 			info.value = v
 			info.func = OnClick
 			L_UIDropDownMenu_AddButton(info, level)
-		end
+		end		
     end
     L_UIDropDownMenu_Initialize(NewDropDownMenu, initialize)
     L_UIDropDownMenu_SetWidth(NewDropDownMenu, 100);
@@ -700,7 +702,7 @@ function NL.InitPersonalMonitorFrame()
 
 	LockyPersonalMonitorFrame:Hide();
 	--UpdateCurseGraphic(LockyPersonalMonitorFrame, "Agony")
-	print("Personal Monitor loaded.")
+	--print("Personal Monitor loaded.")
 	--print(LockyPersonalMonitorFrame.CurseGraphicFrame.CurseTexture)
 end
 
@@ -765,6 +767,32 @@ function NL.UpdatePersonalMonitorSize(myData)
 end
 
 function NL.InitAnnouncerOptionFrame()
-	LockyAnnouncerOptionMenu = NL.CreateDropDownMenu(NLAnnouncerContainer, NL.AnnouncerOptions, "CHAT")
-	LockyAnnouncerOptionMenu:SetPoint("CENTER", NLAnnouncerContainer, "CENTER", 0,0);
+		--print("Creating Announcer menu");
+		LockyAnnouncerOptionMenu = NL.CreateDropDownMenu(NLAnnouncerContainer, NL.AnnouncerOptions, "CHAT")	
+		LockyAnnouncerOptionMenu:SetPoint("CENTER", NLAnnouncerContainer, "CENTER", 0,0);	
+end
+
+function NL.SetExtraChats()
+	NL.AnnouncerOptions ={
+		"Addon Only",
+		"Raid",
+		"Party",
+		"Whisper"
+	}
+	local channels = { }
+	local chanList = { GetChannelList() }
+	for i=1, #chanList, 3 do			
+		local chanName = string.upper(chanList[i+1]);
+		
+		if chanName~= string.upper("General") 
+		and chanName ~= string.upper("Trade")
+		and chanName ~= string.upper("LocalDefense")
+		and chanName ~= string.upper("WorldDefense") 
+		and chanName ~= string.upper("LookingForGroup")
+		and chanName ~= "LFG" then
+			table.insert(NL.AnnouncerOptions, chanList[i+1]);
+		end
+	end
+	--print("Updating Announcer Menu")
+	NL.UpdateDropDownMenuWithNewOptions(LockyAnnouncerOptionMenu, NL.AnnouncerOptions, "CHAT")
 end

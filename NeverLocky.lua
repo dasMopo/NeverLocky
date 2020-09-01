@@ -13,8 +13,8 @@ function NL.NeverLockyInit()
 		--print("LockyFriendsData Default Assignments Set successfully.")
 		NL.UpdateAllLockyFriendFrames();
 		
-		print("Never Locky has been registered to the WOW UI.")		
-		print("Use /nl or /neverlocky to view assignment information.")
+		print("|cff9322B5 Never Locky|cFFFFFFFF has been registered to the WOW UI.")		
+		print("Use |cff9322B5/nl|cFFFFFFFF or |cff9322B5/neverlocky|cFFFFFFFF to view assignment information.")
 		--NeverLockyFrame:Show()
 		NL.InitLockyAssignCheckFrame();	
 		NL.InitPersonalMonitorFrame();
@@ -201,6 +201,7 @@ end
 function NL.NeverLocky_OnShowFrame()
 	if not LockyData_HasInitialized then
 		NL.LockyFriendsData = NL.InitLockyFriendData()
+		
 		--LockyData_Timestamp = 0
 		LockyData_HasInitialized = true
 		if NL.DebugMode then
@@ -213,6 +214,7 @@ function NL.NeverLocky_OnShowFrame()
 	if NL.DebugMode then
 		print("Frame should be showing now.")	
 	end
+	
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
 	--print("Updating SS targets")
 	NL.UpdateSSTargets()
@@ -226,6 +228,7 @@ function NL.NeverLocky_OnShowFrame()
 		NL.RaidMode = false;
 		NL.LockyFriendsData = NL.RegisterMySoloData();
 	end
+	NL.SetExtraChats();
 end
 
 -- /command for opening the ui.
