@@ -76,6 +76,14 @@ Features:
             - If the NL Curse Macro does not exist.        
                 - Create the macro when the user accepts the assignment.
             - If the NL Macro exists then update it to the appropriate spell.
+    Reduced global taint.
+        Replaced the underlying architecture of all of the drop down menus to get away from blizzards non-taint-safe implementation.
+        This was a bear, about 6+ hours worth of work to replace the vast majority of my globals with a single global. 
+        There is still some taint according to the taintlog but it is no longer as eggregious as it was.
+    Added the ability to send assignments to custom channels.
+        Custom channels are registered when the UI is pulled up.
+        Channels are properly added or taken away if the user leaves them.
+
 
 ToDo:
     Add a notification system the will show messages when action is needed I.E - SS needed, Curse Needed, Banish wearing off--
@@ -84,10 +92,10 @@ ToDo:
 
     Issue - If a raider leaves and the assignments are taken away then portaits can be sticky. Not sure if this will affect it in raid mode.
 
-    Issue - There is a race condition that is loable to cause data corruption but I need to track it down.
-
-    Reduce global taint.
-
-    Add the ability to send assignments to custom channels.
+    Issue - There is a race condition that is liable to cause data corruption but I need to track it down.
+        Steps to reproduce:
+            3 addon users need to be in the raid, and 2 of them need to /rl at the same time.
+            Can also be recreated in the case of mass DC. 
 
     Remove the filter on soulstone recipients.
+        I want to add a sort to the list and color code names based on classes.
