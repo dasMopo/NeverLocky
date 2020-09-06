@@ -345,20 +345,20 @@ function NL.AnnounceAssignments()
 		end
 		if v.CurseAssignment~="None" then
 			message = message.."Curse -> ".. v.CurseAssignment .." ";
-			NL.SendAnnounceMent(AnnounceOption, message);
+			NL.SendAnnounceMent(AnnounceOption, message, v);
 		end
 		if v.BanishAssignment~="None" then
 			message = v.Name .. ": ".."Banish -> {".. v.BanishAssignment .."} ";
-			NL.SendAnnounceMent(AnnounceOption, message);
+			NL.SendAnnounceMent(AnnounceOption, message, v);
 		end
 		if v.SSAssignment~="None" then
 			message = v.Name .. ": ".."SS -> "..v.SSAssignment .." ";
-			NL.SendAnnounceMent(AnnounceOption, message);
+			NL.SendAnnounceMent(AnnounceOption, message, v);
 		end		
 	end		
 end
 
-function NL.SendAnnounceMent(AnnounceOption, message)
+function NL.SendAnnounceMent(AnnounceOption, message, v)
 	if AnnounceOption == "Addon Only" then
 		if NL.DebugMode then					
 			print(message)
