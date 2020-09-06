@@ -83,6 +83,9 @@ Features:
     Added the ability to send assignments to custom channels.
         Custom channels are registered when the UI is pulled up.
         Channels are properly added or taken away if the user leaves them.
+    Issue - Need to fix whisper announcements
+        - Done..... I noobed out on that one.... .Net would never have allowed that to ship.
+    Feature Update - Added mouseover capability to the assignment macro.
 
 
 ToDo:
