@@ -302,16 +302,20 @@ function NL.SetupAssignmentMacro(CurseAssignment)
 			print("Updating macro ".. macroIndex .. " to the new assigment " .. curseName);
 		end
 
-		EditMacro(macroIndex, NL.MacroName, GetSpellTexture(NL.GetSpellIdFromDropDownList(CurseAssignment)), "#showtooltip ".. curseName .." \n/Cast ".. curseName ..";", 1, 1);
+		EditMacro(macroIndex, NL.MacroName, GetSpellTexture(NL.GetSpellIdFromDropDownList(CurseAssignment)), NL.BuildMacroTexe(curseName), 1, 1);
 		
 		if NL.DebugMode then
 			print("Update success!!!!!");
 		end
 	end
-
-
 	-- CreateMacro("MyMacro", "INV_MISC_QUESTIONMARK", "/script CastSpellById(1);", 1);
 	-- I think I can just pass in the texture in param 2?
-
 end
 
+function  NL.BuildMacroTexe(curseName)
+	return "#showtooltip "..
+	 curseName ..
+	 "\n/stopcasting" ..
+	 "\n/Cast [@mouseover,exists,harm,nodead][]"..
+	 curseName ..";"
+end
