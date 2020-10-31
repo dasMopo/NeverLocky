@@ -654,6 +654,141 @@ function UpdateAssignedCurseGraphic(CurseGraphicFrame, CurseListValue)
 	end
 end
 
+
+
+function InitMonitorFrame()
+	--LockyPersonalAnchorButton = CreateFrame("Button", nil, UIParent)
+	--LockyPersonalAnchorButton:SetSize(30,30)
+	--LockyPersonalAnchorButton:SetPoint("CENTER", UIParent, "CENTER")
+
+
+	LockyMonitorFrame = CreateFrame("Frame", nil, UIParent);
+
+	LockyMonitorFrame:SetSize(66, 34) 
+	LockyMonitorFrame:SetPoint("TOP", UIParent, "TOP",0,-75) 
+
+	--LockyMonitorFrame:SetBackdrop({
+	-- 	bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
+	-- 	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
+	-- 	tile = true,
+	-- 	tileSize = 32,
+	-- 	edgeSize = 12,
+	-- 	insets = { left = 0, right = 0, top = 0, bottom = 0 }
+	-- });
+
+	LockyMonitorFrame:RegisterForDrag("LeftButton");
+	LockyMonitorFrame:SetMovable(true);
+	LockyMonitorFrame:EnableMouse(true);
+
+	LockyMonitorFrame:SetScript("OnDragStart", LockyMonitorFrame.StartMoving);
+	LockyMonitorFrame:SetScript("OnDragStop", LockyMonitorFrame.StopMovingOrSizing);
+
+    local LockyAnchorFrame = LockyMonitorFrame;
+    
+    for i=0, 4 do
+        LockyAnchorFrame.CurseGraphicFrame = CreateFrame("Frame", "CurseGraphicFrame_"..i, LockyAnchorFrame)
+        LockyAnchorFrame.CurseGraphicFrame:SetSize(30,30)
+        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "BOTTOM", 0, -20*i)
+
+        LockyAnchorFrame.BanishGraphicFrame = CreateFrame("Frame", "BanishGraphicFrame_"..i, LockyAnchorFrame)
+        LockyAnchorFrame.BanishGraphicFrame:SetSize(30,30)
+        LockyAnchorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.CurseGraphicFrame, "RIGHT", 2, 0)
+        
+        LockyAnchorFrame.TextAnchorFrame = CreateFrame("Frame", "TextAnchorFrame_"..i, LockyAnchorFrame)
+        LockyAnchorFrame.TextAnchorFrame:SetSize(5,30)
+        LockyAnchorFrame.TextAnchorFrame:SetPoint("LEFT", LockyAnchorFrame.CurseGraphicFrame, "RIGHT", 2, 0)
+        
+-- LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil,"ARTWORK") 
+        LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
+-- LockyAnchorFrame.TextAnchorFrame.text:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE")
+-- LockyAnchorFrame.TextAnchorFrame.text:SetPoint("CENTER",0,0)
+        LockyAnchorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 5, 0)
+--         LockyAnchorFrame.TextAnchorFrame.text:SetJustifyH("CENTER")
+-- 		LockyAnchorFrame.TextAnchorFrame.text:SetJustifyV("CENTER")
+        LockyAnchorFrame.TextAnchorFrame.text:SetText("No Locks in raid.")
+        
+--         NamePlate = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+-- 		NamePlate:SetWidth(75)
+-- 		NamePlate:SetJustifyH("CENTER")
+-- 		NamePlate:SetJustifyV("CENTER")
+-- 		NamePlate:SetTextColor(1,1,1,1)
+-- 		NamePlate:SetText("Dummy #"..i)
+        
+--         LockyAnchorFrame.SSAssignmentText = NL.AddTextToFrame(LockyAnchorFrame.TextAnchorFrame, "", 75);
+--         LockyAnchorFrame.SSAssignmentText:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 5, 0)
+--         LockyAnchorFrame.SSAssignmentText:SetJustifyH("LEFT")
+--         LockyAnchorFrame.SSAssignmentText:SetText("Dummy #"..i);
+        
+        print(LockyAnchorFrame.TextAnchorFrame:GetName());
+
+
+--         LockyAnchorFrame = LockyAnchorFrame.CurseGraphicFrame;
+        
+        
+	end
+	
+    
+    local children = {LockyMonitorFrame:GetChildren() }
+    for i, child in ipairs(children) do
+        print("   "..child:GetName());
+    end   
+    
+    
+    -- LockyMonitorFrame.TextAnchorFrame_0.NamePlate:SetText("Ima no dummy.");
+    
+--     LockyMonitorFrame.TextAnchorFrame.text:SetText("Ima no dummy.")
+    
+    
+    for i=0, 4 do    
+        _G["TextAnchorFrame_"..i].text:SetText("#"..i.." All work and no play ...")
+    end
+    
+
+	LockyMonitorFrame.MainLabel = NL_AddTextToFrame(LockyMonitorFrame,"Global Lock Assigns:", 125);
+	LockyMonitorFrame.MainLabel:SetPoint("BOTTOM", LockyMonitorFrame, "TOP");
+
+	--LockyMonitorFrame:Hide();
+    
+    
+    
+    
+    
+    --LockyMonitorFrame.SSAssignmentText:SetText("Ima no dummy.");
+    
+--     TextAnchorFrame_2:SetText("Ima no dummy.");
+    
+    
+    
+    --_G["TextAnchorFrame_0"..2].SSAssignmentText:SetText("Ima no dummy.");
+	
+	--UpdateCurseGraphic(LockyMonitorFrame, "Agony")
+	--print("Personal Monitor loaded.")
+	--print(LockyMonitorFrame.CurseGraphicFrame.CurseTexture)
+    
+    
+    
+    if not LockyData_HasInitialized then
+        LockyFriendsData = InitLockyFriendData()
+        
+        --LockyData_Timestamp = 0
+        LockyData_HasInitialized = true
+        if DebugMode then
+            print("Initialization complete");
+        end		
+        print("Found " .. GetTableLength(LockyFriendsData) .. " Warlocks in raid." );
+        local num = 0;
+        for key, value in pairs(LockyFriendsData) do
+            print(key..": "..value.Name)
+            _G["TextAnchorFrame_"..num].text:SetText("#"..num.." "..value.Name)
+            num = num + 1
+        end
+    end    
+    
+end
+
+
+
+
 function InitPersonalMonitorFrame()
 	--LockyPersonalAnchorButton = CreateFrame("Button", nil, UIParent)
 	--LockyPersonalAnchorButton:SetSize(30,30)
