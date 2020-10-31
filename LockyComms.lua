@@ -127,11 +127,11 @@ function NeverLocky:OnCommReceived(prefix, message, distribution, sender)
             end               
         end 
         
-        if myData.CurseAssignment == "None" and myData.BanishAssignment == "None" and myData.SSAssignment == "None" then
-            LockyPersonalMonitorFrame:Hide();
-        else
+        -- if myData.CurseAssignment == "None" and myData.BanishAssignment == "None" and myData.SSAssignment == "None" then
+        --    LockyPersonalMonitorFrame:Hide();
+        -- else
             LockyPersonalMonitorFrame:Show();
-        end
+        -- end
     elseif message.action == NL_CommAction.RequestAssignments then
         if RaidMode then
             if NL_DebugMode then

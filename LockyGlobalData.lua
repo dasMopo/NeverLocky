@@ -46,7 +46,8 @@ function NL_RegisterWarlocks()
 				if NL_DebugMode then
 					print(name .. "-" .. fileName)
 				end
-				table.insert(raidInfo, CreateWarlock(name, "None", "None"))
+				table.insert(raidInfo, CreateWarlock(name, "Shadows", "Circle"))
+				-- table.insert(raidInfo, CreateWarlock(name, "None", "None"))
 			end
 		end		
 	end

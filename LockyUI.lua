@@ -654,7 +654,28 @@ function UpdateAssignedCurseGraphic(CurseGraphicFrame, CurseListValue)
 	end
 end
 
-
+function UpdateAssignedBanishGraphic(BanishGraphicFrame, CurseListValue)
+	--print("Updating Banish Graphic to " .. BanishListValue)
+	if not (BanishListValue == nil) then
+		if(BanishGraphicFrame.BanishTexture == nil) then
+			local BanishGraphic = BanishGraphicFrame:CreateTexture(nil, "OVERLAY") 
+			BanishGraphic:SetAllPoints()
+			BanishGraphic:SetTexture(GetAssetLocationFromRaidMarker(BanishListValue))
+			BanishGraphicFrame.BanishTexture = BanishGraphic
+		else
+			BanishGraphicFrame.BanishTexture:SetTexture(GetAssetLocationFromRaidMarker(BanishListValue))	
+		end		
+	else 
+		if (BanishGraphicFrame.BanishTexture == nil) then
+			local BanishGraphic = BanishGraphicFrame:CreateTexture(nil, "OVERLAY") 
+			BanishGraphic:SetAllPoints()
+			BanishGraphic:SetColorTexture(0,0,0,0)
+			BanishGraphicFrame.BanishTexture = BanishGraphic
+		else
+			BanishGraphicFrame.BanishTexture:SetColorTexture(0,0,0,0)			
+		end
+	end
+end
 
 function InitMonitorFrame()
 	--LockyPersonalAnchorButton = CreateFrame("Button", nil, UIParent)
@@ -664,17 +685,19 @@ function InitMonitorFrame()
 
 	LockyMonitorFrame = CreateFrame("Frame", nil, UIParent);
 
-	LockyMonitorFrame:SetSize(66, 34) 
+	LockyMonitorFrame:SetSize(200, 34) 
 	LockyMonitorFrame:SetPoint("TOP", UIParent, "TOP",0,-75) 
 
-	--LockyMonitorFrame:SetBackdrop({
-	-- 	bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
-	-- 	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
-	-- 	tile = true,
-	-- 	tileSize = 32,
-	-- 	edgeSize = 12,
-	-- 	insets = { left = 0, right = 0, top = 0, bottom = 0 }
-	-- });
+	LockyMonitorFrame:SetBackdrop({
+	 	bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
+	 	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
+	 	tile = true,
+	 	tileSize = 32,
+	 	edgeSize = 24,
+	 	insets = { left = 0, right = 0, top = 0, bottom = 0 }
+	 });
+
+
 
 	LockyMonitorFrame:RegisterForDrag("LeftButton");
 	LockyMonitorFrame:SetMovable(true);
@@ -688,7 +711,7 @@ function InitMonitorFrame()
     for i=0, 4 do
         LockyAnchorFrame.CurseGraphicFrame = CreateFrame("Frame", "CurseGraphicFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.CurseGraphicFrame:SetSize(30,30)
-        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "BOTTOM", 0, -20*i)
+        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOP", -100, (-32*i)-16)
 
         LockyAnchorFrame.BanishGraphicFrame = CreateFrame("Frame", "BanishGraphicFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.BanishGraphicFrame:SetSize(30,30)
@@ -727,11 +750,14 @@ function InitMonitorFrame()
         
 	end
 	
+	if (NL_DebugMode) then
+		local children = {LockyMonitorFrame:GetChildren() }
+		for i, child in ipairs(children) do
+			print("   "..child:GetName());
+		end
+	end
     
-    local children = {LockyMonitorFrame:GetChildren() }
-    for i, child in ipairs(children) do
-        print("   "..child:GetName());
-    end   
+	LockyMonitorFrame:SetSize(200, 300)     
     
     
     -- LockyMonitorFrame.TextAnchorFrame_0.NamePlate:SetText("Ima no dummy.");
@@ -744,20 +770,13 @@ function InitMonitorFrame()
     end
     
 
-	LockyMonitorFrame.MainLabel = NL_AddTextToFrame(LockyMonitorFrame,"Global Lock Assigns:", 125);
-	LockyMonitorFrame.MainLabel:SetPoint("BOTTOM", LockyMonitorFrame, "TOP");
+	LockyMonitorFrame.MainLabel = NL_AddTextToFrame(LockyMonitorFrame,"Global Lock Assigns:", 175);
+	LockyMonitorFrame.MainLabel:SetPoint("BOTTOM", LockyMonitorFrame, "TOP", 0, 0);
 
 	--LockyMonitorFrame:Hide();
     
-    
-    
-    
-    
-    --LockyMonitorFrame.SSAssignmentText:SetText("Ima no dummy.");
-    
---     TextAnchorFrame_2:SetText("Ima no dummy.");
-    
-    
+    -- LockyMonitorFrame.SSAssignmentText:SetText("Ima no dummy.");
+    -- TextAnchorFrame_2:SetText("Ima no dummy.");
     
     --_G["TextAnchorFrame_0"..2].SSAssignmentText:SetText("Ima no dummy.");
 	
@@ -766,7 +785,10 @@ function InitMonitorFrame()
 	--print(LockyMonitorFrame.CurseGraphicFrame.CurseTexture)
     
     
-    
+end
+
+function UpdateMonitorFrame()
+
     if not LockyData_HasInitialized then
         LockyFriendsData = InitLockyFriendData()
         
@@ -776,18 +798,19 @@ function InitMonitorFrame()
             print("Initialization complete");
         end		
         print("Found " .. GetTableLength(LockyFriendsData) .. " Warlocks in raid." );
-        local num = 0;
-        for key, value in pairs(LockyFriendsData) do
-            print(key..": "..value.Name)
-            _G["TextAnchorFrame_"..num].text:SetText("#"..num.." "..value.Name)
-            num = num + 1
-        end
-    end    
-    
+	end
+        
+	local num = 0;
+	for key, value in pairs(LockyFriendsData) do
+		print(key..": "..value.Name)
+		_G["TextAnchorFrame_"..num].text:SetText("#"..num.." "..value.Name)
+		-- curseFrame = _G["CurseGraphicFrame_"..num]
+		UpdateAssignedCurseGraphic(_G["CurseGraphicFrame_"..num], value.CurseAssignment)
+		UpdateAssignedBanishGraphic(_G["BanishGraphicFrame_"..num], value.BanishAssignment)
+		num = num + 1
+	end
+
 end
-
-
-
 
 function InitPersonalMonitorFrame()
 	--LockyPersonalAnchorButton = CreateFrame("Button", nil, UIParent)
