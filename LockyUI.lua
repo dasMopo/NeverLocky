@@ -632,15 +632,17 @@ end
 
 
 function UpdateAssignedCurseGraphic(CurseGraphicFrame, CurseListValue)
-	--print("Updating Curse Graphic to " .. CurseListValue)
+	if NL_DebugMode then
+		print("Updating Curse Graphic to "..CurseListValue..":"..GetSpellIdFromDropDownList(CurseListValue))
+	end
 	if not (CurseListValue == nil) then
 		if(CurseGraphicFrame.CurseTexture == nil) then
 			local CurseGraphic = CurseGraphicFrame:CreateTexture(nil, "OVERLAY") 
 			CurseGraphic:SetAllPoints()
-			CurseGraphic:SetTexture(GetSpellTexture(11713))
+			CurseGraphic:SetTexture(GetSpellTexture(GetSpellIdFromDropDownList(CurseListValue)))
 			CurseGraphicFrame.CurseTexture = CurseGraphic
 		else
-			CurseGraphicFrame.CurseTexture:SetTexture(GetSpellTexture(11713))		
+			CurseGraphicFrame.CurseTexture:SetTexture(GetSpellTexture(GetSpellIdFromDropDownList(CurseListValue)))
 		end		
 	else 
 		if (CurseGraphicFrame.CurseTexture == nil) then
@@ -654,8 +656,10 @@ function UpdateAssignedCurseGraphic(CurseGraphicFrame, CurseListValue)
 	end
 end
 
-function UpdateAssignedBanishGraphic(BanishGraphicFrame, CurseListValue)
-	--print("Updating Banish Graphic to " .. BanishListValue)
+function UpdateAssignedBanishGraphic(BanishGraphicFrame, BanishListValue)
+	if NL_DebugMode then
+		print("Updating Banish Graphic to "..BanishListValue..":"..GetAssetLocationFromRaidMarker(BanishListValue))
+	end
 	if not (BanishListValue == nil) then
 		if(BanishGraphicFrame.BanishTexture == nil) then
 			local BanishGraphic = BanishGraphicFrame:CreateTexture(nil, "OVERLAY") 
@@ -672,7 +676,32 @@ function UpdateAssignedBanishGraphic(BanishGraphicFrame, CurseListValue)
 			BanishGraphic:SetColorTexture(0,0,0,0)
 			BanishGraphicFrame.BanishTexture = BanishGraphic
 		else
-			BanishGraphicFrame.BanishTexture:SetColorTexture(0,0,0,0)			
+			BanishGraphicFrame.BanishTexture:SetColorTexture(0,0,0,0)
+		end
+	end
+end
+
+function UpdateAssignedSoulstoneGraphic(SoulstoneGraphicFrame, SoulstoneTarget)
+	if NL_DebugMode then
+		print("Updating Soulstone target to "..SoulstoneTarget)
+	end
+	if not (SoulstoneTarget == nil) then
+		if(SoulstoneGraphicFrame.SoulstoneTexture == nil) then
+			local SoulstoneGraphic = SoulstoneGraphicFrame:CreateTexture(nil, "OVERLAY") 
+			SoulstoneGraphic:SetAllPoints()
+			SoulstoneGraphic:SetTexture(GetItemIcon(16896))
+			SoulstoneGraphicFrame.SoulstoneTexture = SoulstoneGraphic
+		else
+			SoulstoneGraphicFrame.SoulstoneTexture:SetTexture(GetItemIcon(16896))
+		end		
+	else 
+		if(SoulstoneGraphicFrame.SoulstoneTexture == nil) then
+			local SoulstoneGraphic = SoulstoneGraphicFrame:CreateTexture(nil, "OVERLAY") 
+			SoulstoneGraphic:SetAllPoints()
+			SoulstoneGraphic:SetTexture(GetItemIcon(16896))
+			SoulstoneGraphicFrame.SoulstoneTexture = SoulstoneGraphic
+		else
+			SoulstoneGraphicFrame.SoulstoneTexture:SetTexture(GetItemIcon(16896))
 		end
 	end
 end
@@ -682,12 +711,11 @@ function InitMonitorFrame()
 	--LockyPersonalAnchorButton:SetSize(30,30)
 	--LockyPersonalAnchorButton:SetPoint("CENTER", UIParent, "CENTER")
 
-
 	LockyMonitorFrame = CreateFrame("Frame", nil, UIParent);
-
 	LockyMonitorFrame:SetSize(200, 34) 
 	LockyMonitorFrame:SetPoint("TOP", UIParent, "TOP",0,-75) 
 
+	-- background setting for the whole frame
 	LockyMonitorFrame:SetBackdrop({
 	 	bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
 	 	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
@@ -698,7 +726,7 @@ function InitMonitorFrame()
 	 });
 
 
-
+	-- mouse drag handling
 	LockyMonitorFrame:RegisterForDrag("LeftButton");
 	LockyMonitorFrame:SetMovable(true);
 	LockyMonitorFrame:EnableMouse(true);
@@ -706,26 +734,46 @@ function InitMonitorFrame()
 	LockyMonitorFrame:SetScript("OnDragStart", LockyMonitorFrame.StartMoving);
 	LockyMonitorFrame:SetScript("OnDragStop", LockyMonitorFrame.StopMovingOrSizing);
 
+	-- provide a button for manual update
+	updateButton = CreateFrame("Button", "UpdateButton", UIParent, "UIPanelButtonTemplate", 0)
+	updateButton:SetSize(32,32)
+	updateButton:SetPoint("TOP", LockyMonitorFrame, "TOPLEFT", 0, 32)
+	--updateButton:SetBackdrop({
+	 	--bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
+	 	--edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
+	 	--tile = true,
+	 	--tileSize = 32,
+	 	--edgeSize = 24,
+	 	--insets = { left = 0, right = 0, top = 0, bottom = 0 }
+	 --});
+	 updateButton:SetText("U")
+	 updateButton:SetScript("OnClick", function(self) UpdateMonitorFrame() end)
+	 
+
     local LockyAnchorFrame = LockyMonitorFrame;
     
     for i=0, 4 do
         LockyAnchorFrame.CurseGraphicFrame = CreateFrame("Frame", "CurseGraphicFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.CurseGraphicFrame:SetSize(30,30)
-        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOP", -100, (-32*i)-16)
+        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOPLEFT", 26, (-32*i)-16)
 
         LockyAnchorFrame.BanishGraphicFrame = CreateFrame("Frame", "BanishGraphicFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.BanishGraphicFrame:SetSize(30,30)
-        LockyAnchorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.CurseGraphicFrame, "RIGHT", 2, 0)
+        LockyAnchorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.CurseGraphicFrame, "RIGHT", 5, 0)
+        
+        LockyAnchorFrame.SoulstoneGraphicFrame = CreateFrame("Frame", "SoulstoneGraphicFrame_"..i, LockyAnchorFrame)
+        LockyAnchorFrame.SoulstoneGraphicFrame:SetSize(30,30)
+        LockyAnchorFrame.SoulstoneGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.BanishGraphicFrame, "RIGHT", 5, 0)
         
         LockyAnchorFrame.TextAnchorFrame = CreateFrame("Frame", "TextAnchorFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.TextAnchorFrame:SetSize(5,30)
-        LockyAnchorFrame.TextAnchorFrame:SetPoint("LEFT", LockyAnchorFrame.CurseGraphicFrame, "RIGHT", 2, 0)
+        LockyAnchorFrame.TextAnchorFrame:SetPoint("LEFT", LockyAnchorFrame.SoulstoneGraphicFrame, "RIGHT", 2, 0)
         
 -- LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil,"ARTWORK") 
         LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
 -- LockyAnchorFrame.TextAnchorFrame.text:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE")
 -- LockyAnchorFrame.TextAnchorFrame.text:SetPoint("CENTER",0,0)
-        LockyAnchorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 5, 0)
+        LockyAnchorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 2, 0)
 --         LockyAnchorFrame.TextAnchorFrame.text:SetJustifyH("CENTER")
 -- 		LockyAnchorFrame.TextAnchorFrame.text:SetJustifyV("CENTER")
         LockyAnchorFrame.TextAnchorFrame.text:SetText("No Locks in raid.")
@@ -750,7 +798,7 @@ function InitMonitorFrame()
         
 	end
 	
-	if (NL_DebugMode) then
+	if NL_DebugMode then
 		local children = {LockyMonitorFrame:GetChildren() }
 		for i, child in ipairs(children) do
 			print("   "..child:GetName());
@@ -764,9 +812,13 @@ function InitMonitorFrame()
     
 --     LockyMonitorFrame.TextAnchorFrame.text:SetText("Ima no dummy.")
     
-    
-    for i=0, 4 do    
-        _G["TextAnchorFrame_"..i].text:SetText("#"..i.." All work and no play ...")
+    -- dummy data
+    for num=0, 4 do    
+        --_G["TextAnchorFrame_"..i].text:SetText("#"..i.." All work and no play ...")
+ 		_G["TextAnchorFrame_"..num].text:SetText("#"..num.." Warlock_"..num)
+		UpdateAssignedCurseGraphic(_G["CurseGraphicFrame_"..num], "Doom LOL")
+		UpdateAssignedBanishGraphic(_G["BanishGraphicFrame_"..num], "Skull")
+		UpdateAssignedSoulstoneGraphic(_G["SoulstoneGraphicFrame_"..num], "Noone")
     end
     
 
@@ -783,18 +835,22 @@ function InitMonitorFrame()
 	--UpdateCurseGraphic(LockyMonitorFrame, "Agony")
 	--print("Personal Monitor loaded.")
 	--print(LockyMonitorFrame.CurseGraphicFrame.CurseTexture)
-    
+	
+	UpdateMonitorFrame()
     
 end
 
 function UpdateMonitorFrame()
 
-    if not LockyData_HasInitialized then
+	if NL_DebugMode then
+		print("Updating monitor frame.")
+	end
+
+    if not (LockyData_HasInitialized) then
         LockyFriendsData = InitLockyFriendData()
-        
         --LockyData_Timestamp = 0
         LockyData_HasInitialized = true
-        if DebugMode then
+        if NL_DebugMode then
             print("Initialization complete");
         end		
         print("Found " .. GetTableLength(LockyFriendsData) .. " Warlocks in raid." );
@@ -802,11 +858,13 @@ function UpdateMonitorFrame()
         
 	local num = 0;
 	for key, value in pairs(LockyFriendsData) do
-		print(key..": "..value.Name)
+		if NL_DebugMode then
+			print ("#"..num..":"..value.Name.." C:"..value.CurseAssignment.." B:"..value.BanishAssignment)
+		end	
 		_G["TextAnchorFrame_"..num].text:SetText("#"..num.." "..value.Name)
-		-- curseFrame = _G["CurseGraphicFrame_"..num]
 		UpdateAssignedCurseGraphic(_G["CurseGraphicFrame_"..num], value.CurseAssignment)
 		UpdateAssignedBanishGraphic(_G["BanishGraphicFrame_"..num], value.BanishAssignment)
+		UpdateAssignedSoulstoneGraphic(_G["SoulstoneGraphicFrame_"..num], value.SoulstoneAssignment)
 		num = num + 1
 	end
 
