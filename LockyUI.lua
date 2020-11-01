@@ -712,7 +712,7 @@ function InitMonitorFrame()
 	--LockyPersonalAnchorButton:SetPoint("CENTER", UIParent, "CENTER")
 
 	LockyMonitorFrame = CreateFrame("Frame", nil, UIParent);
-	LockyMonitorFrame:SetSize(200, 34) 
+	LockyMonitorFrame:SetSize(100, 34) 
 	LockyMonitorFrame:SetPoint("TOP", UIParent, "TOP",0,-75) 
 
 	-- background setting for the whole frame
@@ -769,26 +769,9 @@ function InitMonitorFrame()
         LockyAnchorFrame.TextAnchorFrame:SetSize(5,30)
         LockyAnchorFrame.TextAnchorFrame:SetPoint("LEFT", LockyAnchorFrame.SoulstoneGraphicFrame, "RIGHT", 2, 0)
         
--- LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil,"ARTWORK") 
         LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
--- LockyAnchorFrame.TextAnchorFrame.text:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE")
--- LockyAnchorFrame.TextAnchorFrame.text:SetPoint("CENTER",0,0)
         LockyAnchorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 2, 0)
---         LockyAnchorFrame.TextAnchorFrame.text:SetJustifyH("CENTER")
--- 		LockyAnchorFrame.TextAnchorFrame.text:SetJustifyV("CENTER")
         LockyAnchorFrame.TextAnchorFrame.text:SetText("No Locks in raid.")
-        
---         NamePlate = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
--- 		NamePlate:SetWidth(75)
--- 		NamePlate:SetJustifyH("CENTER")
--- 		NamePlate:SetJustifyV("CENTER")
--- 		NamePlate:SetTextColor(1,1,1,1)
--- 		NamePlate:SetText("Dummy #"..i)
-        
---         LockyAnchorFrame.SSAssignmentText = NL.AddTextToFrame(LockyAnchorFrame.TextAnchorFrame, "", 75);
---         LockyAnchorFrame.SSAssignmentText:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 5, 0)
---         LockyAnchorFrame.SSAssignmentText:SetJustifyH("LEFT")
---         LockyAnchorFrame.SSAssignmentText:SetText("Dummy #"..i);
         
         print(LockyAnchorFrame.TextAnchorFrame:GetName());
 
@@ -805,7 +788,7 @@ function InitMonitorFrame()
 		end
 	end
     
-	LockyMonitorFrame:SetSize(200, 300)     
+	LockyMonitorFrame:SetSize(400, 300)     
     
     
     -- LockyMonitorFrame.TextAnchorFrame_0.NamePlate:SetText("Ima no dummy.");
