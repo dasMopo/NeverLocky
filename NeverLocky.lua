@@ -233,7 +233,6 @@ end
 SLASH_NL1 = "/nl"
 SLASH_NL2 = "/neverlocky"
 SlashCmdList["NL"] = function(msg)
-
 	if msg == "debug" then
 		if(NL_DebugMode) then
 			NL_DebugMode = false
@@ -244,6 +243,8 @@ SlashCmdList["NL"] = function(msg)
 		end		
 	elseif msg == "test" then
 		LockyAssignCheckFrame:Show();
+	elseif msg == "monshow" then
+		LockyMonitorFrame:Show()		
 	else
 		NeverLockyFrame:Show()
 	end	

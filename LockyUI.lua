@@ -735,7 +735,7 @@ function InitMonitorFrame()
 	LockyMonitorFrame:SetScript("OnDragStop", LockyMonitorFrame.StopMovingOrSizing);
 
 	-- provide a button for manual update
-	updateButton = CreateFrame("Button", "UpdateButton", UIParent, "UIPanelButtonTemplate", 0)
+	updateButton = CreateFrame("Button", "UpdateButton", LockyMonitorFrame, "UIPanelButtonTemplate", 0)
 	updateButton:SetSize(32,32)
 	updateButton:SetPoint("TOP", LockyMonitorFrame, "TOPLEFT", 0, 32)
 	--updateButton:SetBackdrop({
@@ -749,13 +749,28 @@ function InitMonitorFrame()
 	 updateButton:SetText("U")
 	 updateButton:SetScript("OnClick", function(self) UpdateMonitorFrame() end)
 	 
+	-- provide a button for manual update
+	hideButton = CreateFrame("Button", "UpdateButton", LockyMonitorFrame, "UIPanelButtonTemplate", 0)
+	hideButton:SetSize(32,32)
+	hideButton:SetPoint("TOP", LockyMonitorFrame, "TOPRIGHT", 0, 32)
+	--updateButton:SetBackdrop({
+	 	--bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
+	 	--edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
+	 	--tile = true,
+	 	--tileSize = 32,
+	 	--edgeSize = 24,
+	 	--insets = { left = 0, right = 0, top = 0, bottom = 0 }
+	 --});
+	 hideButton:SetText("H")
+	 hideButton:SetScript("OnClick", function(self) LockyMonitorFrame:Hide() end)	 
+	 
 
     local LockyAnchorFrame = LockyMonitorFrame;
     
     for i=0, 4 do
         LockyAnchorFrame.CurseGraphicFrame = CreateFrame("Frame", "CurseGraphicFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.CurseGraphicFrame:SetSize(30,30)
-        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOPLEFT", 26, (-32*i)-16)
+        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOPLEFT", 26, (-50*i)-16)
 
         LockyAnchorFrame.BanishGraphicFrame = CreateFrame("Frame", "BanishGraphicFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.BanishGraphicFrame:SetSize(30,30)
@@ -763,14 +778,30 @@ function InitMonitorFrame()
         
         LockyAnchorFrame.SoulstoneGraphicFrame = CreateFrame("Frame", "SoulstoneGraphicFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.SoulstoneGraphicFrame:SetSize(30,30)
-        LockyAnchorFrame.SoulstoneGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.BanishGraphicFrame, "RIGHT", 5, 0)
+        LockyAnchorFrame.SoulstoneGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.BanishGraphicFrame, "RIGHT", 35, 0)
+        
+        LockyAnchorFrame.SoulstoneCooldownFrame = CreateFrame("Frame", "SoulstoneCooldownFrame_"..i, LockyAnchorFrame)
+        LockyAnchorFrame.SoulstoneCooldownFrame:SetSize(30,30)
+        LockyAnchorFrame.SoulstoneCooldownFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 10, 0)
+        
+        LockyAnchorFrame.SoulstoneCooldownFrame.text = LockyAnchorFrame.SoulstoneCooldownFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
+        LockyAnchorFrame.SoulstoneCooldownFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneCooldownFrame,"TOP", 2, -5)
+        LockyAnchorFrame.SoulstoneCooldownFrame.text:SetText("Unknown.")
+
+        LockyAnchorFrame.SoulstoneTargetFrame = CreateFrame("Frame", "SoulstoneTargetFrame_"..i, LockyAnchorFrame)
+        LockyAnchorFrame.SoulstoneTargetFrame:SetSize(30,30)
+        LockyAnchorFrame.SoulstoneTargetFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 5, 0) 
+        
+        LockyAnchorFrame.SoulstoneTargetFrame.text = LockyAnchorFrame.SoulstoneTargetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
+        LockyAnchorFrame.SoulstoneTargetFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneTargetFrame,"TOP", 2, -25)
+        LockyAnchorFrame.SoulstoneTargetFrame.text:SetText("Noone.")        
         
         LockyAnchorFrame.TextAnchorFrame = CreateFrame("Frame", "TextAnchorFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.TextAnchorFrame:SetSize(5,30)
         LockyAnchorFrame.TextAnchorFrame:SetPoint("LEFT", LockyAnchorFrame.SoulstoneGraphicFrame, "RIGHT", 2, 0)
         
         LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
-        LockyAnchorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 2, 0)
+        LockyAnchorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 10, 0)
         LockyAnchorFrame.TextAnchorFrame.text:SetText("No Locks in raid.")
         
         print(LockyAnchorFrame.TextAnchorFrame:GetName());
