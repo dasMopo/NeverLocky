@@ -599,8 +599,6 @@ function LockyAssignFrameOnShow()
 	end	
 end
 
-
-
 function LockyAssignAcceptClick()
 	PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE);
 	LockyAssignCheckFrame:Hide()
@@ -630,11 +628,8 @@ function UpdateSoulStoneAssignment(Assignment)
 	LockyAssignCheckFrame.SoulStoneAssignment:SetText(Assignment);
 end
 
-
 function UpdateAssignedCurseGraphic(CurseGraphicFrame, CurseListValue)
-	if NL_DebugMode then
-		print("Updating Curse Graphic to "..CurseListValue..":"..GetSpellIdFromDropDownList(CurseListValue))
-	end
+
 	if not (CurseListValue == nil) then
 		if(CurseGraphicFrame.CurseTexture == nil) then
 			local CurseGraphic = CurseGraphicFrame:CreateTexture(nil, "OVERLAY") 
@@ -681,9 +676,9 @@ function UpdateAssignedBanishGraphic(BanishGraphicFrame, BanishListValue)
 	end
 end
 
-function UpdateAssignedSoulstoneGraphic(SoulstoneGraphicFrame, SoulstoneTarget)
+function UpdateAssignedSoulstoneGraphic(SoulstoneGraphicFrame, SoulstoneTargetFrame, SoulstoneTarget)
 	if NL_DebugMode then
-		print("Updating Soulstone target to "..SoulstoneTarget)
+		print("Updating Soulstone")
 	end
 	if not (SoulstoneTarget == nil) then
 		if(SoulstoneGraphicFrame.SoulstoneTexture == nil) then
@@ -693,7 +688,8 @@ function UpdateAssignedSoulstoneGraphic(SoulstoneGraphicFrame, SoulstoneTarget)
 			SoulstoneGraphicFrame.SoulstoneTexture = SoulstoneGraphic
 		else
 			SoulstoneGraphicFrame.SoulstoneTexture:SetTexture(GetItemIcon(16896))
-		end		
+		end
+		UpdateAssignedSoulstoneTarget(SoulstoneTargetFrame, SoulstoneTarget)
 	else 
 		if(SoulstoneGraphicFrame.SoulstoneTexture == nil) then
 			local SoulstoneGraphic = SoulstoneGraphicFrame:CreateTexture(nil, "OVERLAY") 
@@ -703,7 +699,40 @@ function UpdateAssignedSoulstoneGraphic(SoulstoneGraphicFrame, SoulstoneTarget)
 		else
 			SoulstoneGraphicFrame.SoulstoneTexture:SetTexture(GetItemIcon(16896))
 		end
+		UpdateAssignedSoulstoneTarget(SoulstoneTargetFrame, "Noone.")
 	end
+end
+
+function UpdateAssignedSoulstoneTarget(SoulstoneTargetFrame, SoulstoneTarget)
+	if NL_DebugMode then
+		print("Updating Soulstone target to "..SoulstoneTarget)
+	end
+	SoulstoneTargetFrame.text:SetText(SoulstoneTarget);
+end
+
+function UpdateAssignedSoulstoneCooldown(SoulstoneCooldownFrame, lockData)
+	if NL_DebugMode then
+		-- print("Updating Soulstone CD to "..SoulstoneCooldown)
+	end
+	
+	local CDLength = 30*60
+	local timeShift = 0
+	
+	timeShift = lockData.MyTime - lockData.LocalTime;
+	
+	local absCD = lockData.SSCooldown+timeShift;
+
+	
+
+	local secondsRemaining = math.floor(absCD + CDLength - GetTime())
+	local result = SecondsToTime(secondsRemaining)		
+	
+	
+	SoulstoneCooldownFrame.text:SetText(result);
+	if secondsRemaining <=0 or lockData.SSCooldown == 0 then
+		lockData.SSonCD = "false"
+		SoulstoneCooldownFrame.text:SetText("Available")
+	end	
 end
 
 function InitMonitorFrame()
@@ -770,7 +799,7 @@ function InitMonitorFrame()
     for i=0, 4 do
         LockyAnchorFrame.CurseGraphicFrame = CreateFrame("Frame", "CurseGraphicFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.CurseGraphicFrame:SetSize(30,30)
-        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOPLEFT", 26, (-50*i)-16)
+        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOPLEFT", 26, (-65*i)-30)
 
         LockyAnchorFrame.BanishGraphicFrame = CreateFrame("Frame", "BanishGraphicFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.BanishGraphicFrame:SetSize(30,30)
@@ -785,22 +814,23 @@ function InitMonitorFrame()
         LockyAnchorFrame.SoulstoneCooldownFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 10, 0)
         
         LockyAnchorFrame.SoulstoneCooldownFrame.text = LockyAnchorFrame.SoulstoneCooldownFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
-        LockyAnchorFrame.SoulstoneCooldownFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneCooldownFrame,"TOP", 2, -5)
+        LockyAnchorFrame.SoulstoneCooldownFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneCooldownFrame,"TOP", 2, -35)
         LockyAnchorFrame.SoulstoneCooldownFrame.text:SetText("Unknown.")
 
         LockyAnchorFrame.SoulstoneTargetFrame = CreateFrame("Frame", "SoulstoneTargetFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.SoulstoneTargetFrame:SetSize(30,30)
         LockyAnchorFrame.SoulstoneTargetFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 5, 0) 
         
-        LockyAnchorFrame.SoulstoneTargetFrame.text = LockyAnchorFrame.SoulstoneTargetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
-        LockyAnchorFrame.SoulstoneTargetFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneTargetFrame,"TOP", 2, -25)
+        LockyAnchorFrame.SoulstoneTargetFrame.text = LockyAnchorFrame.SoulstoneTargetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        LockyAnchorFrame.SoulstoneTargetFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneTargetFrame,"TOP", 2, 10)
         LockyAnchorFrame.SoulstoneTargetFrame.text:SetText("Noone.")        
         
         LockyAnchorFrame.TextAnchorFrame = CreateFrame("Frame", "TextAnchorFrame_"..i, LockyAnchorFrame)
         LockyAnchorFrame.TextAnchorFrame:SetSize(5,30)
         LockyAnchorFrame.TextAnchorFrame:SetPoint("LEFT", LockyAnchorFrame.SoulstoneGraphicFrame, "RIGHT", 2, 0)
         
-        LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
+        LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        LockyAnchorFrame.TextAnchorFrame.text:SetFont("Fonts\\FRIZQT__.TTF", 16);
         LockyAnchorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 10, 0)
         LockyAnchorFrame.TextAnchorFrame.text:SetText("No Locks in raid.")
         
@@ -819,7 +849,7 @@ function InitMonitorFrame()
 		end
 	end
     
-	LockyMonitorFrame:SetSize(400, 300)     
+	LockyMonitorFrame:SetSize(300, 350)     
     
     
     -- LockyMonitorFrame.TextAnchorFrame_0.NamePlate:SetText("Ima no dummy.");
@@ -832,7 +862,7 @@ function InitMonitorFrame()
  		_G["TextAnchorFrame_"..num].text:SetText("#"..num.." Warlock_"..num)
 		UpdateAssignedCurseGraphic(_G["CurseGraphicFrame_"..num], "Doom LOL")
 		UpdateAssignedBanishGraphic(_G["BanishGraphicFrame_"..num], "Skull")
-		UpdateAssignedSoulstoneGraphic(_G["SoulstoneGraphicFrame_"..num], "Noone")
+		UpdateAssignedSoulstoneGraphic(_G["SoulstoneGraphicFrame_"..num], _G["SoulstoneTargetFrame_"..num], "Noone")
     end
     
 
@@ -878,7 +908,8 @@ function UpdateMonitorFrame()
 		_G["TextAnchorFrame_"..num].text:SetText("#"..num.." "..value.Name)
 		UpdateAssignedCurseGraphic(_G["CurseGraphicFrame_"..num], value.CurseAssignment)
 		UpdateAssignedBanishGraphic(_G["BanishGraphicFrame_"..num], value.BanishAssignment)
-		UpdateAssignedSoulstoneGraphic(_G["SoulstoneGraphicFrame_"..num], value.SoulstoneAssignment)
+		UpdateAssignedSoulstoneGraphic(_G["SoulstoneGraphicFrame_"..num], _G["SoulstoneTargetFrame_"..num], value.SSAssignment)
+		UpdateAssignedSoulstoneCooldown(_G["SoulstoneCooldownFrame_"..num], value);
 		num = num + 1
 	end
 
@@ -965,7 +996,6 @@ function UpdatePersonalMonitorFrame()
 		--we only need to shift the SSAssignmentText to be next to the curse graphic.
 		LockyPersonalMonitorFrame.SSAssignmentText:SetPoint("LEFT", LockyPersonalMonitorFrame.CurseGraphicFrame,"RIGHT", 5, 0)
 	end
-
 	if myData.CurseAssignment == "None" and myData.BanishAssignment == "None" then
 		-- we can make the SSAssignmentText shif all the way left.
 		LockyPersonalMonitorFrame.SSAssignmentText:SetPoint("LEFT", LockyPersonalMonitorFrame, "LEFT", 2, 0)
