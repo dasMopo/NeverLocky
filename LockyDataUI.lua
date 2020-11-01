@@ -347,14 +347,14 @@ function AnnounceAssignments()
 			message = message.."Curse -> ".. v.CurseAssignment .." ";
 		end
 		if v.BanishAssignment~="None" then
-			message = message.."Banish -> {".. v.BanishAssignment .."} ";
+			message = message.."Banish -> {".. LocalizeBanishAssignment(v.BanishAssignment, "de") .."} ";
 		end
 		if v.SSAssignment~="None" then
 			message = message.."SS -> "..v.SSAssignment .." ";
 		end		
 		
 		if AnnounceOption == "Addon Only" then
-			if NL_DebugMode then					
+			if NL_DebugMode then
 				print(message)
 			end
 		elseif AnnounceOption == "Raid" then
@@ -365,4 +365,16 @@ function AnnounceAssignments()
 			SendChatMessage(message, "WHISPER", nil, v.Name)
 		end
 	end		
+end
+
+function LocalizeBanishAssignment(assignment, language)
+	if assignment == "Diamond" then return "Diamant"
+	elseif assignment == "Star" then return "Stern"
+	elseif assignment == "Triangle" then return "Dreieck"
+	elseif assignment == "Circle" then return "Kreis"
+	elseif assignment == "Square" then return "Quadrat"
+	elseif assignment == "Moon" then return "Mond"
+	elseif assignment == "Skull" then return "Totenschädel"
+	elseif assignment == "Cross" then return "Kreuz"
+	end
 end

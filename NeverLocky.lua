@@ -33,7 +33,7 @@ function NeverLocky_OnUpdate(self, elapsed)
 	if (self.TimeSinceLastClockUpdate > NeverLockyClocky_UpdateInterval) then
 		self.TimeSinceLastClockUpdate = 0;
 		if NL_DebugMode then
-			--print("Updating the UI");
+			print("Updating the UI");
 		end
 		UpdateLockyClockys()
 	end

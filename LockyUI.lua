@@ -881,7 +881,26 @@ function InitMonitorFrame()
 	--print(LockyMonitorFrame.CurseGraphicFrame.CurseTexture)
 	
 	UpdateMonitorFrame()
+	
+	LockyMonitorFrame:SetScript("OnUpdate", LockyMonitorFrame_OnUpdate)
     
+end
+
+-- The minimum number of seconds between each update
+local LockyMonitorFrame_OnUpdate_Interval = 2	
+
+-- The number of seconds since the last update
+local LockyMonitorFrame_TimeSinceLastUpdate = 0
+
+function LockyMonitorFrame_OnUpdate(self, elapsed)
+	LockyMonitorFrame_TimeSinceLastUpdate = LockyMonitorFrame_TimeSinceLastUpdate + elapsed
+	if LockyMonitorFrame_TimeSinceLastUpdate >= LockyMonitorFrame_OnUpdate_Interval then
+		LockyMonitorFrame_TimeSinceLastUpdate = 0
+		if NL_DebugMode then		
+			print("LockyMonitorFrame_OnUpdate")
+		end
+		UpdateMonitorFrame()
+	end
 end
 
 function UpdateMonitorFrame()
