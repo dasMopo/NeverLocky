@@ -112,7 +112,6 @@ function UpdateAllLockyFriendFrames()
   --  print("ScrollRegion size updated successfully")
 end
 
-
 --Loops through and clears all of the data currently loaded.
 function  ClearAllLockyFrames()
 	--print("Clearing the frames")

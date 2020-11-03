@@ -754,7 +754,6 @@ function InitMonitorFrame()
 	 	insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	 });
 
-
 	-- mouse drag handling
 	LockyMonitorFrame:RegisterForDrag("LeftButton");
 	LockyMonitorFrame:SetMovable(true);
@@ -778,7 +777,7 @@ function InitMonitorFrame()
 	 updateButton:SetText("U")
 	 updateButton:SetScript("OnClick", function(self) UpdateMonitorFrame() end)
 	 
-	-- provide a button for manual update
+	-- provide a button to hide the panel
 	hideButton = CreateFrame("Button", "UpdateButton", LockyMonitorFrame, "UIPanelButtonTemplate", 0)
 	hideButton:SetSize(32,32)
 	hideButton:SetPoint("TOP", LockyMonitorFrame, "TOPRIGHT", 0, 32)
@@ -836,9 +835,7 @@ function InitMonitorFrame()
         
         print(LockyAnchorFrame.TextAnchorFrame:GetName());
 
-
---         LockyAnchorFrame = LockyAnchorFrame.CurseGraphicFrame;
-        
+        -- LockyAnchorFrame = LockyAnchorFrame.CurseGraphicFrame;
         
 	end
 	
