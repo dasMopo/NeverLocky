@@ -342,39 +342,52 @@ function AnnounceAssignments()
 		local message = ""
 		if v.CurseAssignment ~= "None"  or v.BanishAssignment ~= "None" or v.SSAssignment~="None" then
 			message = v.Name .. ": ";
+			AnnounceStuff(AnnounceOption, message, v.Name)
 		end
 		if v.CurseAssignment~="None" then
-			message = message.."Curse -> ".. v.CurseAssignment .." ";
+			message = "   Curse -> ".. v.CurseAssignment .." ";
+			AnnounceStuff(AnnounceOption, message, v.Name)
 		end
 		if v.BanishAssignment~="None" then
-			message = message.."Banish -> {".. LocalizeBanishAssignment(v.BanishAssignment, "de") .."} ";
+			message = "   Banish -> {".. LocalizeRaidmarker(v.BanishAssignment, "de") .."} ";
+			AnnounceStuff(AnnounceOption, message, v.Name)
 		end
 		if v.SSAssignment~="None" then
-			message = message.."SS -> "..v.SSAssignment .." ";
-		end		
-		
-		if AnnounceOption == "Addon Only" then
-			if NL_DebugMode then
-				print(message)
-			end
-		elseif AnnounceOption == "Raid" then
-			SendChatMessage(message, "RAID", nil, nil)
-		elseif AnnounceOption == "Party" then
-			SendChatMessage(message, "PARTY", nil, nil)
-		elseif AnnounceOption == "Whisper" then
-			SendChatMessage(message, "WHISPER", nil, v.Name)
+			message = "   SS -> "..v.SSAssignment .." ";
+			AnnounceStuff(AnnounceOption, message, v.Name)
 		end
-	end		
+	end
 end
 
-function LocalizeBanishAssignment(assignment, language)
-	if assignment == "Diamond" then return "Diamant"
-	elseif assignment == "Star" then return "Stern"
-	elseif assignment == "Triangle" then return "Dreieck"
-	elseif assignment == "Circle" then return "Kreis"
-	elseif assignment == "Square" then return "Quadrat"
-	elseif assignment == "Moon" then return "Mond"
-	elseif assignment == "Skull" then return "Totenschädel"
-	elseif assignment == "Cross" then return "Kreuz"
+function AnnounceStuff(AnnounceOption, message, name)
+		if NL_DebugMode then
+			print(AnnounceOption..", "..message..", "..name)
+		end
+	if AnnounceOption == "Addon Only" then
+		if NL_DebugMode then
+			print(message)
+		end
+	elseif AnnounceOption == "Raid" then
+		SendChatMessage(message, "RAID", nil, nil)
+	elseif AnnounceOption == "Party" then
+		SendChatMessage(message, "PARTY", nil, nil)
+	elseif AnnounceOption == "Whisper" then
+		SendChatMessage(message, "WHISPER", nil, name)
+	end
+end
+
+function LocalizeRaidmarker(assignment, language)
+	if (language == "de") then
+		if assignment == "Diamond" then return "Diamant"
+		elseif assignment == "Star" then return "Stern"
+		elseif assignment == "Triangle" then return "Dreieck"
+		elseif assignment == "Circle" then return "Kreis"
+		elseif assignment == "Square" then return "Quadrat"
+		elseif assignment == "Moon" then return "Mond"
+		elseif assignment == "Skull" then return "Totenschädel"
+		elseif assignment == "Cross" then return "Kreuz"
+		end
+	else
+		return assignment
 	end
 end
