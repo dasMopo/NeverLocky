@@ -793,51 +793,51 @@ function InitMonitorFrame()
 	 hideButton:SetScript("OnClick", function(self) LockyMonitorFrame:Hide() end)	 
 	 
 
-    local LockyAnchorFrame = LockyMonitorFrame;
-    
-    for i=0, 4 do
-        LockyAnchorFrame.CurseGraphicFrame = CreateFrame("Frame", "CurseGraphicFrame_"..i, LockyAnchorFrame)
-        LockyAnchorFrame.CurseGraphicFrame:SetSize(30,30)
-        LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOPLEFT", 26, (-65*i)-30)
-
-        LockyAnchorFrame.BanishGraphicFrame = CreateFrame("Frame", "BanishGraphicFrame_"..i, LockyAnchorFrame)
-        LockyAnchorFrame.BanishGraphicFrame:SetSize(30,30)
-        LockyAnchorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.CurseGraphicFrame, "RIGHT", 5, 0)
-        
-        LockyAnchorFrame.SoulstoneGraphicFrame = CreateFrame("Frame", "SoulstoneGraphicFrame_"..i, LockyAnchorFrame)
-        LockyAnchorFrame.SoulstoneGraphicFrame:SetSize(30,30)
-        LockyAnchorFrame.SoulstoneGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.BanishGraphicFrame, "RIGHT", 35, 0)
-        
-        LockyAnchorFrame.SoulstoneCooldownFrame = CreateFrame("Frame", "SoulstoneCooldownFrame_"..i, LockyAnchorFrame)
-        LockyAnchorFrame.SoulstoneCooldownFrame:SetSize(30,30)
-        LockyAnchorFrame.SoulstoneCooldownFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 10, 0)
-        
-        LockyAnchorFrame.SoulstoneCooldownFrame.text = LockyAnchorFrame.SoulstoneCooldownFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
-        LockyAnchorFrame.SoulstoneCooldownFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneCooldownFrame,"TOP", 2, -35)
-        LockyAnchorFrame.SoulstoneCooldownFrame.text:SetText("Unknown.")
-
-        LockyAnchorFrame.SoulstoneTargetFrame = CreateFrame("Frame", "SoulstoneTargetFrame_"..i, LockyAnchorFrame)
-        LockyAnchorFrame.SoulstoneTargetFrame:SetSize(30,30)
-        LockyAnchorFrame.SoulstoneTargetFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 5, 0) 
-        
-        LockyAnchorFrame.SoulstoneTargetFrame.text = LockyAnchorFrame.SoulstoneTargetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        LockyAnchorFrame.SoulstoneTargetFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneTargetFrame,"TOP", 2, 10)
-        LockyAnchorFrame.SoulstoneTargetFrame.text:SetText("Noone.")        
-        
-        LockyAnchorFrame.TextAnchorFrame = CreateFrame("Frame", "TextAnchorFrame_"..i, LockyAnchorFrame)
-        LockyAnchorFrame.TextAnchorFrame:SetSize(5,30)
-        LockyAnchorFrame.TextAnchorFrame:SetPoint("LEFT", LockyAnchorFrame.SoulstoneGraphicFrame, "RIGHT", 2, 0)
-        
-        LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        LockyAnchorFrame.TextAnchorFrame.text:SetFont("Fonts\\FRIZQT__.TTF", 16);
-        LockyAnchorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 10, 0)
-        LockyAnchorFrame.TextAnchorFrame.text:SetText("No Locks in raid.")
-        
-        print(LockyAnchorFrame.TextAnchorFrame:GetName());
-
-        -- LockyAnchorFrame = LockyAnchorFrame.CurseGraphicFrame;
-        
-	end
+--     local LockyAnchorFrame = LockyMonitorFrame;
+--     
+--     for i=0, 4 do
+--         LockyAnchorFrame.CurseGraphicFrame = CreateFrame("Frame", "CurseGraphicFrame_"..i, LockyAnchorFrame)
+--         LockyAnchorFrame.CurseGraphicFrame:SetSize(30,30)
+--         LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOPLEFT", 26, (-65*i)-30)
+-- 
+--         LockyAnchorFrame.BanishGraphicFrame = CreateFrame("Frame", "BanishGraphicFrame_"..i, LockyAnchorFrame)
+--         LockyAnchorFrame.BanishGraphicFrame:SetSize(30,30)
+--         LockyAnchorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.CurseGraphicFrame, "RIGHT", 5, 0)
+--         
+--         LockyAnchorFrame.SoulstoneGraphicFrame = CreateFrame("Frame", "SoulstoneGraphicFrame_"..i, LockyAnchorFrame)
+--         LockyAnchorFrame.SoulstoneGraphicFrame:SetSize(30,30)
+--         LockyAnchorFrame.SoulstoneGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.BanishGraphicFrame, "RIGHT", 35, 0)
+--         
+--         LockyAnchorFrame.SoulstoneCooldownFrame = CreateFrame("Frame", "SoulstoneCooldownFrame_"..i, LockyAnchorFrame)
+--         LockyAnchorFrame.SoulstoneCooldownFrame:SetSize(30,30)
+--         LockyAnchorFrame.SoulstoneCooldownFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 10, 0)
+--         
+--         LockyAnchorFrame.SoulstoneCooldownFrame.text = LockyAnchorFrame.SoulstoneCooldownFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
+--         LockyAnchorFrame.SoulstoneCooldownFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneCooldownFrame,"TOP", 2, -35)
+--         LockyAnchorFrame.SoulstoneCooldownFrame.text:SetText("Unknown.")
+-- 
+--         LockyAnchorFrame.SoulstoneTargetFrame = CreateFrame("Frame", "SoulstoneTargetFrame_"..i, LockyAnchorFrame)
+--         LockyAnchorFrame.SoulstoneTargetFrame:SetSize(30,30)
+--         LockyAnchorFrame.SoulstoneTargetFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 5, 0) 
+--         
+--         LockyAnchorFrame.SoulstoneTargetFrame.text = LockyAnchorFrame.SoulstoneTargetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+--         LockyAnchorFrame.SoulstoneTargetFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneTargetFrame,"TOP", 2, 10)
+--         LockyAnchorFrame.SoulstoneTargetFrame.text:SetText("Noone.")        
+--         
+--         LockyAnchorFrame.TextAnchorFrame = CreateFrame("Frame", "TextAnchorFrame_"..i, LockyAnchorFrame)
+--         LockyAnchorFrame.TextAnchorFrame:SetSize(5,30)
+--         LockyAnchorFrame.TextAnchorFrame:SetPoint("LEFT", LockyAnchorFrame.SoulstoneGraphicFrame, "RIGHT", 2, 0)
+--         
+--         LockyAnchorFrame.TextAnchorFrame.text = LockyAnchorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+--         LockyAnchorFrame.TextAnchorFrame.text:SetFont("Fonts\\FRIZQT__.TTF", 16);
+--         LockyAnchorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyAnchorFrame.TextAnchorFrame,"RIGHT", 10, 0)
+--         LockyAnchorFrame.TextAnchorFrame.text:SetText("No Locks in raid.")
+--         
+--         print(LockyAnchorFrame.TextAnchorFrame:GetName());
+-- 
+--         -- LockyAnchorFrame = LockyAnchorFrame.CurseGraphicFrame;
+--         
+-- 	end
 	
 	if NL_DebugMode then
 		local children = {LockyMonitorFrame:GetChildren() }
@@ -853,14 +853,14 @@ function InitMonitorFrame()
     
 --     LockyMonitorFrame.TextAnchorFrame.text:SetText("Ima no dummy.")
     
-    -- dummy data
-    for num=0, 4 do    
-        --_G["TextAnchorFrame_"..i].text:SetText("#"..i.." All work and no play ...")
- 		_G["TextAnchorFrame_"..num].text:SetText("#"..num.." Warlock_"..num)
-		UpdateAssignedCurseGraphic(_G["CurseGraphicFrame_"..num], "Doom LOL")
-		UpdateAssignedBanishGraphic(_G["BanishGraphicFrame_"..num], "Skull")
-		UpdateAssignedSoulstoneGraphic(_G["SoulstoneGraphicFrame_"..num], _G["SoulstoneTargetFrame_"..num], "Noone")
-    end
+--     -- dummy data
+--     for num=0, 4 do    
+--         --_G["TextAnchorFrame_"..i].text:SetText("#"..i.." All work and no play ...")
+--  		_G["TextAnchorFrame_"..num].text:SetText("#"..num.." Warlock_"..num)
+-- 		UpdateAssignedCurseGraphic(_G["CurseGraphicFrame_"..num], "Doom LOL")
+-- 		UpdateAssignedBanishGraphic(_G["BanishGraphicFrame_"..num], "Skull")
+-- 		UpdateAssignedSoulstoneGraphic(_G["SoulstoneGraphicFrame_"..num], _G["SoulstoneTargetFrame_"..num], "Noone")
+--     end
     
 
 	LockyMonitorFrame.MainLabel = NL_AddTextToFrame(LockyMonitorFrame,"Global Lock Assigns:", 175);
@@ -920,7 +920,10 @@ function UpdateMonitorFrame()
 	for key, value in pairs(LockyFriendsData) do
 		if NL_DebugMode then
 			print ("#"..num..":"..value.Name.." C:"..value.CurseAssignment.." B:"..value.BanishAssignment)
-		end	
+		end
+        if (_G["CurseGraphicFrame_"..num] == nil) then
+            AddMonitorFrameItem(num)
+        end
 		_G["TextAnchorFrame_"..num].text:SetText("#"..num.." "..value.Name)
 		UpdateAssignedCurseGraphic(_G["CurseGraphicFrame_"..num], value.CurseAssignment)
 		UpdateAssignedBanishGraphic(_G["BanishGraphicFrame_"..num], value.BanishAssignment)
@@ -929,6 +932,47 @@ function UpdateMonitorFrame()
 		num = num + 1
 	end
 
+end
+
+function AddMonitorFrameItem(i)
+    
+        LockyMonitorFrame.CurseGraphicFrame = CreateFrame("Frame", "CurseGraphicFrame_"..i, LockyMonitorFrame)
+        LockyMonitorFrame.CurseGraphicFrame:SetSize(30,30)
+        LockyMonitorFrame.CurseGraphicFrame:SetPoint("TOP", LockyMonitorFrame, "TOPLEFT", 26, (-65*i)-30)
+
+        LockyMonitorFrame.BanishGraphicFrame = CreateFrame("Frame", "BanishGraphicFrame_"..i, LockyMonitorFrame)
+        LockyMonitorFrame.BanishGraphicFrame:SetSize(30,30)
+        LockyMonitorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyMonitorFrame.CurseGraphicFrame, "RIGHT", 5, 0)
+        
+        LockyMonitorFrame.SoulstoneGraphicFrame = CreateFrame("Frame", "SoulstoneGraphicFrame_"..i, LockyMonitorFrame)
+        LockyMonitorFrame.SoulstoneGraphicFrame:SetSize(30,30)
+        LockyMonitorFrame.SoulstoneGraphicFrame:SetPoint("LEFT", LockyMonitorFrame.BanishGraphicFrame, "RIGHT", 35, 0)
+        
+        LockyMonitorFrame.SoulstoneCooldownFrame = CreateFrame("Frame", "SoulstoneCooldownFrame_"..i, LockyMonitorFrame)
+        LockyMonitorFrame.SoulstoneCooldownFrame:SetSize(30,30)
+        LockyMonitorFrame.SoulstoneCooldownFrame:SetPoint("CENTER", LockyMonitorFrame.SoulstoneGraphicFrame, "LEFT", 10, 0)
+        
+        LockyMonitorFrame.SoulstoneCooldownFrame.text = LockyMonitorFrame.SoulstoneCooldownFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
+        LockyMonitorFrame.SoulstoneCooldownFrame.text:SetPoint("CENTER", LockyMonitorFrame.SoulstoneCooldownFrame,"TOP", 2, -35)
+        LockyMonitorFrame.SoulstoneCooldownFrame.text:SetText("Unknown.")
+
+        LockyMonitorFrame.SoulstoneTargetFrame = CreateFrame("Frame", "SoulstoneTargetFrame_"..i, LockyMonitorFrame)
+        LockyMonitorFrame.SoulstoneTargetFrame:SetSize(30,30)
+        LockyMonitorFrame.SoulstoneTargetFrame:SetPoint("CENTER", LockyMonitorFrame.SoulstoneGraphicFrame, "LEFT", 5, 0) 
+        
+        LockyMonitorFrame.SoulstoneTargetFrame.text = LockyMonitorFrame.SoulstoneTargetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        LockyMonitorFrame.SoulstoneTargetFrame.text:SetPoint("CENTER", LockyMonitorFrame.SoulstoneTargetFrame,"TOP", 2, 10)
+        LockyMonitorFrame.SoulstoneTargetFrame.text:SetText("Noone.")        
+        
+        LockyMonitorFrame.TextAnchorFrame = CreateFrame("Frame", "TextAnchorFrame_"..i, LockyMonitorFrame)
+        LockyMonitorFrame.TextAnchorFrame:SetSize(5,30)
+        LockyMonitorFrame.TextAnchorFrame:SetPoint("LEFT", LockyMonitorFrame.SoulstoneGraphicFrame, "RIGHT", 2, 0)
+        
+        LockyMonitorFrame.TextAnchorFrame.text = LockyMonitorFrame.TextAnchorFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        LockyMonitorFrame.TextAnchorFrame.text:SetFont("Fonts\\FRIZQT__.TTF", 16);
+        LockyMonitorFrame.TextAnchorFrame.text:SetPoint("LEFT", LockyMonitorFrame.TextAnchorFrame,"RIGHT", 10, 0)
+        LockyMonitorFrame.TextAnchorFrame.text:SetText("No Locks in raid.")
+    
 end
 
 function InitPersonalMonitorFrame()
