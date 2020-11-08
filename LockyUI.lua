@@ -750,8 +750,8 @@ function InitMonitorFrame()
 	--LockyPersonalAnchorButton:SetPoint("CENTER", UIParent, "CENTER")
 
 	LockyMonitorFrame = CreateFrame("Frame", nil, UIParent);
-	LockyMonitorFrame:SetSize(100, 34) 
-	LockyMonitorFrame:SetPoint("TOP", UIParent, "TOP",0,-75) 
+	LockyMonitorFrame:SetPoint("TOP", UIParent, "TOP",0,-75)
+	LockyMonitorFrame:SetSize(300, 48) 
 
 	-- background setting for the whole frame
 	LockyMonitorFrame:SetBackdrop({
@@ -774,7 +774,7 @@ function InitMonitorFrame()
 	-- provide a button for manual update
 	updateButton = CreateFrame("Button", "UpdateButton", LockyMonitorFrame, "UIPanelButtonTemplate", 0)
 	updateButton:SetSize(32,32)
-	updateButton:SetPoint("TOP", LockyMonitorFrame, "TOPLEFT", 0, 32)
+	updateButton:SetPoint("TOP", LockyMonitorFrame, "TOPLEFT", 24, 0)
 	--updateButton:SetBackdrop({
 	 	--bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
 	 	--edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
@@ -789,7 +789,7 @@ function InitMonitorFrame()
 	-- provide a button to hide the panel
 	hideButton = CreateFrame("Button", "UpdateButton", LockyMonitorFrame, "UIPanelButtonTemplate", 0)
 	hideButton:SetSize(32,32)
-	hideButton:SetPoint("TOP", LockyMonitorFrame, "TOPRIGHT", 0, 32)
+	hideButton:SetPoint("TOP", LockyMonitorFrame, "TOPRIGHT", -24, 0)
 	--updateButton:SetBackdrop({
 	 	--bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
 	 	--edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
@@ -799,54 +799,7 @@ function InitMonitorFrame()
 	 	--insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	 --});
 	 hideButton:SetText("H")
-	 hideButton:SetScript("OnClick", function(self) LockyMonitorFrame:Hide() end)	 
-	 
-
---     local LockyAnchorFrame = LockyMonitorFrame;
---     
---     for i=0, 4 do
---         LockyAnchorFrame.CurseGraphicFrame = CreateFrame("Frame", "CurseGraphicFrame_"..i, LockyAnchorFrame)
---         LockyAnchorFrame.CurseGraphicFrame:SetSize(30,30)
---         LockyAnchorFrame.CurseGraphicFrame:SetPoint("TOP", LockyAnchorFrame, "TOPLEFT", 26, (-65*i)-30)
--- 
---         LockyAnchorFrame.BanishGraphicFrame = CreateFrame("Frame", "BanishGraphicFrame_"..i, LockyAnchorFrame)
---         LockyAnchorFrame.BanishGraphicFrame:SetSize(30,30)
---         LockyAnchorFrame.BanishGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.CurseGraphicFrame, "RIGHT", 5, 0)
---         
---         LockyAnchorFrame.SoulstoneGraphicFrame = CreateFrame("Frame", "SoulstoneGraphicFrame_"..i, LockyAnchorFrame)
---         LockyAnchorFrame.SoulstoneGraphicFrame:SetSize(30,30)
---         LockyAnchorFrame.SoulstoneGraphicFrame:SetPoint("LEFT", LockyAnchorFrame.BanishGraphicFrame, "RIGHT", 35, 0)
---         
---         LockyAnchorFrame.SoulstoneCooldownFrame = CreateFrame("Frame", "SoulstoneCooldownFrame_"..i, LockyAnchorFrame)
---         LockyAnchorFrame.SoulstoneCooldownFrame:SetSize(30,30)
---         LockyAnchorFrame.SoulstoneCooldownFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 10, 0)
---         
---         LockyAnchorFrame.SoulstoneCooldownFrame.text = LockyAnchorFrame.SoulstoneCooldownFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal") 
---         LockyAnchorFrame.SoulstoneCooldownFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneCooldownFrame,"TOP", 2, -35)
---         LockyAnchorFrame.SoulstoneCooldownFrame.text:SetText("Unknown.")
--- 
---         LockyAnchorFrame.SoulstoneTargetFrame = CreateFrame("Frame", "SoulstoneTargetFrame_"..i, LockyAnchorFrame)
---         LockyAnchorFrame.SoulstoneTargetFrame:SetSize(30,30)
---         LockyAnchorFrame.SoulstoneTargetFrame:SetPoint("CENTER", LockyAnchorFrame.SoulstoneGraphicFrame, "LEFT", 5, 0) 
---         
---         LockyAnchorFrame.SoulstoneTargetFrame.text = LockyAnchorFrame.SoulstoneTargetFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
---         LockyAnchorFrame.SoulstoneTargetFrame.text:SetPoint("CENTER", LockyAnchorFrame.SoulstoneTargetFrame,"TOP", 2, 10)
---         LockyAnchorFrame.SoulstoneTargetFrame.text:SetText("Noone.")        
---         
---         LockyAnchorFrame.WarlockNameFrame = CreateFrame("Frame", "WarlockNameFrame_"..i, LockyAnchorFrame)
---         LockyAnchorFrame.WarlockNameFrame:SetSize(5,30)
---         LockyAnchorFrame.WarlockNameFrame:SetPoint("LEFT", LockyAnchorFrame.SoulstoneGraphicFrame, "RIGHT", 2, 0)
---         
---         LockyAnchorFrame.WarlockNameFrame.text = LockyAnchorFrame.WarlockNameFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
---         LockyAnchorFrame.WarlockNameFrame.text:SetFont("Fonts\\FRIZQT__.TTF", 16);
---         LockyAnchorFrame.WarlockNameFrame.text:SetPoint("LEFT", LockyAnchorFrame.WarlockNameFrame,"RIGHT", 10, 0)
---         LockyAnchorFrame.WarlockNameFrame.text:SetText("No Locks in raid.")
---         
---         print(LockyAnchorFrame.WarlockNameFrame:GetName());
--- 
---         -- LockyAnchorFrame = LockyAnchorFrame.CurseGraphicFrame;
---         
--- 	end
+	 hideButton:SetScript("OnClick", function(self) LockyMonitorFrame:Hide() end)
 	
 	if NL_DebugMode then
 		local children = {LockyMonitorFrame:GetChildren() }
@@ -854,40 +807,25 @@ function InitMonitorFrame()
 			print("   "..child:GetName());
 		end
 	end
-    
-	LockyMonitorFrame:SetSize(300, 350)     
-    
-    
-    -- LockyMonitorFrame.WarlockNameFrame_0.NamePlate:SetText("Ima no dummy.");
-    
---     LockyMonitorFrame.WarlockNameFrame.text:SetText("Ima no dummy.")
-    
---     -- dummy data
---     for num=0, 4 do    
---         --_G["WarlockNameFrame_"..i].text:SetText("#"..i.." All work and no play ...")
---  		_G["WarlockNameFrame_"..num].text:SetText("#"..num.." Warlock_"..num)
--- 		UpdateAssignedCurseGraphic(_G["CurseGraphicFrame_"..num], "Doom LOL")
--- 		UpdateAssignedBanishGraphic(_G["BanishGraphicFrame_"..num], "Skull")
--- 		UpdateAssignedSoulstoneGraphic(_G["SoulstoneGraphicFrame_"..num], _G["SoulstoneTargetFrame_"..num], "Noone")
---     end
-    
 
-	LockyMonitorFrame.MainLabel = NL_AddTextToFrame(LockyMonitorFrame,"Global Lock Assigns:", 175);
-	LockyMonitorFrame.MainLabel:SetPoint("BOTTOM", LockyMonitorFrame, "TOP", 0, 0);
+	LockyMonitorFrame.MonitorTitleFrame = CreateFrame("Frame", "MonitorTitleFrame", LockyMonitorFrame)
+	LockyMonitorFrame.MonitorTitleFrame:SetSize(300, 48)
+	LockyMonitorFrame.MonitorTitleFrame:SetPoint("CENTER", LockyMonitorFrame, "TOP", 0, -20)
+	LockyMonitorFrame.MonitorTitleFrame:SetBackdrop({
+	 	bgFile= "Interface\\DialogFrame\\UI-DialogBox-Background",
+	 	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
+	 	tile = true,
+	 	tileSize = 32,
+	 	edgeSize = 24,
+	 	insets = { left = 0, right = 0, top = 0, bottom = 0 }
+	 });
 
-	--LockyMonitorFrame:Hide();
-    
-    -- LockyMonitorFrame.SSAssignmentText:SetText("Ima no dummy.");
-    -- WarlockNameFrame_2:SetText("Ima no dummy.");
-    
-    --_G["WarlockNameFrame_0"..2].SSAssignmentText:SetText("Ima no dummy.");
-	
-	--UpdateCurseGraphic(LockyMonitorFrame, "Agony")
-	--print("Personal Monitor loaded.")
-	--print(LockyMonitorFrame.CurseGraphicFrame.CurseTexture)
-	
+	LockyMonitorFrame.MainLabel = NL_AddTextToFrame(MonitorTitleFrame,"Global Lock Assigns:", 175);
+	LockyMonitorFrame.MainLabel:SetPoint("BOTTOM", MonitorTitleFrame, "BOTTOM", 0, 16);
+
 	UpdateMonitorFrame()
 	
+	-- enable updates
 	LockyMonitorFrame:SetScript("OnUpdate", LockyMonitorFrame_OnUpdate)
     
 end
@@ -907,7 +845,7 @@ function AddMonitorFrameItem(i)
 
         LockyMonitorFrame.MonitorItemFrame = CreateFrame("Frame", "MonitorItemFrame_"..i, LockyMonitorFrame)
         LockyMonitorFrame.MonitorItemFrame:SetSize(280, 64)
-        LockyMonitorFrame.MonitorItemFrame:SetPoint("TOPLEFT", LockyMonitorFrame, "TOPLEFT", 10, (-60*i)-8)
+        LockyMonitorFrame.MonitorItemFrame:SetPoint("TOPLEFT", LockyMonitorFrame, "TOPLEFT", 10, (-60*i)-42)
     
 		local AnchorFrame = LockyMonitorFrame.MonitorItemFrame
 		
@@ -1003,8 +941,17 @@ function UpdateMonitorFrame()
 	if NL_DebugMode then
 		print(num.." active items in "..LockyMonitorFrame_numFrames.." active frames.")
 	end
-	for i = num, LockyMonitorFrame_numFrames -1 do
-		_G["MonitorItemFrame_"..i]:Hide()
+
+	
+	if (LockyMonitorFrame_numFrames ~= num) then
+		for i = num, LockyMonitorFrame_numFrames -1 do
+			_G["MonitorItemFrame_"..i]:Hide()
+		end
+		if (num == 0) then
+			LockyMonitorFrame:SetSize(300, 48)
+		else
+			LockyMonitorFrame:SetSize(300, 60*num+52)
+		end
 	end
 	
 	LockyMonitorFrame_numFrames = num
