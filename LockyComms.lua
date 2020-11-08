@@ -218,7 +218,7 @@ function RequestAssignments()
     end
 end
 
-function  SendAssignmentAcknowledgement(answer)
+function SendAssignmentAcknowledgement(answer)
     if NL_DebugMode then
         print("Sending assignment acknowledgement:", answer)
     end   

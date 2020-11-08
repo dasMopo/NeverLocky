@@ -215,6 +215,10 @@ function NeverLocky_OnShowFrame()
 		print("Frame should be showing now.")	
 	end
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+	UpdateFriendsData()
+end
+
+function UpdateFriendsData()
 	--print("Updating SS targets")
 	UpdateSSTargets()
 	LockyFriendsData = UpdateWarlocks(LockyFriendsData);
